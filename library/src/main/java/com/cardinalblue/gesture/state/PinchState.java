@@ -71,14 +71,14 @@ public class PinchState extends BaseGestureState {
             mStopPointers.put(id, new PointF(event.getX(i),
                                              event.getY(i)));
 
-            mControlPoints.add(i);
+            mOrderedPointerIds.add(id);
         }
 
         // Dispatch pinch-begin.
         mOwner.getListener().onPinchBegin(
             obtainMyMotionEvent(event), touchingObject, touchingContext,
-            new PointF[]{mStartPointers.get(mStartPointers.keyAt(0)),
-                         mStartPointers.get(mStartPointers.keyAt(1))});
+            new PointF[]{mStartPointers.get(mOrderedPointerIds.get(0)),
+                         mStartPointers.get(mOrderedPointerIds.get(1))});
     }
 
     @Override
@@ -118,6 +118,8 @@ public class PinchState extends BaseGestureState {
                                                       event.getY(downIndex)));
                 mStopPointers.put(downId, new PointF(event.getX(downIndex),
                                                      event.getY(downIndex)));
+                // Hold new down pointer ID.
+                mOrderedPointerIds.add(event.getPointerId(downIndex));
                 break;
             }
 
@@ -131,10 +133,10 @@ public class PinchState extends BaseGestureState {
                         // would end and restart.
                         mOwner.getListener().onPinchEnd(
                             obtainMyMotionEvent(event), touchingObject, touchingContext,
-                            new PointF[]{mStartPointers.get(mStartPointers.keyAt(0)),
-                                mStartPointers.get(mStartPointers.keyAt(1))},
-                            new PointF[]{mStopPointers.get(mStopPointers.keyAt(0)),
-                                mStopPointers.get(mStopPointers.keyAt(1))});
+                            new PointF[]{mStartPointers.get(mOrderedPointerIds.get(0)),
+                                         mStartPointers.get(mOrderedPointerIds.get(1))},
+                            new PointF[]{mStopPointers.get(mOrderedPointerIds.get(0)),
+                                         mStopPointers.get(mOrderedPointerIds.get(1))});
 
                         // Refresh the start pointers.
                         mStartPointers.clear();
@@ -155,12 +157,16 @@ public class PinchState extends BaseGestureState {
                         // Restart the gesture.
                         mOwner.getListener().onPinchBegin(
                             obtainMyMotionEvent(event), touchingObject, touchingContext,
-                            new PointF[]{mStartPointers.get(mStartPointers.keyAt(0)),
-                                mStartPointers.get(mStartPointers.keyAt(1))});
+                            new PointF[]{mStartPointers.get(mOrderedPointerIds.get(0)),
+                                         mStartPointers.get(mOrderedPointerIds.get(1))});
                     } else {
                         // Remove the hold (up) pointer.
                         mStartPointers.remove(upId);
                         mStopPointers.remove(upId);
+                        int index = mOrderedPointerIds.indexOf(upId);
+                        if (index != -1) {
+                            mOrderedPointerIds.remove(index);
+                        }
                     }
                 } else {
                     // Transit to STATE_SINGLE_FINGER_PRESSING state.
@@ -197,6 +203,7 @@ public class PinchState extends BaseGestureState {
         // Clear pointers.
         mStartPointers.clear();
         mStopPointers.clear();
+        mOrderedPointerIds.clear();
     }
 
     @Override
