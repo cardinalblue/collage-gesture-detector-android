@@ -32,8 +32,7 @@ public class PinchState extends BaseGestureState {
     // Pointers.
     private final SparseArray<PointF> mStartPointers = new SparseArray<>();
     private final SparseArray<PointF> mStopPointers = new SparseArray<>();
-
-    private ArrayList<Integer> mCurrentPointers = new ArrayList<>();
+    private ArrayList<Integer> mControlPoints = new ArrayList<>();
 
     public PinchState(IGestureStateOwner owner) {
         super(owner);
@@ -50,7 +49,7 @@ public class PinchState extends BaseGestureState {
         // Hold the all down pointers.
         mStartPointers.clear();
         mStopPointers.clear();
-        mCurrentPointers.clear();
+        mControlPoints.clear();
         for (int i = 0; i < event.getPointerCount(); ++i) {
             if (i == upIndex) continue;
 
@@ -61,7 +60,7 @@ public class PinchState extends BaseGestureState {
             mStopPointers.put(id, new PointF(event.getX(i),
                                              event.getY(i)));
 
-            mCurrentPointers.add(i);
+            mControlPoints.add(i);
         }
 
         // Dispatch pinch-begin.
@@ -83,19 +82,19 @@ public class PinchState extends BaseGestureState {
         switch (action) {
             case MotionEvent.ACTION_MOVE: {
                 // Update stop pointers.
-                final PointF pointer1 = mStopPointers.get(mCurrentPointers.get(0));
+                final PointF pointer1 = mStopPointers.get(mControlPoints.get(0));
                 pointer1.set(event.getX(0), event.getY(0));
 
-                final PointF pointer2 = mStopPointers.get(mCurrentPointers.get(1));
+                final PointF pointer2 = mStopPointers.get(mControlPoints.get(1));
                 pointer2.set(event.getX(1), event.getY(1));
 
                 // Dispatch callback.
                 mOwner.getListener().onPinch(
                     obtainMyMotionEvent(event), touchingObject, touchingContext,
-                    new PointF[]{mStartPointers.get(mCurrentPointers.get(0)),
-                                 mStartPointers.get(mCurrentPointers.get(1))},
-                    new PointF[]{mStopPointers.get(mCurrentPointers.get(0)),
-                                 mStopPointers.get(mCurrentPointers.get(1))});
+                    new PointF[]{mStartPointers.get(mControlPoints.get(0)),
+                                 mStartPointers.get(mControlPoints.get(1))},
+                    new PointF[]{mStopPointers.get(mControlPoints.get(0)),
+                                 mStopPointers.get(mControlPoints.get(1))});
 
                 break;
             }
@@ -115,8 +114,8 @@ public class PinchState extends BaseGestureState {
                 if (downPointerCount >= 2) {
                     final int upId = event.getPointerId(upIndex);
 
-                    if (mCurrentPointers.indexOf(upId) != -1 &&
-                        mCurrentPointers.indexOf(upId) < 2) {
+                    if (mControlPoints.indexOf(upId) != -1 &&
+                        mControlPoints.indexOf(upId) < 2) {
                         // The anchor pointers (first two) is changed, the gesture
                         // would end and restart.
                         mOwner.getListener().onPinchEnd(
@@ -129,7 +128,7 @@ public class PinchState extends BaseGestureState {
                         // Refresh the start pointers.
                         mStartPointers.clear();
                         mStopPointers.clear();
-                        mCurrentPointers.clear();
+                        mControlPoints.clear();
                         for (int i = 0; i < event.getPointerCount(); ++i) {
                             if (i == upIndex) continue;
 
@@ -139,7 +138,7 @@ public class PinchState extends BaseGestureState {
                             mStopPointers.put(event.getPointerId(i),
                                 new PointF(event.getX(i),
                                     event.getY(i)));
-                            mCurrentPointers.add(event.getPointerId(i));
+                            mControlPoints.add(event.getPointerId(i));
                         }
 
                         // Restart the gesture.
