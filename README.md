@@ -1,57 +1,50 @@
-My Boilerplate Android
+Gesture Detector
 ===
 
-Welcome to my experiment playground for Android. I like **Computer Vision** and **Machine Learning** and am trying to run them on the smartphone.
+The system built-in `GestureDetector` has no concept of gesture lifecycle. We enclose gesture callbacks with lifecycle so that you could something in the **onActionBegin** and do anothing in the **onActionEnd** callbacks.
 
-> `app` and `lib-tensorflow` is under refactoring.
-
-Demo Apps
+The State Diagram
 ---
 
-### demo-widget
+![state diagram](docs/figure-state-paradigm.jpg)
 
-The demo app using `lib-core` and `lib-widget`.
-
-### demo-dlib
-
-The demo app using `lib-core`, `lib-widget`, `lib-protobuf` and `lib-dlib`.
-
-### demo-doodle
-
-The demo app for letting you to draw sketch on a canvas.
-
-Library
+Recognized Gestures
 ---
 
-### lib-core
+```
+void onActionBegin();
 
-The most common Java/JNI code used generally in the demo apps.
+void onActionEnd();
 
-### lib-common-theme
+void onSingleTap();
 
-The common theme widely used in the demo experiment.
+void onDoubleTap();
 
-### lib-widget
+void onMoreTap();
 
-The custom *View* fishpound. e.g. [ElasticDragLayout](lib-widget/src/main/java/com/my/widget/ElasticDragLayout.java)
+void onLongTap();
 
-### lib-component
+void onLongPress();
 
-The custom *Activity* or *Fragment* that could be repeatedly used.
+// Drag ///////////////////////////////////////////////////////////////
 
-### lib-dlib
+boolean onDragBegin();
 
-The `dlib` port and Java/JNI functions I'm experimenting.
+void onDrag();
 
-### lib-protobuf
+void onDragEnd();
 
-A serialization/deserialization library from Google.
+// Fling //////////////////////////////////////////////////////////////
 
-### lib-tensorflow
+boolean onDragFling();
 
-The JNI for Tensorflow.
+// Pinch //////////////////////////////////////////////////////////////
 
-Temporary Folder
----
+boolean onPinchBegin();
 
-The `lib-distribution` folder is generated after first build.
+void onPinch();
+
+void onPinchEnd();
+```
+
+Checkout the details in the code, [interface link](library/src/main/java/com/cardinalblue/gesture/IGestureListener.java).
