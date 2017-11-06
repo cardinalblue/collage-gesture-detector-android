@@ -23,6 +23,7 @@ import android.util.SparseArray;
 import android.view.MotionEvent;
 
 import com.cardinalblue.gesture.IGestureStateOwner;
+import java.util.ArrayList;
 
 import static com.cardinalblue.gesture.IGestureStateOwner.State.STATE_SINGLE_FINGER_PRESSING;
 
@@ -31,6 +32,7 @@ public class PinchState extends BaseGestureState {
     // Pointers.
     private final SparseArray<PointF> mStartPointers = new SparseArray<>();
     private final SparseArray<PointF> mStopPointers = new SparseArray<>();
+    private ArrayList<Integer> mControlPoints = new ArrayList<>();
 
     public PinchState(IGestureStateOwner owner) {
         super(owner);
@@ -47,6 +49,7 @@ public class PinchState extends BaseGestureState {
         // Hold the all down pointers.
         mStartPointers.clear();
         mStopPointers.clear();
+        mControlPoints.clear();
         for (int i = 0; i < event.getPointerCount(); ++i) {
             if (i == upIndex) continue;
 
@@ -56,6 +59,8 @@ public class PinchState extends BaseGestureState {
                                               event.getY(i)));
             mStopPointers.put(id, new PointF(event.getX(i),
                                              event.getY(i)));
+
+            mControlPoints.add(i);
         }
 
         // Dispatch pinch-begin.
@@ -77,19 +82,19 @@ public class PinchState extends BaseGestureState {
         switch (action) {
             case MotionEvent.ACTION_MOVE: {
                 // Update stop pointers.
-                final PointF pointer1 = mStopPointers.get(mStopPointers.keyAt(0));
+                final PointF pointer1 = mStopPointers.get(mControlPoints.get(0));
                 pointer1.set(event.getX(0), event.getY(0));
 
-                final PointF pointer2 = mStopPointers.get(mStopPointers.keyAt(1));
+                final PointF pointer2 = mStopPointers.get(mControlPoints.get(1));
                 pointer2.set(event.getX(1), event.getY(1));
 
                 // Dispatch callback.
                 mOwner.getListener().onPinch(
                     obtainMyMotionEvent(event), touchingObject, touchingContext,
-                    new PointF[]{mStartPointers.get(mStartPointers.keyAt(0)),
-                                 mStartPointers.get(mStartPointers.keyAt(1))},
-                    new PointF[]{mStopPointers.get(mStopPointers.keyAt(0)),
-                                 mStopPointers.get(mStopPointers.keyAt(1))});
+                    new PointF[]{mStartPointers.get(mControlPoints.get(0)),
+                                 mStartPointers.get(mControlPoints.get(1))},
+                    new PointF[]{mStopPointers.get(mControlPoints.get(0)),
+                                 mStopPointers.get(mControlPoints.get(1))});
 
                 break;
             }
@@ -109,35 +114,38 @@ public class PinchState extends BaseGestureState {
                 if (downPointerCount >= 2) {
                     final int upId = event.getPointerId(upIndex);
 
-                    if (mStartPointers.indexOfKey(upId) < 2) {
+                    if (mControlPoints.indexOf(upId) != -1 &&
+                        mControlPoints.indexOf(upId) < 2) {
                         // The anchor pointers (first two) is changed, the gesture
                         // would end and restart.
                         mOwner.getListener().onPinchEnd(
                             obtainMyMotionEvent(event), touchingObject, touchingContext,
                             new PointF[]{mStartPointers.get(mStartPointers.keyAt(0)),
-                                         mStartPointers.get(mStartPointers.keyAt(1))},
+                                mStartPointers.get(mStartPointers.keyAt(1))},
                             new PointF[]{mStopPointers.get(mStopPointers.keyAt(0)),
-                                         mStopPointers.get(mStopPointers.keyAt(1))});
+                                mStopPointers.get(mStopPointers.keyAt(1))});
 
                         // Refresh the start pointers.
                         mStartPointers.clear();
                         mStopPointers.clear();
+                        mControlPoints.clear();
                         for (int i = 0; i < event.getPointerCount(); ++i) {
                             if (i == upIndex) continue;
 
                             mStartPointers.put(event.getPointerId(i),
-                                               new PointF(event.getX(i),
-                                                          event.getY(i)));
+                                new PointF(event.getX(i),
+                                    event.getY(i)));
                             mStopPointers.put(event.getPointerId(i),
-                                              new PointF(event.getX(i),
-                                                         event.getY(i)));
+                                new PointF(event.getX(i),
+                                    event.getY(i)));
+                            mControlPoints.add(event.getPointerId(i));
                         }
 
                         // Restart the gesture.
                         mOwner.getListener().onPinchBegin(
                             obtainMyMotionEvent(event), touchingObject, touchingContext,
                             new PointF[]{mStartPointers.get(mStartPointers.keyAt(0)),
-                                         mStartPointers.get(mStartPointers.keyAt(1))});
+                                mStartPointers.get(mStartPointers.keyAt(1))});
                     } else {
                         // Remove the hold (up) pointer.
                         mStartPointers.remove(upId);
@@ -165,15 +173,15 @@ public class PinchState extends BaseGestureState {
 
     @Override
     public void onExit(MotionEvent event,
-                       Object touchingObject,
-                       Object touchingContext) {
+        Object touchingObject,
+        Object touchingContext) {
         // Dispatch pinch-end.
         mOwner.getListener().onPinchEnd(
             obtainMyMotionEvent(event), touchingObject, touchingContext,
             new PointF[]{mStartPointers.get(mStartPointers.keyAt(0)),
-                         mStartPointers.get(mStartPointers.keyAt(1))},
+                mStartPointers.get(mStartPointers.keyAt(1))},
             new PointF[]{mStopPointers.get(mStopPointers.keyAt(0)),
-                         mStopPointers.get(mStopPointers.keyAt(1))});
+                mStopPointers.get(mStopPointers.keyAt(1))});
 
         // Clear pointers.
         mStartPointers.clear();
