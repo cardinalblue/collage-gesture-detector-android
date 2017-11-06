@@ -1,0 +1,105 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.cardinalblue.demo"
+        minSdkVersion 16
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    lintOptions {
+        disable "MissingTranslation"
+    }
+
+    productFlavors {
+        dev {
+            // Enable pre-dexing to produce an APK that can be tested on
+            // Android 5.0+ without the time-consuming DEX build processes.
+            minSdkVersion 21
+        }
+        prod {
+            // The actual minSdkVersion for the production version.
+            minSdkVersion 16
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    maven { url "https://maven.fabric.io/public" }
+    // Support AAR file.
+    flatDir { dirs "libs" }
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Google Support Library.
+    compile rootProject.ext.dep.supportAppcompatV7
+    compile rootProject.ext.dep.supportVectorDrawable
+    compile rootProject.ext.dep.supportRecyclerViewV7
+    compile rootProject.ext.dep.supportConstraintLayout
+    // Multi-dex.
+    compile rootProject.ext.dep.supportMultidex
+
+    // Dependency Injection.
+    compile rootProject.ext.dep.dagger2
+//    compile rootProject.ext.dep.dagger2Support
+    annotationProcessor rootProject.ext.dep.dagger2Compiler
+
+    // JSON.
+    compile rootProject.ext.dep.gson
+
+    // Image loader.
+    compile rootProject.ext.dep.glide
+
+    // View.
+    compile rootProject.ext.dep.airbnbEpoxy
+
+    // Leak Detection.
+    compile rootProject.ext.dep.leakcanary
+    releaseCompile rootProject.ext.dep.leakcanaryNoOp
+
+    // RxAndroid
+    compile rootProject.ext.dep.rxAndroid
+    // Because RxAndroid releases are few and far between, it is recommended you
+    // also explicitly depend on RxJava's latest version for bug fixes and new
+    // features.
+    compile rootProject.ext.dep.rxJava
+    compile rootProject.ext.dep.rxBinding
+
+    // My Libraries.
+    compile project(path: ':library')
+
+    // Unit tests.
+    testCompile rootProject.ext.dep.testJunit
+    testCompile rootProject.ext.dep.testMockito
+    testCompile rootProject.ext.dep.leakcanaryNoOp
+
+    // Instrumentation tests.
+    androidTestCompile(rootProject.ext.dep.testEspressoCore, {
+        exclude group: "com.android.support", module: "support-annotations"
+    })
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+}

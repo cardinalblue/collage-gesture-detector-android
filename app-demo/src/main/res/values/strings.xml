@@ -1,0 +1,7 @@
+<resources
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Common -->
+    <string name="loading" tools:ignore="MissingTranslation">Loading</string>
+    <string name="menu_settings" tools:ignore="MissingTranslation">Settings</string>
+    <string name="tap_anywhere_to_start">Tap anywhere to start</string>
+</resources>
