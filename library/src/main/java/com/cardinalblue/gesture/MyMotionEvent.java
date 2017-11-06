@@ -21,15 +21,34 @@ public class MyMotionEvent {
 
     public final int maskedAction;
 
-    public final float[] xArray;
-    public final float[] yArray;
+    public final int downPointerCount;
+    public final float[] downXs;
+    public final float[] downYs;
+
+    public final boolean isUp;
+    public final float upX;
+    public final float upY;
 
     public MyMotionEvent(int maskedAction,
-                         float[] xArray,
-                         float[] yArray) {
+                         float[] downXs,
+                         float[] downYs,
+                         boolean isUp,
+                         float upX,
+                         float upY) {
+        if (downXs == null || downYs == null) {
+            throw new IllegalArgumentException("Invalid down x and y array.");
+        } else if (downXs.length != downYs.length) {
+            throw new IllegalArgumentException("Amount of down x is not consistent to y.");
+        }
+
         this.maskedAction = maskedAction;
 
-        this.xArray = xArray;
-        this.yArray = yArray;
+        this.downXs = downXs;
+        this.downYs = downYs;
+        this.downPointerCount = downXs.length;
+
+        this.isUp = isUp;
+        this.upX = upX;
+        this.upY = upY;
     }
 }

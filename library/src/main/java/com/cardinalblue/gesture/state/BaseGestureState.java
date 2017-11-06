@@ -49,15 +49,41 @@ public abstract class BaseGestureState {
     // Protected / Private Methods ////////////////////////////////////////////
 
     protected MyMotionEvent obtainMyMotionEvent(MotionEvent event) {
-        // TODO: Remember to pass x and y array.
-        return new MyMotionEvent(event.getActionMasked(), null, null);
+        final int action = event.getActionMasked();
+        final boolean pointerUp = action == MotionEvent.ACTION_POINTER_UP;
+        final int upIndex = pointerUp ? event.getActionIndex() : -1;
+        final int downPointerCount = event.getPointerCount() - (pointerUp ? 1 : 0);
+
+        // Prepare the down x and y;
+        final float[] downXs = new float[downPointerCount];
+        final float[] downYs = new float[downPointerCount];
+        for (int i = 0, j = 0; i < event.getPointerCount(); ++i) {
+            if (i == upIndex) continue;
+
+            downXs[j] = event.getX(i);
+            downYs[j] = event.getY(i);
+
+            ++j;
+        }
+
+        if (pointerUp) {
+            return new MyMotionEvent(event.getActionMasked(),
+                                     downXs, downYs,
+                                     true,
+                                     event.getX(upIndex),
+                                     event.getY(upIndex));
+
+        } else {
+            return new MyMotionEvent(event.getActionMasked(),
+                                     downXs, downYs,
+                                     false, 0, 0);
+        }
     }
 
     protected MyMessagePayload obtainMessagePayload(MotionEvent event,
                                                     Object touchingObject,
                                                     Object touchingContext) {
-        // TODO: Remember to pass x and y array.
-        MyMotionEvent eventClone = new MyMotionEvent(event.getActionMasked(), null, null);
+        MyMotionEvent eventClone = obtainMyMotionEvent(event);
 
         return new MyMessagePayload(eventClone,
                                     touchingObject,
