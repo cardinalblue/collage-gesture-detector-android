@@ -90,6 +90,8 @@ public class GestureDetector implements Handler.Callback,
         // Init properties like touch slop square, tap slop square, ..., etc.
         init(context, touchSlop, tapSlop, minFlingVec, maxFlingVec);
 
+        // TODO: Configure the policy of factory of the factor.
+
         // Internal states.
         mIdleState = new IdleState(this);
         mSingleFingerPressingState = new SingleFingerPressingState(
@@ -124,6 +126,7 @@ public class GestureDetector implements Handler.Callback,
             oldState.onExit(event, touchingObject, touchingContext);
         }
 
+        // TODO: Use a factor to produce reusable internal states.
         switch (newState) {
             case STATE_IDLE:
                 mState = mIdleState;

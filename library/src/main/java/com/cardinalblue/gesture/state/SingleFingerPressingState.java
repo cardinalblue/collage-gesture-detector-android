@@ -186,8 +186,7 @@ public class SingleFingerPressingState extends BaseGestureState {
                     mOwner.issueStateTransition(
                         STATE_IDLE, event, touchingObject, touchingContext);
                 } else {
-                    // TODO: Two continuous taps far away doesn't count as a double tap.
-                    // Accumulate the tap count if the current is closed to .
+                    // Two continuous taps far apart doesn't count as a double tap.
                     if (isConsideredCloseTap(mPreviousDownEvent, mCurrentDownEvent)) {
                         ++mTapCount;
                     }
@@ -227,7 +226,6 @@ public class SingleFingerPressingState extends BaseGestureState {
             mOwner.getHandler().removeMessages(MSG_LONG_PRESS);
         }
 
-        // TODO: Discuss with our UX designer.
         // Dispatch tap callback.
         if (action == MotionEvent.ACTION_UP) {
             final MyMotionEvent clone = obtainMyMotionEvent(mCurrentUpEvent);

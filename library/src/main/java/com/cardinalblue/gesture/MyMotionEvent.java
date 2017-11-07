@@ -29,6 +29,7 @@ public class MyMotionEvent {
     public final float upX;
     public final float upY;
 
+    // TODO: Make it package private.
     public MyMotionEvent(int maskedAction,
                          float[] downXs,
                          float[] downYs,

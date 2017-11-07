@@ -33,6 +33,7 @@ public class MultipleFingersPressingState extends BaseGestureState {
     // Given...
     private final int mTouchSlopSquare;
 
+    // TODO: Time for insertion is O(log(n)), searching is O(1)
     // Pointers.
     private final SparseArray<PointF> mStartPointers = new SparseArray<>();
     private final SparseArray<PointF> mStopPointers = new SparseArray<>();
