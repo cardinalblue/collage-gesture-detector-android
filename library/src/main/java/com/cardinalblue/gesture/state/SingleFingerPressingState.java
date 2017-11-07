@@ -207,7 +207,10 @@ public class SingleFingerPressingState extends BaseGestureState {
 
             case MotionEvent.ACTION_CANCEL: {
                 // Transit to IDLE state.
-                mOwner.issueStateTransition(STATE_IDLE, null, null, null);
+                mOwner.issueStateTransition(STATE_IDLE,
+                                            event,
+                                            touchingObject,
+                                            touchingContext);
                 break;
             }
         }
