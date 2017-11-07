@@ -26,6 +26,7 @@ import com.cardinalblue.gesture.IGestureStateOwner;
 
 import java.util.ArrayList;
 
+import static com.cardinalblue.gesture.IGestureStateOwner.State.STATE_IDLE;
 import static com.cardinalblue.gesture.IGestureStateOwner.State.STATE_SINGLE_FINGER_PRESSING;
 
 public class PinchState extends BaseGestureState {
@@ -179,10 +180,11 @@ public class PinchState extends BaseGestureState {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL: {
-                // Transit to STATE_SINGLE_FINGER_PRESSING state.
-                mOwner.issueStateTransition(
-                    STATE_SINGLE_FINGER_PRESSING,
-                    event, touchingObject, touchingContext);
+                // Transit to IDLE state.
+                mOwner.issueStateTransition(STATE_IDLE,
+                                            event,
+                                            touchingObject,
+                                            touchingContext);
                 break;
             }
         }

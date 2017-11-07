@@ -90,7 +90,10 @@ public class DragState extends BaseGestureState {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 // Transit to IDLE state.
-                mOwner.issueStateTransition(STATE_IDLE, event, touchingObject, touchingContext);
+                mOwner.issueStateTransition(STATE_IDLE,
+                                            event,
+                                            touchingObject,
+                                            touchingContext);
                 break;
         }
     }
