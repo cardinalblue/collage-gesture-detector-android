@@ -23,9 +23,13 @@ import android.view.MotionEvent;
 
 public interface IGestureListener {
 
-    void onActionBegin();
+    void onActionBegin(MyMotionEvent event,
+                       Object touchingObject,
+                       Object touchingContext);
 
-    void onActionEnd();
+    void onActionEnd(MyMotionEvent event,
+                     Object touchingObject,
+                     Object touchingContext);
 
     void onSingleTap(MyMotionEvent event,
                      Object touchingObject,
@@ -50,9 +54,9 @@ public interface IGestureListener {
 
     // Drag ///////////////////////////////////////////////////////////////
 
-    boolean onDragBegin(MyMotionEvent event,
-                        Object touchingObject,
-                        Object touchingContext);
+    void onDragBegin(MyMotionEvent event,
+                     Object touchingObject,
+                     Object touchingContext);
 
     void onDrag(MyMotionEvent event,
                 Object touchingObject,
@@ -73,29 +77,29 @@ public interface IGestureListener {
      * {@link MotionEvent} and the matching up {@link MotionEvent}. The
      * calculated velocity is supplied along the x and y axis in pixels per
      * second.
-     *  @param event                The MotionEvent alternative.
+     * @param event                The MotionEvent alternative.
      * @param startPointerInCanvas The first down pointer that started the
      *                             fling.
      * @param stopPointerInCanvas  The move pointer that triggered the
- *                             current onDragFling.
+*                             current onDragFling.
      * @param velocityX            The velocity of this fling measured in
 *                             pixels per second along the x axis.
      * @param velocityY            The velocity of this fling measured in
      */
-    boolean onDragFling(MyMotionEvent event,
-                        Object touchingObject,
-                        Object touchContext,
-                        PointF startPointerInCanvas,
-                        PointF stopPointerInCanvas,
-                        float velocityX,
-                        float velocityY);
+    void onDragFling(MyMotionEvent event,
+                     Object touchingObject,
+                     Object touchContext,
+                     PointF startPointerInCanvas,
+                     PointF stopPointerInCanvas,
+                     float velocityX,
+                     float velocityY);
 
     // Pinch //////////////////////////////////////////////////////////////
 
-    boolean onPinchBegin(MyMotionEvent event,
-                         Object touchingObject,
-                         Object touchContext,
-                         PointF[] startPointers);
+    void onPinchBegin(MyMotionEvent event,
+                      Object touchingObject,
+                      Object touchContext,
+                      PointF[] startPointers);
 
     void onPinch(MyMotionEvent event,
                  Object touchingObject,

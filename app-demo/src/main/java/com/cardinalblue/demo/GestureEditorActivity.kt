@@ -49,12 +49,16 @@ class GestureEditorActivity : AppCompatActivity(),
 
     // GestureListener ----------------------------------------------------->
 
-    override fun onActionBegin() {
+    override fun onActionBegin(event: MyMotionEvent,
+                               touchingObject: Any?,
+                               touchingContext: Any?) {
         printLog("--------------")
         printLog("⬇onActionBegin")
     }
 
-    override fun onActionEnd() {
+    override fun onActionEnd(event: MyMotionEvent,
+                             touchingObject: Any?,
+                             touchingContext: Any?) {
         printLog("⬆onActionEnd")
     }
 
@@ -91,9 +95,8 @@ class GestureEditorActivity : AppCompatActivity(),
 
     override fun onDragBegin(event: MyMotionEvent,
                              touchingObject: Any?,
-                             touchingContext: Any?): Boolean {
+                             touchingContext: Any?) {
         printLog("✍️ onDragBegin")
-        return true
     }
 
     override fun onDrag(event: MyMotionEvent,
@@ -119,17 +122,15 @@ class GestureEditorActivity : AppCompatActivity(),
                              startPointerInCanvas: PointF,
                              stopPointerInCanvas: PointF,
                              velocityX: Float,
-                             velocityY: Float): Boolean {
+                             velocityY: Float) {
         printLog("✍ \uD83C\uDFBC onDragFling")
-        return true
     }
 
     override fun onPinchBegin(event: MyMotionEvent,
                               touchingObject: Any?,
                               touchContext: Any?,
-                              startPointers: Array<PointF>): Boolean {
+                              startPointers: Array<PointF>) {
         printLog("\uD83D\uDD0D onPinchBegin")
-        return true
     }
 
     override fun onPinch(event: MyMotionEvent,

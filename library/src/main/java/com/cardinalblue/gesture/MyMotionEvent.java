@@ -24,6 +24,8 @@ public class MyMotionEvent {
     public final int downPointerCount;
     public final float[] downXs;
     public final float[] downYs;
+    public final float downFocusX;
+    public final float downFocusY;
 
     public final boolean isUp;
     public final float upX;
@@ -47,6 +49,15 @@ public class MyMotionEvent {
         this.downXs = downXs;
         this.downYs = downYs;
         this.downPointerCount = downXs.length;
+
+        float sumX = 0;
+        float sumY = 0;
+        for (int i = 0; i < this.downPointerCount; ++i) {
+            sumX += downXs[i];
+            sumY += downYs[i];
+        }
+        this.downFocusX = sumX / this.downPointerCount;
+        this.downFocusY = sumY / this.downPointerCount;
 
         this.isUp = isUp;
         this.upX = upX;

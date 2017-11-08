@@ -35,7 +35,9 @@ public class IdleState extends BaseGestureState {
     public void onEnter(MotionEvent event,
                         Object touchingObject,
                         Object touchingContext) {
-        mOwner.getListener().onActionEnd();
+        mOwner.getListener().onActionEnd(obtainMyMotionEvent(event),
+                                         touchingObject,
+                                         touchingContext);
     }
 
     @Override
@@ -65,7 +67,9 @@ public class IdleState extends BaseGestureState {
     public void onExit(MotionEvent event,
                        Object touchingObject,
                        Object touchingContext) {
-        mOwner.getListener().onActionBegin();
+        mOwner.getListener().onActionBegin(obtainMyMotionEvent(event),
+                                           touchingObject,
+                                           touchingContext);
     }
 
     @Override
