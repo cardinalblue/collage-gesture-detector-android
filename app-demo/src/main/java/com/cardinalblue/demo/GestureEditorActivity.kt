@@ -9,6 +9,8 @@ import android.widget.TextView
 import com.cardinalblue.gesture.IGestureListener
 import com.cardinalblue.gesture.GestureDetector
 import com.cardinalblue.gesture.MyMotionEvent
+import com.cardinalblue.gesture.PointerUtils
+import com.cardinalblue.gesture.PointerUtils.*
 import com.jakewharton.rxbinding2.view.RxView
 import java.util.*
 
@@ -138,7 +140,17 @@ class GestureEditorActivity : AppCompatActivity(),
                          touchContext: Any?,
                          startPointersInCanvas: Array<PointF>,
                          stopPointersInCanvas: Array<PointF>) {
-        printLog("\uD83D\uDD0D onPinch")
+        val transform = PointerUtils.getTransformFromPointers(startPointersInCanvas,
+                                                              stopPointersInCanvas)
+
+        printLog(String.format(Locale.ENGLISH,
+                               "\uD83D\uDD0D onPinch: " +
+                               "dx=%.1f, dy=%.1f, " +
+                               "ds=%.2f, " +
+                               "dr=%.2f",
+                               transform[DELTA_X], transform[DELTA_Y],
+                               transform[DELTA_SCALE_X],
+                               transform[DELTA_RADIANS]))
     }
 
     override fun onPinchFling(event: MyMotionEvent,

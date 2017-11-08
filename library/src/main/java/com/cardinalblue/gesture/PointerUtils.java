@@ -20,13 +20,13 @@ package com.cardinalblue.gesture;
 
 import android.graphics.PointF;
 
-public class TwoDTransformUtils {
+public class PointerUtils {
 
-    public static final int TRANS_X = 0;
-    public static final int TRANS_Y = 1;
-    public static final int SCALE_X = 2;
-    public static final int SCALE_Y = 3;
-    public static final int ROTATION = 4;
+    public static final int DELTA_X = 0;
+    public static final int DELTA_Y = 1;
+    public static final int DELTA_SCALE_X = 2;
+    public static final int DELTA_SCALE_Y = 3;
+    public static final int DELTA_RADIANS = 4;
 
     /**
      * Get an array of [tx, ty, sx, sy, rotation] sequence representing
@@ -70,27 +70,27 @@ public class TwoDTransformUtils {
         final float stopPivotY = (stopY1 + stopY2) / 2f;
 
         // Calculate the translation.
-        transform[TRANS_X] = stopPivotX - startPivotX;
-        transform[TRANS_Y] = stopPivotY - startPivotY;
+        transform[DELTA_X] = stopPivotX - startPivotX;
+        transform[DELTA_Y] = stopPivotY - startPivotY;
         // Calculate the rotation degree.
-        transform[ROTATION] = (float) Math.toDegrees(
+        transform[DELTA_RADIANS] = (float) (
             Math.atan2(stopVecY, stopVecX) -
             Math.atan2(startVecY, startVecX));
         // Calculate the scale change.
-        final float scale = (float) (Math.hypot(stopVecX,
-                                                stopVecY) /
-                                     Math.hypot(startVecX,
-                                                stopVecY));
-        transform[SCALE_X] = scale;
-        transform[SCALE_Y] = scale;
-//        mLogger.d("xyz", String.format(Locale.ENGLISH,
-//                                    "getTransform: " +
-//                                    "tx=%.3f, ty=%.3f, " +
-//                                    "scale=%.3f, " +
-//                                    "rot=%.3f",
-//                                    transform[TRANS_X], transform[TRANS_Y],
-//                                    transform[SCALE_X],
-//                                    transform[ROTATION]));
+        final float dScale = (float) (Math.hypot(stopVecX,
+                                                 stopVecY) /
+                                      Math.hypot(startVecX,
+                                                 startVecY));
+        transform[DELTA_SCALE_X] = dScale;
+        transform[DELTA_SCALE_Y] = dScale;
+//        Log.d("xyz", String.format(Locale.ENGLISH,
+//                                   "getTransform: " +
+//                                   "dx=%.3f, dy=%.3f, " +
+//                                   "dScale=%.3f, " +
+//                                   "dRadians=%.3f",
+//                                   transform[DELTA_X], transform[DELTA_Y],
+//                                   transform[DELTA_SCALE_X],
+//                                   transform[DELTA_RADIANS]));
 
         return transform;
     }

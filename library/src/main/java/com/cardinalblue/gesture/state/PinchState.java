@@ -94,10 +94,12 @@ public class PinchState extends BaseGestureState {
         switch (action) {
             case MotionEvent.ACTION_MOVE: {
                 // Update stop pointers.
-                final PointF pointer1 = mStopPointers.get(mOrderedPointerIds.get(0));
+                final int id1 = mOrderedPointerIds.get(0);
+                final PointF pointer1 = mStopPointers.get(id1);
                 pointer1.set(event.getX(0), event.getY(0));
 
-                final PointF pointer2 = mStopPointers.get(mOrderedPointerIds.get(1));
+                final int id2 = mOrderedPointerIds.get(1);
+                final PointF pointer2 = mStopPointers.get(id2);
                 pointer2.set(event.getX(1), event.getY(1));
 
                 // Dispatch callback.
