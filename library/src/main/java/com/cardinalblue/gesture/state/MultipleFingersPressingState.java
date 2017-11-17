@@ -98,18 +98,29 @@ public class MultipleFingersPressingState extends BaseGestureState {
 
         switch (action) {
             case MotionEvent.ACTION_MOVE: {
-                // Update the stop pointers.
-                for (int i = 0; i < downPointerCount; ++i) {
-                    final int id = event.getPointerId(i);
-                    final PointF pointer = mStopPointers.get(id);
+                if (downPointerCount >= 2) {
+                    // Update the stop pointers.
+                    for (int i = 0; i < event.getPointerCount(); ++i) {
+                        if (i == upIndex) continue;
 
-                    pointer.set(event.getX(i), event.getY(i));
-                }
+                        final int id = event.getPointerId(i);
+                        final PointF pointer = mStopPointers.get(id);
 
-                // Transit to PINCH state.
-                if (isConsideredPinch(mStartPointers, mStopPointers)) {
+                        if (pointer != null) {
+                            pointer.set(event.getX(i), event.getY(i));
+                        }
+                    }
+
+                    // Transit to PINCH state.
+                    if (isConsideredPinch(mStartPointers, mStopPointers)) {
+                        mOwner.issueStateTransition(
+                            STATE_PINCH, event, touchingObject, touchingContext);
+                    }
+                } else {
+                    // Transit to single-finger-pressing state.
                     mOwner.issueStateTransition(
-                        STATE_PINCH, event, touchingObject, touchingContext);
+                        STATE_SINGLE_FINGER_PRESSING,
+                        event, touchingObject, touchingContext);
                 }
                 break;
             }
