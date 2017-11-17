@@ -93,23 +93,29 @@ public class PinchState extends BaseGestureState {
 
         switch (action) {
             case MotionEvent.ACTION_MOVE: {
-                // Update stop pointers.
-                final int id1 = mOrderedPointerIds.get(0);
-                final PointF pointer1 = mStopPointers.get(id1);
-                pointer1.set(event.getX(0), event.getY(0));
+                if (downPointerCount >= 2) {
+                    // Update stop pointers.
+                    final int id1 = mOrderedPointerIds.get(0);
+                    final PointF pointer1 = mStopPointers.get(id1);
+                    pointer1.set(event.getX(0), event.getY(0));
 
-                final int id2 = mOrderedPointerIds.get(1);
-                final PointF pointer2 = mStopPointers.get(id2);
-                pointer2.set(event.getX(1), event.getY(1));
+                    final int id2 = mOrderedPointerIds.get(1);
+                    final PointF pointer2 = mStopPointers.get(id2);
+                    pointer2.set(event.getX(1), event.getY(1));
 
-                // Dispatch callback.
-                mOwner.getListener().onPinch(
-                    obtainMyMotionEvent(event), touchingObject, touchingContext,
-                    new PointF[]{mStartPointers.get(mOrderedPointerIds.get(0)),
-                                 mStartPointers.get(mOrderedPointerIds.get(1))},
-                    new PointF[]{mStopPointers.get(mOrderedPointerIds.get(0)),
-                                 mStopPointers.get(mOrderedPointerIds.get(1))});
-
+                    // Dispatch callback.
+                    mOwner.getListener().onPinch(
+                        obtainMyMotionEvent(event), touchingObject, touchingContext,
+                        new PointF[]{mStartPointers.get(mOrderedPointerIds.get(0)),
+                                     mStartPointers.get(mOrderedPointerIds.get(1))},
+                        new PointF[]{mStopPointers.get(mOrderedPointerIds.get(0)),
+                                     mStopPointers.get(mOrderedPointerIds.get(1))});
+                } else {
+                    // Transit to STATE_SINGLE_FINGER_PRESSING state.
+                    mOwner.issueStateTransition(
+                        STATE_SINGLE_FINGER_PRESSING,
+                        event, touchingObject, touchingContext);
+                }
                 break;
             }
 
