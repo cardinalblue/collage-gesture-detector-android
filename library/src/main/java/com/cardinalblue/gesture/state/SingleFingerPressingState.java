@@ -90,19 +90,19 @@ public class SingleFingerPressingState extends BaseGestureState {
                         Object touchingContext) {
         final int action = event.getActionMasked();
         final boolean pointerUp = (action == MotionEvent.ACTION_POINTER_UP);
-        final int skipIndex = pointerUp ? event.getActionIndex() : -1;
+        final int upIndex = pointerUp ? event.getActionIndex() : -1;
 
         // Determine focal point.
         float sumX = 0, sumY = 0;
         final int count = event.getPointerCount();
         for (int i = 0; i < count; i++) {
-            if (skipIndex == i) continue;
+            if (upIndex == i) continue;
             sumX += event.getX(i);
             sumY += event.getY(i);
         }
-        final int pointerDownCount = pointerUp ? count - 1 : count;
-        final float focusX = sumX / pointerDownCount;
-        final float focusY = sumY / pointerDownCount;
+        final int downPointerCount = pointerUp ? count - 1 : count;
+        final float focusX = sumX / downPointerCount;
+        final float focusY = sumY / downPointerCount;
 
         switch (action) {
             case MotionEvent.ACTION_POINTER_DOWN: {
@@ -127,7 +127,7 @@ public class SingleFingerPressingState extends BaseGestureState {
                 mPreviousDownEvent = mCurrentDownEvent;
                 mCurrentDownEvent = MotionEvent.obtain(event);
 
-                final boolean isSingleFinger = pointerDownCount == 1;
+                final boolean isSingleFinger = downPointerCount == 1;
                 if (isSingleFinger) {
                     // Handle TAP (determine if it is a TAP gesture by waiting
                     // for a short period).
