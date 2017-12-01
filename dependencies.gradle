@@ -1,14 +1,14 @@
 ext {
-    compileSdkVersion = 25
-    buildToolsVersion = '25.0.3'
+    compileSdkVersion = 26
+    buildToolsVersion = '26.0.2'
     minSdkVersion = 16
     targetSdkVersion = 25
     sourceCompatibilityVersion = JavaVersion.VERSION_1_7
     targetCompatibilityVersion = JavaVersion.VERSION_1_7
 
-    SUPPORT_LIB_VER = '25.4.0'
+    SUPPORT_LIB_VER = '26.1.0'
     PLAY_SERVICES_VER = '10.2.6'
-    KOTLIN_VER = '1.1.51'
+    KOTLIN_VER = '1.2.0'
     FIREBASE_VER = '10.2.6'
     RX_BINDING_VER = '2.0.0'
     DAGGER2_VER = '2.11-rc2'

@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -22,18 +23,6 @@ android {
         disable "MissingTranslation"
     }
 
-    productFlavors {
-        dev {
-            // Enable pre-dexing to produce an APK that can be tested on
-            // Android 5.0+ without the time-consuming DEX build processes.
-            minSdkVersion 21
-        }
-        prod {
-            // The actual minSdkVersion for the production version.
-            minSdkVersion 16
-        }
-    }
-
     buildTypes {
         debug {
             minifyEnabled false
@@ -46,60 +35,59 @@ android {
 }
 
 repositories {
-    maven { url "https://maven.fabric.io/public" }
     // Support AAR file.
     flatDir { dirs "libs" }
+    google()
+    jcenter()
     mavenCentral()
+    maven { url "https://maven.fabric.io/public" }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Google Support Library.
-    compile rootProject.ext.dep.supportAppcompatV7
-    compile rootProject.ext.dep.supportVectorDrawable
-    compile rootProject.ext.dep.supportRecyclerViewV7
-    compile rootProject.ext.dep.supportConstraintLayout
+    implementation rootProject.ext.dep.supportAppcompatV7
+    implementation rootProject.ext.dep.supportVectorDrawable
+    implementation rootProject.ext.dep.supportRecyclerViewV7
+    implementation rootProject.ext.dep.supportConstraintLayout
     // Multi-dex.
-    compile rootProject.ext.dep.supportMultidex
+    implementation rootProject.ext.dep.supportMultidex
+
+    // Kotlin STD Library.
+    implementation rootProject.ext.dep.kotlinStdlibJre7
 
     // Dependency Injection.
-    compile rootProject.ext.dep.dagger2
+//    compile rootProject.ext.dep.dagger2
 //    compile rootProject.ext.dep.dagger2Support
-    annotationProcessor rootProject.ext.dep.dagger2Compiler
+//    annotationProcessor rootProject.ext.dep.dagger2Compiler
 
     // JSON.
-    compile rootProject.ext.dep.gson
+//    compile rootProject.ext.dep.gson
 
     // Image loader.
-    compile rootProject.ext.dep.glide
+//    compile rootProject.ext.dep.glide
 
     // View.
-    compile rootProject.ext.dep.airbnbEpoxy
+//    compile rootProject.ext.dep.airbnbEpoxy
 
     // Leak Detection.
-    compile rootProject.ext.dep.leakcanary
-    releaseCompile rootProject.ext.dep.leakcanaryNoOp
+//    compile rootProject.ext.dep.leakcanary
+//    releaseCompile rootProject.ext.dep.leakcanaryNoOp
 
     // RxAndroid
-    compile rootProject.ext.dep.rxAndroid
+    implementation rootProject.ext.dep.rxAndroid
     // Because RxAndroid releases are few and far between, it is recommended you
     // also explicitly depend on RxJava's latest version for bug fixes and new
     // features.
-    compile rootProject.ext.dep.rxJava
-    compile rootProject.ext.dep.rxBinding
+    implementation rootProject.ext.dep.rxJava
+    implementation rootProject.ext.dep.rxBinding
 
     // My Libraries.
-    compile project(path: ':library')
+    implementation project(path: ':collage-gesture-detector')
 
-    // Unit tests.
-    testCompile rootProject.ext.dep.testJunit
-    testCompile rootProject.ext.dep.testMockito
-    testCompile rootProject.ext.dep.leakcanaryNoOp
+    testImplementation rootProject.ext.dep.testJunit
 
-    // Instrumentation tests.
-    androidTestCompile(rootProject.ext.dep.testEspressoCore, {
-        exclude group: "com.android.support", module: "support-annotations"
-    })
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    androidTestImplementation rootProject.ext.dep.testRunner
+    androidTestImplementation rootProject.ext.dep.testEspressoCore
 }

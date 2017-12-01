@@ -1,2 +1,2 @@
 include ':app-demo',
-        ':library'
+        ':collage-gesture-detector'

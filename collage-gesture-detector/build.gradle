@@ -1,4 +1,5 @@
 apply plugin: "com.android.library"
+apply plugin: 'kotlin-android'
 
 // Gradle doc:
 // http://google.github.io/android-gradle-dsl/
@@ -24,9 +25,18 @@ android {
     }
 }
 
+repositories {
+    google()
+    jcenter()
+    mavenCentral()
+}
+
 dependencies {
-    compile fileTree(dir: "libs", include: ["*.jar"])
+    implementation fileTree(dir: "libs", include: ["*.jar"])
 
     // Google Support Library.
-    compile rootProject.ext.dep.supportAppcompatV7
+    implementation rootProject.ext.dep.supportAppcompatV7
 }
+
+// Deployment script.
+apply from: 'deploy.gradle'
