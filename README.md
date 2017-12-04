@@ -1,6 +1,8 @@
 Gesture Detector
 ===
 
+![demo](docs/demo.gif)
+
 The system built-in `GestureDetector` has no concept of gesture lifecycle. We enclose gesture callbacks with lifecycle so that you could something in the **onActionBegin** and do anothing in the **onActionEnd** callbacks.
 
 Gradle

@@ -1,5 +1,6 @@
-apply plugin: "com.android.library"
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 // Gradle doc:
 // http://google.github.io/android-gradle-dsl/
@@ -8,19 +9,21 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
     }
 
+    lintOptions {
+        abortOnError false
+        disable "MissingTranslation"
+    }
+
     buildTypes {
-        debug {
-            minifyEnabled false
-        }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -32,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Google Support Library.
     implementation rootProject.ext.dep.supportAppcompatV7
