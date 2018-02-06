@@ -17,8 +17,13 @@ import java.util.*
 class GestureEditorActivity : AppCompatActivity(),
                               IGestureListener {
 
+    private var mEnabled = true
+
     private val mLog: MutableList<String> = mutableListOf()
 
+    private val mBtnEnable: TextView by lazy {
+        findViewById(R.id.btn_enable) as TextView
+    }
     private val mBtnClearLog: ImageView by lazy {
         findViewById(R.id.btn_clear) as ImageView
     }
@@ -43,6 +48,11 @@ class GestureEditorActivity : AppCompatActivity(),
         RxView.clicks(mBtnClearLog)
             .subscribe { _ ->
                 clearLog()
+            }
+
+        RxView.clicks(mBtnEnable)
+            .subscribe { _ ->
+                setEnable()
             }
     }
 
@@ -187,5 +197,11 @@ class GestureEditorActivity : AppCompatActivity(),
     private fun clearLog() {
         mLog.clear()
         mTxtLog.text = getString(R.string.tap_anywhere_to_start)
+    }
+
+    private fun setEnable() {
+        mEnabled = !mEnabled
+        mGestureDetector.setIsMultitouchEnabled(mEnabled)
+        mBtnEnable.setText("Multitouch : " + mEnabled.toString())
     }
 }

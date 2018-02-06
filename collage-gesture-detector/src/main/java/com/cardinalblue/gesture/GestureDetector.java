@@ -168,6 +168,20 @@ public class GestureDetector implements Handler.Callback,
         mSingleFingerPressingState.setIsLongPressEnabled(enabled);
     }
 
+    public void setIsMultitouchEnabled(boolean enabled) {
+        mSingleFingerPressingState.setIsTransitionToMultiTouchEnabled(enabled);
+        mIdleState.setIsTransitionToMultiTouchEnabled(enabled);
+        mDragState.setIsTransitionToMultiTouchEnabled(enabled);
+    }
+
+    public void resetStateEnable() {
+        mSingleFingerPressingState.setIsLongPressEnabled(true);
+        mSingleFingerPressingState.setIsTapEnabled(true);
+        mSingleFingerPressingState.setIsTransitionToMultiTouchEnabled(true);
+        mIdleState.setIsTransitionToMultiTouchEnabled(true);
+        mDragState.setIsTransitionToMultiTouchEnabled(true);
+    }
+
     /**
      * Analyzes the given motion event and if applicable triggers the
      * appropriate callbacks on the {@link IGestureListener}

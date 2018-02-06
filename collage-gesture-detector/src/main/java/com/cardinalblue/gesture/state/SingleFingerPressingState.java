@@ -42,6 +42,7 @@ public class SingleFingerPressingState extends BaseGestureState {
     // Configurations.
     private boolean mIsTapEnabled = true;
     private boolean mIsLongPressEnabled = true;
+    private boolean mIsMultitouchEnabled = true;
 
     private boolean mHadLongPress;
 
@@ -106,6 +107,9 @@ public class SingleFingerPressingState extends BaseGestureState {
 
         switch (action) {
             case MotionEvent.ACTION_POINTER_DOWN: {
+                if (!mIsMultitouchEnabled)
+                    break;
+
                 mOwner.issueStateTransition(
                     STATE_MULTIPLE_FINGERS_PRESSING,
                     event, touchingObject, touchingContext);
@@ -128,7 +132,7 @@ public class SingleFingerPressingState extends BaseGestureState {
                 mCurrentDownEvent = MotionEvent.obtain(event);
 
                 final boolean isSingleFinger = downPointerCount == 1;
-                if (isSingleFinger) {
+                if (isSingleFinger || !mIsMultitouchEnabled) {
                     // Handle TAP (determine if it is a TAP gesture by waiting
                     // for a short period).
                     boolean hadTapMessage = mOwner.getHandler().hasMessages(MSG_TAP);
@@ -304,6 +308,10 @@ public class SingleFingerPressingState extends BaseGestureState {
 
     public void setIsTapEnabled(boolean enabled) {
         mIsTapEnabled = enabled;
+    }
+
+    public void setIsTransitionToMultiTouchEnabled(boolean enabled) {
+        mIsMultitouchEnabled = enabled;
     }
 
     public boolean getIsLongPressEnabled() {

@@ -27,6 +27,8 @@ import static com.cardinalblue.gesture.IGestureStateOwner.State.STATE_SINGLE_FIN
 
 public class IdleState extends BaseGestureState {
 
+    private boolean mIsMultitouchEnabled = true;
+
     public IdleState(IGestureStateOwner owner) {
         super(owner);
     }
@@ -49,7 +51,7 @@ public class IdleState extends BaseGestureState {
             case MotionEvent.ACTION_DOWN:
                 boolean isSingleFinger = event.getPointerCount() == 1;
 
-                if (isSingleFinger) {
+                if (isSingleFinger || !mIsMultitouchEnabled) {
                     mOwner.issueStateTransition(
                         STATE_SINGLE_FINGER_PRESSING,
                         event, touchingObject, touchingContext);
@@ -75,5 +77,9 @@ public class IdleState extends BaseGestureState {
     @Override
     public boolean onHandleMessage(Message msg) {
         return true;
+    }
+
+    public void setIsTransitionToMultiTouchEnabled(boolean enabled) {
+        mIsMultitouchEnabled = enabled;
     }
 }

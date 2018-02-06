@@ -30,6 +30,8 @@ import static com.cardinalblue.gesture.IGestureStateOwner.State.STATE_MULTIPLE_F
 
 public class DragState extends BaseGestureState {
 
+    private boolean mIsMultitouchEnabled = true;
+
     // Given..
     private int mMinFlingVelocity;
     private int mMaxFlingVelocity;
@@ -74,6 +76,11 @@ public class DragState extends BaseGestureState {
 
         switch (action) {
             case MotionEvent.ACTION_POINTER_DOWN:
+                if (!mIsMultitouchEnabled) {
+                    // Don't issue transition.
+                    break;
+                }
+
                 // Transit to multiple-fingers-pressing state.
                 mOwner.issueStateTransition(
                     STATE_MULTIPLE_FINGERS_PRESSING,
@@ -88,6 +95,11 @@ public class DragState extends BaseGestureState {
                 break;
 
             case MotionEvent.ACTION_UP:
+                if (event.getPointerCount() - 1 > 0) {
+                    // Still finger touching.
+                    break;
+                }
+                // Else transition to IDLE state.
             case MotionEvent.ACTION_CANCEL:
                 // Transit to IDLE state.
                 mOwner.issueStateTransition(STATE_IDLE,
@@ -129,6 +141,10 @@ public class DragState extends BaseGestureState {
     @Override
     public boolean onHandleMessage(Message msg) {
         return false;
+    }
+
+    public void setIsTransitionToMultiTouchEnabled(boolean enabled) {
+        mIsMultitouchEnabled = enabled;
     }
 
     ///////////////////////////////////////////////////////////////////////////
