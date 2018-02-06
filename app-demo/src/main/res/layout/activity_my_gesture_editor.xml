@@ -15,6 +15,19 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
     <TextView
+        android:id="@+id/btn_enable"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_margin="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="start"
+        android:textSize="12sp"
+        android:text="@string/enable_multitouch"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
         android:id="@+id/text_gesture_test"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -78,3 +78,4 @@ Checkout the details in the code, [interface link](library/src/main/java/com/car
 ### The State Diagram
 
 ![state diagram](docs/figure-state-paradigm.jpg)
+![state diagram2](docs/GestureDetectorState.png)
