@@ -15,15 +15,19 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-package com.cardinalblue.gesture;
+package com.cardinalblue.gesture
 
-import android.os.Handler;
-import android.view.MotionEvent;
+import android.os.Handler
+import android.view.MotionEvent
 
-public interface IGestureStateOwner {
+interface IGestureStateOwner {
+
+    val handler: Handler
+
+    val listener: IGestureListener
 
     // All recognized states.
-    enum State {
+    enum class State {
         STATE_IDLE,
 
         STATE_SINGLE_FINGER_PRESSING,
@@ -33,12 +37,8 @@ public interface IGestureStateOwner {
         STATE_PINCH
     }
 
-    Handler getHandler();
-
-    IGestureListener getListener();
-
-    void issueStateTransition(State newState,
-                              MotionEvent event,
-                              Object touchingObject,
-                              Object touchingContext);
+    fun issueStateTransition(newState: State,
+                             event: MotionEvent,
+                             target: Any?,
+                             context: Any?)
 }

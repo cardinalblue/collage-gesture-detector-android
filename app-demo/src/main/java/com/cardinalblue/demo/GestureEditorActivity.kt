@@ -6,11 +6,14 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
 import android.widget.ImageView
 import android.widget.TextView
-import com.cardinalblue.gesture.IGestureListener
 import com.cardinalblue.gesture.GestureDetector
+import com.cardinalblue.gesture.IGestureListener
 import com.cardinalblue.gesture.MyMotionEvent
 import com.cardinalblue.gesture.PointerUtils
-import com.cardinalblue.gesture.PointerUtils.*
+import com.cardinalblue.gesture.PointerUtils.DELTA_RADIANS
+import com.cardinalblue.gesture.PointerUtils.DELTA_SCALE_X
+import com.cardinalblue.gesture.PointerUtils.DELTA_X
+import com.cardinalblue.gesture.PointerUtils.DELTA_Y
 import com.jakewharton.rxbinding2.view.RxView
 import java.util.*
 
@@ -22,13 +25,13 @@ class GestureEditorActivity : AppCompatActivity(),
     private val mLog: MutableList<String> = mutableListOf()
 
     private val mBtnEnable: TextView by lazy {
-        findViewById(R.id.btn_enable) as TextView
+        findViewById<TextView>(R.id.btn_enable)
     }
     private val mBtnClearLog: ImageView by lazy {
-        findViewById(R.id.btn_clear) as ImageView
+        findViewById<ImageView>(R.id.btn_clear)
     }
     private val mTxtLog: TextView by lazy {
-        findViewById(R.id.text_gesture_test) as TextView
+        findViewById<TextView>(R.id.text_gesture_test)
     }
 
     private val mGestureDetector: GestureDetector by lazy {
@@ -56,64 +59,67 @@ class GestureEditorActivity : AppCompatActivity(),
             }
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean =
-        mGestureDetector.onTouchEvent(event, null, null)
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return event?.let {
+            mGestureDetector.onTouchEvent(event, null, null)
+        } ?: false
+    }
 
     // GestureListener ----------------------------------------------------->
 
     override fun onActionBegin(event: MyMotionEvent,
-                               touchingObject: Any?,
-                               touchingContext: Any?) {
+                               target: Any?,
+                               context: Any?) {
         printLog("--------------")
         printLog("⬇onActionBegin")
     }
 
     override fun onActionEnd(event: MyMotionEvent,
-                             touchingObject: Any?,
-                             touchingContext: Any?) {
+                             target: Any?,
+                             context: Any?) {
         printLog("⬆onActionEnd")
     }
 
     override fun onSingleTap(event: MyMotionEvent,
-                             touchingObject: Any?,
-                             touchingContext: Any?) {
+                             target: Any?,
+                             context: Any?) {
         printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onSingleTap", 1))
     }
 
     override fun onDoubleTap(event: MyMotionEvent,
-                             touchingObject: Any?,
-                             touchingContext: Any?) {
+                             target: Any?,
+                             context: Any?) {
         printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onDoubleTap", 2))
     }
 
     override fun onMoreTap(event: MyMotionEvent,
-                           touchingObject: Any?,
-                           touchingContext: Any?,
+                           target: Any?,
+                           context: Any?,
                            tapCount: Int) {
         printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onMoreTap", tapCount))
     }
 
     override fun onLongTap(event: MyMotionEvent,
-                           touchingObject: Any?,
-                           touchingContext: Any?) {
+                           target: Any?,
+                           context: Any?) {
         printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onLongTap", 1))
     }
 
     override fun onLongPress(event: MyMotionEvent,
-                             touchingObject: Any?,
-                             touchingContext: Any?) {
+                             target: Any?,
+                             context: Any?) {
         printLog("\uD83D\uDD50 onLongPress")
     }
 
     override fun onDragBegin(event: MyMotionEvent,
-                             touchingObject: Any?,
-                             touchingContext: Any?) {
+                             target: Any?,
+                             context: Any?) {
         printLog("✍️ onDragBegin")
     }
 
     override fun onDrag(event: MyMotionEvent,
-                        touchingObject: Any?,
-                        touchingContext: Any?,
+                        target: Any?,
+                        context: Any?,
                         startPointer: PointF,
                         stopPointer: PointF) {
         // DO NOTHING.
@@ -121,16 +127,16 @@ class GestureEditorActivity : AppCompatActivity(),
     }
 
     override fun onDragEnd(event: MyMotionEvent,
-                           touchingObject: Any?,
-                           touchingContext: Any?,
+                           target: Any?,
+                           context: Any?,
                            startPointer: PointF,
                            stopPointer: PointF) {
         printLog("✍️ onDragEnd")
     }
 
     override fun onDragFling(event: MyMotionEvent,
-                             touchingObject: Any?,
-                             touchContext: Any?,
+                             target: Any?,
+                             context: Any?,
                              startPointer: PointF,
                              stopPointer: PointF,
                              velocityX: Float,
@@ -139,15 +145,15 @@ class GestureEditorActivity : AppCompatActivity(),
     }
 
     override fun onPinchBegin(event: MyMotionEvent,
-                              touchingObject: Any?,
-                              touchContext: Any?,
+                              target: Any?,
+                              context: Any?,
                               startPointers: Array<PointF>) {
         printLog("\uD83D\uDD0D onPinchBegin")
     }
 
     override fun onPinch(event: MyMotionEvent,
-                         touchingObject: Any?,
-                         touchContext: Any?,
+                         target: Any?,
+                         context: Any?,
                          startPointers: Array<PointF>,
                          stopPointers: Array<PointF>) {
         val transform = PointerUtils.getTransformFromPointers(startPointers,
@@ -164,14 +170,14 @@ class GestureEditorActivity : AppCompatActivity(),
     }
 
     override fun onPinchFling(event: MyMotionEvent,
-                              touchingObject: Any?,
-                              touchContext: Any?) {
+                              target: Any?,
+                              context: Any?) {
         printLog("\uD83D\uDD0D onPinchFling")
     }
 
     override fun onPinchEnd(event: MyMotionEvent,
-                            touchingObject: Any?,
-                            touchContext: Any?,
+                            target: Any?,
+                            context: Any?,
                             startPointers: Array<PointF>,
                             stopPointers: Array<PointF>) {
         printLog("\uD83D\uDD0D onPinchEnd")
@@ -188,7 +194,7 @@ class GestureEditorActivity : AppCompatActivity(),
         val builder = StringBuilder()
         mLog.forEach { line ->
             builder.append(line)
-            builder.append(System.lineSeparator())
+            builder.append("\n")
         }
 
         mTxtLog.text = builder.toString()

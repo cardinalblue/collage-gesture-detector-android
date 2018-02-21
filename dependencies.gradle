@@ -8,7 +8,7 @@ ext {
 
     SUPPORT_LIB_VER = '26.1.0'
     PLAY_SERVICES_VER = '10.2.6'
-    KOTLIN_VER = '1.2.0'
+    KOTLIN_VER = '1.2.21'
     FIREBASE_VER = '10.2.6'
     RX_BINDING_VER = '2.0.0'
     DAGGER2_VER = '2.11-rc2'
@@ -48,6 +48,7 @@ ext {
             // Kotlin.
             kotlinGradle           : "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VER",
             kotlinStdlib           : "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VER",
+            kotlinStdlibJdk7       : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$KOTLIN_VER",
             kotlinStdlibJre7       : "org.jetbrains.kotlin:kotlin-stdlib-jre7:$KOTLIN_VER",
             kotlinStdlibJre8       : "org.jetbrains.kotlin:kotlin-stdlib-jre8:$KOTLIN_VER",
             kotlinUnitTest         : "org.jetbrains.kotlin:kotlin-test-junit:$KOTLIN_VER",

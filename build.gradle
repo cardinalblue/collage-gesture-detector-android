@@ -28,9 +28,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-//        maven {
-//            url 'https://dl.bintray.com/boyw165/android/'
-//        }
     }
 }
 
