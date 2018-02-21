@@ -57,21 +57,21 @@ dependencies {
     // Kotlin STD Library.
     implementation rootProject.ext.dep.kotlinStdlibJre7
 
-    // Dependency Injection.
+//    // Dependency Injection.
 //    compile rootProject.ext.dep.dagger2
 //    compile rootProject.ext.dep.dagger2Support
 //    annotationProcessor rootProject.ext.dep.dagger2Compiler
 
-    // JSON.
+//    // JSON.
 //    compile rootProject.ext.dep.gson
 
-    // Image loader.
+//    // Image loader.
 //    compile rootProject.ext.dep.glide
 
-    // View.
+//    // View.
 //    compile rootProject.ext.dep.airbnbEpoxy
 
-    // Leak Detection.
+//    // Leak Detection.
 //    compile rootProject.ext.dep.leakcanary
 //    releaseCompile rootProject.ext.dep.leakcanaryNoOp
 

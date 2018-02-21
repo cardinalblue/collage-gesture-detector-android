@@ -6,8 +6,8 @@ ext {
     sourceCompatibilityVersion = JavaVersion.VERSION_1_7
     targetCompatibilityVersion = JavaVersion.VERSION_1_7
 
-    SUPPORT_LIB_VER = '26.1.0'
-    PLAY_SERVICES_VER = '10.2.6'
+    SUPPORT_LIB_VER = '27.0.2'
+    PLAY_SERVICES_VER = '11.8.0'
     KOTLIN_VER = '1.2.21'
     FIREBASE_VER = '10.2.6'
     RX_BINDING_VER = '2.0.0'
