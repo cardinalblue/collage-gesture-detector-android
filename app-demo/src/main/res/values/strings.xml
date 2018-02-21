@@ -1,9 +1,16 @@
 <resources
     xmlns:tools="http://schemas.android.com/tools">
+
     <string name="app_name" tools:ignore="MissingTranslation">Gesture Detector Demo</string>
+
     <!-- Common -->
     <string name="loading" tools:ignore="MissingTranslation">Loading</string>
     <string name="menu_settings" tools:ignore="MissingTranslation">Settings</string>
     <string name="tap_anywhere_to_start">Tap anywhere to start</string>
-    <string name="enable_multitouch">Multitouch</string>
+
+    <!-- UI -->
+    <string name="enable_tap">Tap Listener</string>
+    <string name="enable_drag">Drag Listener</string>
+    <string name="enable_pinch">Pinch Listener</string>
+    <string name="enable_multiple_fingers">Multi-fingers</string>
 </resources>

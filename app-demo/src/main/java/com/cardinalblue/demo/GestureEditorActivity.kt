@@ -27,6 +27,7 @@ package com.cardinalblue.demo
 import android.graphics.PointF
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.SwitchCompat
 import android.view.MotionEvent
 import android.widget.ImageView
 import android.widget.TextView
@@ -39,19 +40,22 @@ import com.cardinalblue.gesture.PointerUtils.DELTA_SCALE_X
 import com.cardinalblue.gesture.PointerUtils.DELTA_X
 import com.cardinalblue.gesture.PointerUtils.DELTA_Y
 import com.jakewharton.rxbinding2.view.RxView
+import com.jakewharton.rxbinding2.widget.RxCompoundButton
 import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 
 class GestureEditorActivity : AppCompatActivity(),
                               IAllGesturesListener {
 
-    private var mEnabled = true
-
     private val mLog: MutableList<String> = mutableListOf()
 
-    private val mBtnEnable: TextView by lazy { findViewById<TextView>(R.id.btn_enable) }
-    private val mBtnClearLog: ImageView by lazy { findViewById<ImageView>(R.id.btn_clear) }
-    private val mTxtLog: TextView by lazy { findViewById<TextView>(R.id.text_gesture_test) }
+    // View.
+    private val mTxtLog by lazy { findViewById<TextView>(R.id.text_gesture_test) }
+    private val mBtnClearLog by lazy { findViewById<ImageView>(R.id.btn_clear) }
+    private val mBtnEnableTap by lazy { findViewById<SwitchCompat>(R.id.toggle_tap) }
+    private val mBtnEnableDrag by lazy { findViewById<SwitchCompat>(R.id.toggle_drag) }
+    private val mBtnEnablePinch by lazy { findViewById<SwitchCompat>(R.id.toggle_pinch) }
+    private val mBtnEnableMultipleFingers by lazy { findViewById<SwitchCompat>(R.id.toggle_multiple_fingers) }
 
     // Disposables.
     private val mDisposablesOnCreate = CompositeDisposable()
@@ -76,15 +80,36 @@ class GestureEditorActivity : AppCompatActivity(),
                     clearLog()
                 })
         mDisposablesOnCreate.add(
-            RxView.clicks(mBtnEnable)
-                .subscribe { _ ->
-                    setEnable()
+            RxCompoundButton
+                .checkedChanges(mBtnEnableTap)
+                .startWith(mBtnEnableTap.isChecked)
+                .subscribe { checked ->
+                    mGestureDetector.tapGestureListener = if (checked)
+                        this@GestureEditorActivity else null
                 })
-
-        // Gesture listener.
-        mGestureDetector.tapGestureListener = this@GestureEditorActivity
-        mGestureDetector.dragGestureListener = this@GestureEditorActivity
-        mGestureDetector.pinchGestureListener = this@GestureEditorActivity
+        mDisposablesOnCreate.add(
+            RxCompoundButton
+                .checkedChanges(mBtnEnableDrag)
+                .startWith(mBtnEnableDrag.isChecked)
+                .subscribe { checked ->
+                    mGestureDetector.dragGestureListener = if (checked)
+                        this@GestureEditorActivity else null
+                })
+        mDisposablesOnCreate.add(
+            RxCompoundButton
+                .checkedChanges(mBtnEnablePinch)
+                .startWith(mBtnEnablePinch.isChecked)
+                .subscribe { checked ->
+                    mGestureDetector.pinchGestureListener = if (checked)
+                        this@GestureEditorActivity else null
+                })
+        mDisposablesOnCreate.add(
+            RxCompoundButton
+                .checkedChanges(mBtnEnableMultipleFingers)
+                .startWith(mBtnEnableMultipleFingers.isChecked)
+                .subscribe { checked ->
+                    mGestureDetector.setIsMultitouchEnabled(checked)
+                })
     }
 
     override fun onDestroy() {
@@ -243,11 +268,5 @@ class GestureEditorActivity : AppCompatActivity(),
     private fun clearLog() {
         mLog.clear()
         mTxtLog.text = getString(R.string.tap_anywhere_to_start)
-    }
-
-    private fun setEnable() {
-        mEnabled = !mEnabled
-        mGestureDetector.setIsMultitouchEnabled(mEnabled)
-        mBtnEnable.text = "Multitouch : " + mEnabled.toString()
     }
 }

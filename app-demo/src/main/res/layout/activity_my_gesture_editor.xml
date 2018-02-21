@@ -6,38 +6,127 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/toolbar_height"/>
+
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/btn_clear"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        app:srcCompat="@android:drawable/ic_menu_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/guide_toolbar"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:srcCompat="@android:drawable/ic_menu_delete"/>
+
+    <!-- Multi-fingers toggle button -->
 
     <TextView
-        android:id="@+id/btn_enable"
+        android:id="@+id/txt_multiple_fingers"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_margin="20dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="start"
-        android:textSize="12sp"
-        android:text="@string/enable_multitouch"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="6dp"
+        android:text="@string/enable_multiple_fingers"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/toggle_multiple_fingers"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:checked="true"
+        app:layout_constraintBottom_toBottomOf="@id/txt_multiple_fingers"
+        app:layout_constraintLeft_toRightOf="@id/txt_multiple_fingers"
+        app:layout_constraintTop_toTopOf="@id/txt_multiple_fingers"/>
+
+    <!-- Tap toggle button -->
+
+    <TextView
+        android:id="@+id/txt_tap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="6dp"
+        android:text="@string/enable_tap"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txt_multiple_fingers"/>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/toggle_tap"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:checked="true"
+        app:layout_constraintBottom_toBottomOf="@id/txt_tap"
+        app:layout_constraintLeft_toRightOf="@id/txt_tap"
+        app:layout_constraintTop_toTopOf="@id/txt_tap"/>
+
+    <!-- Drag toggle button -->
+
+    <TextView
+        android:id="@+id/txt_drag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="6dp"
+        android:text="@string/enable_drag"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txt_tap"/>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/toggle_drag"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:checked="true"
+        app:layout_constraintBottom_toBottomOf="@id/txt_drag"
+        app:layout_constraintLeft_toRightOf="@id/txt_drag"
+        app:layout_constraintTop_toTopOf="@id/txt_drag"/>
+
+    <!-- Pinch toggle button -->
+
+    <TextView
+        android:id="@+id/txt_pinch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="6dp"
+        android:text="@string/enable_pinch"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txt_drag"/>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/toggle_pinch"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:checked="true"
+        app:layout_constraintBottom_toBottomOf="@id/txt_pinch"
+        app:layout_constraintLeft_toRightOf="@id/txt_pinch"
+        app:layout_constraintTop_toTopOf="@id/txt_pinch"/>
+
+    <!-- Log -->
     <TextView
         android:id="@+id/text_gesture_test"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:clickable="false"
         android:gravity="start"
+        android:padding="24dp"
         android:text="@string/tap_anywhere_to_start"
         android:textSize="12sp"
-        android:padding="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/txt_pinch"/>
 </android.support.constraint.ConstraintLayout>
