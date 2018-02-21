@@ -33,9 +33,9 @@ class IdleState(owner: IGestureStateOwner)
     override fun onEnter(event: MotionEvent,
                          target: Any?,
                          context: Any?) {
-        owner.listener.onActionEnd(obtainMyMotionEvent(event),
-                                   target,
-                                   context)
+        owner.listener?.onActionEnd(obtainMyMotionEvent(event),
+                                    target,
+                                    context)
     }
 
     override fun onDoing(event: MotionEvent,
@@ -62,9 +62,9 @@ class IdleState(owner: IGestureStateOwner)
     override fun onExit(event: MotionEvent,
                         target: Any?,
                         context: Any?) {
-        owner.listener.onActionBegin(obtainMyMotionEvent(event),
-                                     target,
-                                     context)
+        owner.listener?.onActionBegin(obtainMyMotionEvent(event),
+                                      target,
+                                      context)
     }
 
     override fun onHandleMessage(msg: Message): Boolean {

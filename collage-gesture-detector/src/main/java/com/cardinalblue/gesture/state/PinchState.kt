@@ -68,7 +68,7 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
         }
 
         // Dispatch pinch-begin.
-        owner.listener.onPinchBegin(
+        owner.listener?.onPinchBegin(
             obtainMyMotionEvent(event), target, context,
             arrayOf(mStartPointers.get(mOrderedPointerIds[0]),
                     mStartPointers.get(mOrderedPointerIds[1])))
@@ -95,7 +95,7 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
                     pointer2.set(event.getX(1), event.getY(1))
 
                     // Dispatch callback.
-                    owner.listener.onPinch(
+                    owner.listener?.onPinch(
                         obtainMyMotionEvent(event), target, context,
                         arrayOf(mStartPointers.get(mOrderedPointerIds[0]),
                                 mStartPointers.get(mOrderedPointerIds[1])),
@@ -128,7 +128,7 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
                     if (mOrderedPointerIds.indexOf(upId) != -1 && mOrderedPointerIds.indexOf(upId) < 2) {
                         // The anchor pointers (first two) is changed, the gesture
                         // would end and restart.
-                        owner.listener.onPinchEnd(
+                        owner.listener?.onPinchEnd(
                             obtainMyMotionEvent(event), target, context,
                             arrayOf(mStartPointers.get(mOrderedPointerIds[0]),
                                     mStartPointers.get(mOrderedPointerIds[1])),
@@ -152,7 +152,7 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
                         }
 
                         // Restart the gesture.
-                        owner.listener.onPinchBegin(
+                        owner.listener?.onPinchBegin(
                             obtainMyMotionEvent(event), target, context,
                             arrayOf(mStartPointers.get(mOrderedPointerIds[0]),
                                     mStartPointers.get(mOrderedPointerIds[1])))
@@ -187,7 +187,7 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
                         target: Any?,
                         context: Any?) {
         // Dispatch pinch-end.
-        owner.listener.onPinchEnd(
+        owner.listener?.onPinchEnd(
             obtainMyMotionEvent(event), target, context,
             arrayOf(mStartPointers.get(mStartPointers.keyAt(0)),
                     mStartPointers.get(mStartPointers.keyAt(1))),

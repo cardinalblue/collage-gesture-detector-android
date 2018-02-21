@@ -24,7 +24,7 @@ interface IGestureStateOwner {
 
     val handler: Handler
 
-    val listener: IGestureListener
+    var listener: IGestureListener?
 
     // All recognized states.
     enum class State {

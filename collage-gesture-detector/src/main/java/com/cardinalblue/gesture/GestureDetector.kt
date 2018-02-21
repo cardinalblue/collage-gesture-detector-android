@@ -44,10 +44,9 @@ import com.cardinalblue.gesture.state.SingleFingerPressingState
  * @param minFlingVec The lower bound of the finger movement for a FLING.
  * @param maxFlingVec The upper bound of the finger movement for a FLING.
  * @throws NullPointerException if `listener` is null.
- * @see android.os.Handler.Handler
+ * @see android.os.Handler
  */
 class GestureDetector(context: Context,
-                      override val listener: IGestureListener,
                       touchSlop: Float,
                       tapSlop: Float,
                       minFlingVec: Float,
@@ -60,6 +59,7 @@ class GestureDetector(context: Context,
     private var mMinFlingVelocity: Int = 0
     private var mMaxFlingVelocity: Int = 0
 
+    override var listener: IGestureListener? = null
     override val handler: Handler by lazy { GestureHandler(this) }
 
     private var mState: BaseGestureState? = null

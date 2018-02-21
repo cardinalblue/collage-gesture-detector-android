@@ -15,6 +15,7 @@ import com.cardinalblue.gesture.PointerUtils.DELTA_SCALE_X
 import com.cardinalblue.gesture.PointerUtils.DELTA_X
 import com.cardinalblue.gesture.PointerUtils.DELTA_Y
 import com.jakewharton.rxbinding2.view.RxView
+import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 
 class GestureEditorActivity : AppCompatActivity(),
@@ -24,19 +25,15 @@ class GestureEditorActivity : AppCompatActivity(),
 
     private val mLog: MutableList<String> = mutableListOf()
 
-    private val mBtnEnable: TextView by lazy {
-        findViewById<TextView>(R.id.btn_enable)
-    }
-    private val mBtnClearLog: ImageView by lazy {
-        findViewById<ImageView>(R.id.btn_clear)
-    }
-    private val mTxtLog: TextView by lazy {
-        findViewById<TextView>(R.id.text_gesture_test)
-    }
+    private val mBtnEnable: TextView by lazy { findViewById<TextView>(R.id.btn_enable) }
+    private val mBtnClearLog: ImageView by lazy { findViewById<ImageView>(R.id.btn_clear) }
+    private val mTxtLog: TextView by lazy { findViewById<TextView>(R.id.text_gesture_test) }
+
+    // Disposables.
+    private val mDisposablesOnCreate = CompositeDisposable()
 
     private val mGestureDetector: GestureDetector by lazy {
         GestureDetector(this@GestureEditorActivity,
-                        this,
                         resources.getDimension(R.dimen.touch_slop),
                         resources.getDimension(R.dimen.tap_slop),
                         resources.getDimension(R.dimen.fling_min_vec),
@@ -48,15 +45,30 @@ class GestureEditorActivity : AppCompatActivity(),
 
         setContentView(R.layout.activity_my_gesture_editor)
 
-        RxView.clicks(mBtnClearLog)
-            .subscribe { _ ->
-                clearLog()
-            }
+        // Bind view.
+        mDisposablesOnCreate.add(
+            RxView.clicks(mBtnClearLog)
+                .subscribe { _ ->
+                    clearLog()
+                })
+        mDisposablesOnCreate.add(
+            RxView.clicks(mBtnEnable)
+                .subscribe { _ ->
+                    setEnable()
+                })
 
-        RxView.clicks(mBtnEnable)
-            .subscribe { _ ->
-                setEnable()
-            }
+        // Gesture listener.
+        mGestureDetector.listener = this@GestureEditorActivity
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // Unbind view.
+        mDisposablesOnCreate.clear()
+
+        // Gesture listener.
+        mGestureDetector.listener = null
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

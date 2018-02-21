@@ -194,9 +194,9 @@ class SingleFingerPressingState(owner: IGestureStateOwner,
             MotionEvent.ACTION_CANCEL -> {
                 // Transit to IDLE state.
                 owner.issueStateTransition(STATE_IDLE,
-                                                 event,
-                                                 target,
-                                                 context)
+                                           event,
+                                           target,
+                                           context)
             }
         }
     }
@@ -218,17 +218,17 @@ class SingleFingerPressingState(owner: IGestureStateOwner,
             val clone = obtainMyMotionEvent(mCurrentUpEvent!!)
 
             if (isLongPressEnabled && mHadLongPress) {
-                owner.listener.onLongTap(
+                owner.listener?.onLongTap(
                     clone, mTouchingObject, mTouchingContext)
             } else if (isTapEnabled && mTapCount > 0) {
                 if (mTapCount == 1) {
-                    owner.listener.onSingleTap(
+                    owner.listener?.onSingleTap(
                         clone, mTouchingObject, mTouchingContext)
                 } else if (mTapCount == 2) {
-                    owner.listener.onDoubleTap(
+                    owner.listener?.onDoubleTap(
                         clone, mTouchingObject, mTouchingContext)
                 } else {
-                    owner.listener.onMoreTap(
+                    owner.listener?.onMoreTap(
                         clone, mTouchingObject, mTouchingContext, mTapCount)
                 }
             }
@@ -258,8 +258,8 @@ class SingleFingerPressingState(owner: IGestureStateOwner,
                 cancelTaps()
                 mHadLongPress = true
 
-                if (isLongPressEnabled && owner.listener != null) {
-                    owner.listener.onLongPress(
+                if (isLongPressEnabled) {
+                    owner.listener?.onLongPress(
                         payload.event,
                         payload.target,
                         payload.context)

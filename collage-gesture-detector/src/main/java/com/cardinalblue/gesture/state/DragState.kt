@@ -44,7 +44,7 @@ class DragState(owner: IGestureStateOwner,
         mStartFocusX = event.x
         mStartFocusY = event.y
 
-        owner.listener.onDragBegin(
+        owner.listener?.onDragBegin(
             obtainMyMotionEvent(event),
             target, context)
     }
@@ -75,7 +75,7 @@ class DragState(owner: IGestureStateOwner,
             }
 
             MotionEvent.ACTION_MOVE -> {
-                owner.listener.onDrag(
+                owner.listener?.onDrag(
                     obtainMyMotionEvent(event), target, context,
                     PointF(mStartFocusX, mStartFocusY),
                     PointF(focusX, focusY))
@@ -109,12 +109,12 @@ class DragState(owner: IGestureStateOwner,
 
         if (isConsideredFling(event)) {
             // TODO: Complete fling arguments.
-            owner.listener.onDragFling(clone, target, context,
-                                       PointF(), PointF(), 0f, 0f)
+            owner.listener?.onDragFling(clone, target, context,
+                                        PointF(), PointF(), 0f, 0f)
         }
 
         // TODO: Complete the translation argument.
-        owner.listener.onDragEnd(
+        owner.listener?.onDragEnd(
             clone, target, context,
             PointF(mStartFocusX, mStartFocusY),
             PointF(focusX, focusY))
