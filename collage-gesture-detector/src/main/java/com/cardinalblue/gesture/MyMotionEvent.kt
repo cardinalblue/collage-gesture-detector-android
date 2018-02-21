@@ -23,28 +23,32 @@
 
 package com.cardinalblue.gesture
 
-import android.os.Handler
-import android.view.MotionEvent
+class MyMotionEvent(val maskedAction: Int,
+                    val downXs: FloatArray?,
+                    val downYs: FloatArray?,
+                    val isUp: Boolean,
+                    val upX: Float,
+                    val upY: Float) {
 
-interface IGestureStateOwner {
+    val downPointerCount: Int
+    val downFocusX: Float
+    val downFocusY: Float
 
-    val handler: Handler
+    init {
+        if (downXs == null || downYs == null) {
+            throw IllegalArgumentException("Invalid down x and y array.")
+        } else if (downXs.size != downYs.size) {
+            throw IllegalArgumentException("Amount of down x is not consistent to y.")
+        }
+        this.downPointerCount = downXs.size
 
-    val listener: IAllGesturesListener?
-
-    // All recognized states.
-    enum class State {
-        STATE_IDLE,
-
-        STATE_SINGLE_FINGER_PRESSING,
-        STATE_DRAG,
-
-        STATE_MULTIPLE_FINGERS_PRESSING,
-        STATE_PINCH
+        var sumX = 0f
+        var sumY = 0f
+        for (i in 0 until this.downPointerCount) {
+            sumX += downXs[i]
+            sumY += downYs[i]
+        }
+        this.downFocusX = sumX / this.downPointerCount
+        this.downFocusY = sumY / this.downPointerCount
     }
-
-    fun issueStateTransition(newState: State,
-                             event: MotionEvent,
-                             target: Any?,
-                             context: Any?)
 }

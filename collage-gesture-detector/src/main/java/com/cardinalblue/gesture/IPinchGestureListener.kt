@@ -1,7 +1,6 @@
 // Copyright Feb 2017-present CardinalBlue
 //
 // Author: boy@cardinalblue.com
-//         jack.huang@cardinalblue.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -23,28 +22,29 @@
 
 package com.cardinalblue.gesture
 
-import android.os.Handler
-import android.view.MotionEvent
+import android.graphics.PointF
 
-interface IGestureStateOwner {
+interface IPinchGestureListener : IGestureLifecycleListener {
 
-    val handler: Handler
+    fun onPinchBegin(event: MyMotionEvent,
+                     target: Any?,
+                     context: Any?,
+                     startPointers: Array<PointF>)
 
-    val listener: IAllGesturesListener?
+    fun onPinch(event: MyMotionEvent,
+                target: Any?,
+                context: Any?,
+                startPointers: Array<PointF>,
+                stopPointers: Array<PointF>)
 
-    // All recognized states.
-    enum class State {
-        STATE_IDLE,
+    // TODO: (Not implemented) Figure out the arguments.
+    fun onPinchFling(event: MyMotionEvent,
+                     target: Any?,
+                     context: Any?)
 
-        STATE_SINGLE_FINGER_PRESSING,
-        STATE_DRAG,
-
-        STATE_MULTIPLE_FINGERS_PRESSING,
-        STATE_PINCH
-    }
-
-    fun issueStateTransition(newState: State,
-                             event: MotionEvent,
-                             target: Any?,
-                             context: Any?)
+    fun onPinchEnd(event: MyMotionEvent,
+                   target: Any?,
+                   context: Any?,
+                   startPointers: Array<PointF>,
+                   stopPointers: Array<PointF>)
 }

@@ -12,10 +12,10 @@ Add this into your dependencies block.
 
 ```
 // For gradle < 3.0
-compile 'com.cardinalblue.gesture:collage-gesture-detector:1.0.0'
+compile 'com.cardinalblue.gesture:collage-gesture-detector:1.1.0'
 
 // For gradle >= 3.0
-implementation 'com.cardinalblue.gesture:collage-gesture-detector:1.0.0'
+implementation 'com.cardinalblue.gesture:collage-gesture-detector:1.1.0'
 ```
 
 If you cannot find the package, add this to your gradle repository
@@ -25,6 +25,11 @@ maven {
     url 'https://dl.bintray.com/cblue/android'
 }
 ```
+
+Revisions
+---
+
+[link](CHANGELOG.md)
 
 Wiki
 ---

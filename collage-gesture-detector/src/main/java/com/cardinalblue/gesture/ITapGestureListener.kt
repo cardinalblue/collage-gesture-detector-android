@@ -1,7 +1,6 @@
 // Copyright Feb 2017-present CardinalBlue
 //
 // Author: boy@cardinalblue.com
-//         jack.huang@cardinalblue.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -23,28 +22,26 @@
 
 package com.cardinalblue.gesture
 
-import android.os.Handler
-import android.view.MotionEvent
+interface ITapGestureListener : IGestureLifecycleListener {
 
-interface IGestureStateOwner {
+    fun onSingleTap(event: MyMotionEvent,
+                    target: Any?,
+                    context: Any?)
 
-    val handler: Handler
+    fun onDoubleTap(event: MyMotionEvent,
+                    target: Any?,
+                    context: Any?)
 
-    val listener: IAllGesturesListener?
+    fun onMoreTap(event: MyMotionEvent,
+                  target: Any?,
+                  context: Any?,
+                  tapCount: Int)
 
-    // All recognized states.
-    enum class State {
-        STATE_IDLE,
+    fun onLongTap(event: MyMotionEvent,
+                  target: Any?,
+                  context: Any?)
 
-        STATE_SINGLE_FINGER_PRESSING,
-        STATE_DRAG,
-
-        STATE_MULTIPLE_FINGERS_PRESSING,
-        STATE_PINCH
-    }
-
-    fun issueStateTransition(newState: State,
-                             event: MotionEvent,
-                             target: Any?,
-                             context: Any?)
+    fun onLongPress(event: MyMotionEvent,
+                    target: Any?,
+                    context: Any?)
 }

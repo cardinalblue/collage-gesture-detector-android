@@ -1,7 +1,6 @@
-// Copyright Feb 2017-present CardinalBlue
+// Copyright Feb 2018-present CardinalBlue
 //
 // Author: boy@cardinalblue.com
-//         jack.huang@cardinalblue.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -23,28 +22,6 @@
 
 package com.cardinalblue.gesture
 
-import android.os.Handler
-import android.view.MotionEvent
-
-interface IGestureStateOwner {
-
-    val handler: Handler
-
-    val listener: IAllGesturesListener?
-
-    // All recognized states.
-    enum class State {
-        STATE_IDLE,
-
-        STATE_SINGLE_FINGER_PRESSING,
-        STATE_DRAG,
-
-        STATE_MULTIPLE_FINGERS_PRESSING,
-        STATE_PINCH
-    }
-
-    fun issueStateTransition(newState: State,
-                             event: MotionEvent,
-                             target: Any?,
-                             context: Any?)
-}
+interface IAllGesturesListener : ITapGestureListener,
+                                 IDragGestureListener,
+                                 IPinchGestureListener

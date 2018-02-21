@@ -1,20 +1,26 @@
-//  Copyright Oct 2017-present CardinalBlue
+// Copyright Feb 2017-present CardinalBlue
 //
-//  Author: boy@cardinalblue.com
-//          jack.huang@cardinalblue.com
-//          yolung.lu@cardinalblue.com
+// Author: boy@cardinalblue.com
+//         jack.huang@cardinalblue.com
+//         yolung.lu@cardinalblue.com
 //
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
 //
-//  http://www.apache.org/licenses/LICENSE-2.0
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 package com.cardinalblue.gesture
 
@@ -43,7 +49,7 @@ import com.cardinalblue.gesture.state.SingleFingerPressingState
  * still within.
  * @param minFlingVec The lower bound of the finger movement for a FLING.
  * @param maxFlingVec The upper bound of the finger movement for a FLING.
- * @throws NullPointerException if `listener` is null.
+ *
  * @see android.os.Handler
  */
 class GestureDetector(context: Context,
@@ -59,7 +65,7 @@ class GestureDetector(context: Context,
     private var mMinFlingVelocity: Int = 0
     private var mMaxFlingVelocity: Int = 0
 
-    override var listener: IGestureListener? = null
+    override val listener: IAllGesturesListener? = ListenerBridge()
     override val handler: Handler by lazy { GestureHandler(this) }
 
     private var mState: BaseGestureState? = null
@@ -115,6 +121,11 @@ class GestureDetector(context: Context,
         mState!!.onEnter(event, target, context)
     }
 
+    override fun handleMessage(msg: Message): Boolean {
+        // Delegate to state.
+        return mState!!.onHandleMessage(msg)
+    }
+
     fun setIsTapEnabled(enabled: Boolean) {
         mSingleFingerPressingState.isTapEnabled = enabled
     }
@@ -146,13 +157,37 @@ class GestureDetector(context: Context,
         mDragState.setIsTransitionToMultiTouchEnabled(true)
     }
 
+//    var gestureLifecycleListener: IGestureLifecycleListener?
+//        get() = getListenerBridge().lifecycleListener
+//        set(value) {
+//            getListenerBridge().lifecycleListener = value
+//        }
+
+    var tapGestureListener: ITapGestureListener?
+        get() = getListenerBridge().tapListener
+        set(value) {
+            getListenerBridge().tapListener = value
+        }
+
+    var dragGestureListener: IDragGestureListener?
+        get() = getListenerBridge().dragListener
+        set(value) {
+            getListenerBridge().dragListener = value
+        }
+
+    var pinchGestureListener: IPinchGestureListener?
+        get() = getListenerBridge().pinchListener
+        set(value) {
+            getListenerBridge().pinchListener = value
+        }
+
     /**
      * Analyzes the given motion event and if applicable triggers the
-     * appropriate callbacks on the [IGestureListener]
+     * appropriate callbacks on the [IAllGesturesListener]
      * supplied.
      *
      * @param event The current motion event.
-     * @return true if the [IGestureListener] consumed
+     * @return true if the [IAllGesturesListener] consumed
      * the event, else false.
      */
     fun onTouchEvent(event: MotionEvent,
@@ -162,11 +197,6 @@ class GestureDetector(context: Context,
 
         return mSingleFingerPressingState.isTapEnabled ||
                mSingleFingerPressingState.isLongPressEnabled
-    }
-
-    override fun handleMessage(msg: Message): Boolean {
-        // Delegate to state.
-        return mState!!.onHandleMessage(msg)
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -188,6 +218,10 @@ class GestureDetector(context: Context,
                                      configuration.scaledMinimumFlingVelocity.toFloat()).toInt()
         mMaxFlingVelocity = Math.max(maxFlingVec,
                                      configuration.scaledMaximumFlingVelocity.toFloat()).toInt()
+    }
+
+    private fun getListenerBridge(): ListenerBridge {
+        return this.listener as ListenerBridge
     }
 
     ///////////////////////////////////////////////////////////////////////////
