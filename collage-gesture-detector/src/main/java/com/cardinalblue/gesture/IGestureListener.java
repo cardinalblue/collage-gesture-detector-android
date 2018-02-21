@@ -19,56 +19,57 @@
 package com.cardinalblue.gesture;
 
 import android.graphics.PointF;
+import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 
 public interface IGestureListener {
 
-    void onActionBegin(MyMotionEvent event,
-                       Object touchingObject,
-                       Object touchingContext);
+    void onActionBegin(@NonNull MyMotionEvent event,
+                       Object object,
+                       Object context);
 
-    void onActionEnd(MyMotionEvent event,
-                     Object touchingObject,
-                     Object touchingContext);
+    void onActionEnd(@NonNull MyMotionEvent event,
+                     Object object,
+                     Object context);
 
-    void onSingleTap(MyMotionEvent event,
-                     Object touchingObject,
-                     Object touchingContext);
+    void onSingleTap(@NonNull MyMotionEvent event,
+                     Object object,
+                     Object context);
 
-    void onDoubleTap(MyMotionEvent event,
-                     Object touchingObject,
-                     Object touchingContext);
+    void onDoubleTap(@NonNull MyMotionEvent event,
+                     Object object,
+                     Object context);
 
-    void onMoreTap(MyMotionEvent event,
-                   Object touchingObject,
-                   Object touchingContext,
+    void onMoreTap(@NonNull MyMotionEvent event,
+                   Object object,
+                   Object context,
                    int tapCount);
 
-    void onLongTap(MyMotionEvent event,
-                   Object touchingObject,
-                   Object touchingContext);
+    void onLongTap(@NonNull MyMotionEvent event,
+                   Object object,
+                   Object context);
 
-    void onLongPress(MyMotionEvent event,
-                     Object touchingObject,
-                     Object touchingContext);
+    void onLongPress(@NonNull MyMotionEvent event,
+                     Object object,
+                     Object context);
 
     // Drag ///////////////////////////////////////////////////////////////
 
-    void onDragBegin(MyMotionEvent event,
-                     Object touchingObject,
-                     Object touchingContext);
+    void onDragBegin(@NonNull MyMotionEvent event,
+                     Object object,
+                     Object context);
 
-    void onDrag(MyMotionEvent event,
-                Object touchingObject,
-                Object touchingContext,
-                PointF startPointerInCanvas,
-                PointF stopPointerInCanvas);
+    void onDrag(@NonNull MyMotionEvent event,
+                Object object,
+                Object context,
+                @NonNull PointF startPointer,
+                @NonNull PointF stopPointer);
 
-    void onDragEnd(MyMotionEvent event,
-                   Object touchingObject,
-                   Object touchingContext,
-                   PointF startPointerInCanvas,
-                   PointF stopPointerInCanvas);
+    void onDragEnd(@NonNull MyMotionEvent event,
+                   Object object,
+                   Object context,
+                   @NonNull PointF startPointer,
+                   @NonNull PointF stopPointer);
 
     // Fling //////////////////////////////////////////////////////////////
 
@@ -78,43 +79,43 @@ public interface IGestureListener {
      * calculated velocity is supplied along the x and y axis in pixels per
      * second.
      * @param event                The MotionEvent alternative.
-     * @param startPointerInCanvas The first down pointer that started the
+     * @param startPointer The first down pointer that started the
      *                             fling.
-     * @param stopPointerInCanvas  The move pointer that triggered the
+     * @param stopPointer  The move pointer that triggered the
 *                             current onDragFling.
      * @param velocityX            The velocity of this fling measured in
 *                             pixels per second along the x axis.
      * @param velocityY            The velocity of this fling measured in
      */
-    void onDragFling(MyMotionEvent event,
-                     Object touchingObject,
+    void onDragFling(@NonNull MyMotionEvent event,
+                     Object object,
                      Object touchContext,
-                     PointF startPointerInCanvas,
-                     PointF stopPointerInCanvas,
+                     @NonNull PointF startPointer,
+                     @NonNull PointF stopPointer,
                      float velocityX,
                      float velocityY);
 
     // Pinch //////////////////////////////////////////////////////////////
 
-    void onPinchBegin(MyMotionEvent event,
-                      Object touchingObject,
+    void onPinchBegin(@NonNull MyMotionEvent event,
+                      Object object,
                       Object touchContext,
-                      PointF[] startPointers);
+                      @NonNull PointF[] startPointers);
 
-    void onPinch(MyMotionEvent event,
-                 Object touchingObject,
+    void onPinch(@NonNull MyMotionEvent event,
+                 Object object,
                  Object touchContext,
-                 PointF[] startPointersInCanvas,
-                 PointF[] stopPointersInCanvas);
+                 @NonNull PointF[] startPointers,
+                 @NonNull PointF[] stopPointers);
 
     // TODO: (Not implemented) Figure out the arguments.
-    void onPinchFling(MyMotionEvent event,
-                      Object touchingObject,
+    void onPinchFling(@NonNull MyMotionEvent event,
+                      Object object,
                       Object touchContext);
 
-    void onPinchEnd(MyMotionEvent event,
-                    Object touchingObject,
+    void onPinchEnd(@NonNull MyMotionEvent event,
+                    Object object,
                     Object touchContext,
-                    PointF[] startPointersInCanvas,
-                    PointF[] stopPointersInCanvas);
+                    @NonNull PointF[] startPointers,
+                    @NonNull PointF[] stopPointers);
 }

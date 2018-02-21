@@ -114,8 +114,8 @@ class GestureEditorActivity : AppCompatActivity(),
     override fun onDrag(event: MyMotionEvent,
                         touchingObject: Any?,
                         touchingContext: Any?,
-                        startPointerInCanvas: PointF,
-                        stopPointerInCanvas: PointF) {
+                        startPointer: PointF,
+                        stopPointer: PointF) {
         // DO NOTHING.
         printLog("✍️ onDrag")
     }
@@ -123,16 +123,16 @@ class GestureEditorActivity : AppCompatActivity(),
     override fun onDragEnd(event: MyMotionEvent,
                            touchingObject: Any?,
                            touchingContext: Any?,
-                           startPointerInCanvas: PointF,
-                           stopPointerInCanvas: PointF) {
+                           startPointer: PointF,
+                           stopPointer: PointF) {
         printLog("✍️ onDragEnd")
     }
 
     override fun onDragFling(event: MyMotionEvent,
                              touchingObject: Any?,
                              touchContext: Any?,
-                             startPointerInCanvas: PointF,
-                             stopPointerInCanvas: PointF,
+                             startPointer: PointF,
+                             stopPointer: PointF,
                              velocityX: Float,
                              velocityY: Float) {
         printLog("✍ \uD83C\uDFBC onDragFling")
@@ -148,10 +148,10 @@ class GestureEditorActivity : AppCompatActivity(),
     override fun onPinch(event: MyMotionEvent,
                          touchingObject: Any?,
                          touchContext: Any?,
-                         startPointersInCanvas: Array<PointF>,
-                         stopPointersInCanvas: Array<PointF>) {
-        val transform = PointerUtils.getTransformFromPointers(startPointersInCanvas,
-                                                              stopPointersInCanvas)
+                         startPointers: Array<PointF>,
+                         stopPointers: Array<PointF>) {
+        val transform = PointerUtils.getTransformFromPointers(startPointers,
+                                                              stopPointers)
 
         printLog(String.format(Locale.ENGLISH,
                                "\uD83D\uDD0D onPinch: " +
@@ -172,8 +172,8 @@ class GestureEditorActivity : AppCompatActivity(),
     override fun onPinchEnd(event: MyMotionEvent,
                             touchingObject: Any?,
                             touchContext: Any?,
-                            startPointersInCanvas: Array<PointF>,
-                            stopPointersInCanvas: Array<PointF>) {
+                            startPointers: Array<PointF>,
+                            stopPointers: Array<PointF>) {
         printLog("\uD83D\uDD0D onPinchEnd")
     }
 

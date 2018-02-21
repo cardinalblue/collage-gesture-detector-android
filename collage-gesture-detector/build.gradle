@@ -38,7 +38,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Google Support Library.
-    implementation rootProject.ext.dep.supportAppcompatV7
+    implementation rootProject.ext.dep.supportAnnotations
 }
 
 // Deployment script.
