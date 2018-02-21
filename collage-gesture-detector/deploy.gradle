@@ -26,3 +26,8 @@ publish {
     website = site_url
     dryRun = false
 }
+
+// Avoid Kotlin docs error
+tasks.withType(Javadoc) {
+    enabled = false
+}
