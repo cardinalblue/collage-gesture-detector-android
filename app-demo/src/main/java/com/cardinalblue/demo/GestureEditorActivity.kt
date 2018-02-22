@@ -31,10 +31,7 @@ import android.support.v7.widget.SwitchCompat
 import android.view.MotionEvent
 import android.widget.ImageView
 import android.widget.TextView
-import com.cardinalblue.gesture.GestureDetector
-import com.cardinalblue.gesture.IAllGesturesListener
-import com.cardinalblue.gesture.MyMotionEvent
-import com.cardinalblue.gesture.PointerUtils
+import com.cardinalblue.gesture.*
 import com.cardinalblue.gesture.PointerUtils.DELTA_RADIANS
 import com.cardinalblue.gesture.PointerUtils.DELTA_SCALE_X
 import com.cardinalblue.gesture.PointerUtils.DELTA_X
@@ -108,7 +105,7 @@ class GestureEditorActivity : AppCompatActivity(),
                 .checkedChanges(mBtnEnableMultipleFingers)
                 .startWith(mBtnEnableMultipleFingers.isChecked)
                 .subscribe { checked ->
-                    mGestureDetector.setIsMultitouchEnabled(checked)
+                    mGestureDetector.setPolicy(if (checked) GesturePolicy.ALL else GesturePolicy.DRAG_ONLY)
                 })
     }
 

@@ -28,18 +28,13 @@ import android.graphics.PointF
 import android.os.Message
 import android.view.MotionEvent
 import android.view.VelocityTracker
-
 import com.cardinalblue.gesture.IGestureStateOwner
-
 import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_IDLE
-import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_MULTIPLE_FINGERS_PRESSING
 
-class DragState(owner: IGestureStateOwner,
-                private val mMinFlingVelocity: Int,
-                private val mMaxFlingVelocity: Int)
+class DragStateForDragOnly(owner: IGestureStateOwner,
+                           private val mMinFlingVelocity: Int,
+                           private val mMaxFlingVelocity: Int)
     : BaseGestureState(owner) {
-
-    private var mIsMultitouchEnabled = true
 
     private var mVelocityTracker: VelocityTracker? = null
     private var mStartFocusX: Float = 0.toFloat()
@@ -69,16 +64,13 @@ class DragState(owner: IGestureStateOwner,
         val focusY = event.y
 
         when (action) {
-            MotionEvent.ACTION_POINTER_DOWN -> {
-                if (!mIsMultitouchEnabled) {
-                    // Don't issue transition.
-                    return
-                }
 
-                // Transit to multiple-fingers-pressing state.
-                owner.issueStateTransition(
-                    STATE_MULTIPLE_FINGERS_PRESSING,
-                    event, target, context)
+            MotionEvent.ACTION_POINTER_UP -> {
+                // TODO: Respwan state: end -> start
+            }
+
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                // TODO: Respwan state: end -> start
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -100,8 +92,8 @@ class DragState(owner: IGestureStateOwner,
                                            context)
             }
 
-        // Else transition to IDLE state.
             MotionEvent.ACTION_CANCEL -> {
+                // Else transition to IDLE state.
                 owner.issueStateTransition(STATE_IDLE, event, target, context)
             }
         }
@@ -136,10 +128,6 @@ class DragState(owner: IGestureStateOwner,
 
     override fun onHandleMessage(msg: Message): Boolean {
         return false
-    }
-
-    fun setIsTransitionToMultiTouchEnabled(enabled: Boolean) {
-        mIsMultitouchEnabled = enabled
     }
 
     ///////////////////////////////////////////////////////////////////////////

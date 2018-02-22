@@ -30,13 +30,7 @@ import android.os.Looper
 import android.os.Message
 import android.view.MotionEvent
 import android.view.ViewConfiguration
-
 import com.cardinalblue.gesture.state.BaseGestureState
-import com.cardinalblue.gesture.state.DragState
-import com.cardinalblue.gesture.state.IdleState
-import com.cardinalblue.gesture.state.MultipleFingersPressingState
-import com.cardinalblue.gesture.state.PinchState
-import com.cardinalblue.gesture.state.SingleFingerPressingState
 
 /**
  * Creates a GestureDetector with the supplied listener.
@@ -65,15 +59,21 @@ class GestureDetector(context: Context,
     private var mMinFlingVelocity: Int = 0
     private var mMaxFlingVelocity: Int = 0
 
+    // State owner properties.
     override val listener: IAllGesturesListener? = ListenerBridge()
     override val handler: Handler by lazy { GestureHandler(this) }
 
+    // Policy.
+    private val mPolicy: GesturePolicy by lazy {
+        GesturePolicy(this,
+                      mTouchSlopSquare,
+                      mTapSlopSquare,
+                      mMinFlingVelocity,
+                      mMaxFlingVelocity)
+    }
+
+    // Internal immutable states.
     private var mState: BaseGestureState? = null
-    private val mIdleState: IdleState
-    private val mSingleFingerPressingState: SingleFingerPressingState
-    private val mMultipleFingersPressingState: MultipleFingersPressingState
-    private val mDragState: DragState
-    private val mPinchState: PinchState
 
     init {
         if (Looper.myLooper() != Looper.getMainLooper()) {
@@ -82,22 +82,20 @@ class GestureDetector(context: Context,
         }
 
         // Init properties like touch slop square, tap slop square, ..., etc.
-        init(context, touchSlop, tapSlop, minFlingVec, maxFlingVec)
+        val configuration = ViewConfiguration.get(context)
+        val newTouchSlop = Math.min(touchSlop, configuration.scaledTouchSlop.toFloat())
+        val newTapSlop = Math.min(tapSlop, configuration.scaledDoubleTapSlop.toFloat())
 
-        // TODO: Configure the policy of factory of the factor.
+        mTouchSlopSquare = (newTouchSlop * newTouchSlop).toInt()
+        mTapSlopSquare = (newTapSlop * newTapSlop).toInt()
 
-        // Internal states.
-        mIdleState = IdleState(this)
-        mSingleFingerPressingState = SingleFingerPressingState(
-            this,
-            mTapSlopSquare.toLong(), mTouchSlopSquare.toLong(),
-            TAP_TIMEOUT.toLong(), LONG_PRESS_TIMEOUT.toLong())
-        mMultipleFingersPressingState = MultipleFingersPressingState(this, mTouchSlopSquare)
-        mDragState = DragState(this, mMinFlingVelocity, mMaxFlingVelocity)
-        mPinchState = PinchState(this)
+        mMinFlingVelocity = Math.max(minFlingVec,
+                                     configuration.scaledMinimumFlingVelocity.toFloat()).toInt()
+        mMaxFlingVelocity = Math.max(maxFlingVec,
+                                     configuration.scaledMaximumFlingVelocity.toFloat()).toInt()
 
         // Init IDLE state.
-        mState = mIdleState
+        mState = mPolicy.getDefaultState()
     }
 
     override fun issueStateTransition(newState: IGestureStateOwner.State,
@@ -108,14 +106,7 @@ class GestureDetector(context: Context,
         oldState?.onExit(event, target, context)
 
         // TODO: Use a factor to produce reusable internal states.
-        mState = when (newState) {
-            IGestureStateOwner.State.STATE_IDLE -> mIdleState
-            IGestureStateOwner.State.STATE_SINGLE_FINGER_PRESSING -> mSingleFingerPressingState
-            IGestureStateOwner.State.STATE_DRAG -> mDragState
-            IGestureStateOwner.State.STATE_MULTIPLE_FINGERS_PRESSING -> mMultipleFingersPressingState
-            IGestureStateOwner.State.STATE_PINCH -> mPinchState
-            else -> mIdleState
-        }
+        mState = mPolicy.getNewState(newState)
 
         // Enter new state.
         mState!!.onEnter(event, target, context)
@@ -126,42 +117,40 @@ class GestureDetector(context: Context,
         return mState!!.onHandleMessage(msg)
     }
 
-    fun setIsTapEnabled(enabled: Boolean) {
-        mSingleFingerPressingState.isTapEnabled = enabled
+    fun setPolicy(policy: Int) {
+        mPolicy.setMode(policy)
     }
 
-    /**
-     * Set whether long-press is enabled, if this is enabled when a user
-     * presses and holds down you get a long-press event and nothing further.
-     * If it's disabled the user can press and hold down and then later
-     * moved their finger and you will get scroll events. By default
-     * long-press is enabled.
-     *
-     * @param enabled whether long-press should be enabled.
-     */
-    fun setIsLongPressEnabled(enabled: Boolean) {
-        mSingleFingerPressingState.isTapEnabled = enabled
-    }
-
-    fun setIsMultitouchEnabled(enabled: Boolean) {
-        mSingleFingerPressingState.setIsTransitionToMultiTouchEnabled(enabled)
-        mIdleState.setIsTransitionToMultiTouchEnabled(enabled)
-        mDragState.setIsTransitionToMultiTouchEnabled(enabled)
-    }
-
-    fun resetConfig() {
-        mSingleFingerPressingState.isLongPressEnabled = true
-        mSingleFingerPressingState.isTapEnabled = true
-        mSingleFingerPressingState.setIsTransitionToMultiTouchEnabled(true)
-        mIdleState.setIsTransitionToMultiTouchEnabled(true)
-        mDragState.setIsTransitionToMultiTouchEnabled(true)
-    }
-
-//    var gestureLifecycleListener: IGestureLifecycleListener?
-//        get() = getListenerBridge().lifecycleListener
-//        set(value) {
-//            getListenerBridge().lifecycleListener = value
-//        }
+//    fun setIsTapEnabled(enabled: Boolean) {
+//        mSingleFingerPressingState.isTapEnabled = enabled
+//    }
+//
+//    /**
+//     * Set whether long-press is enabled, if this is enabled when a user
+//     * presses and holds down you get a long-press event and nothing further.
+//     * If it's disabled the user can press and hold down and then later
+//     * moved their finger and you will get scroll events. By default
+//     * long-press is enabled.
+//     *
+//     * @param enabled whether long-press should be enabled.
+//     */
+//    fun setIsLongPressEnabled(enabled: Boolean) {
+//        mSingleFingerPressingState.isTapEnabled = enabled
+//    }
+//
+//    fun setIsMultitouchEnabled(enabled: Boolean) {
+//        mSingleFingerPressingState.setIsTransitionToMultiTouchEnabled(enabled)
+//        mIdleState.setIsTransitionToMultiTouchEnabled(enabled)
+//        mDragState.setIsTransitionToMultiTouchEnabled(enabled)
+//    }
+//
+//    fun resetConfig() {
+//        mSingleFingerPressingState.isLongPressEnabled = true
+//        mSingleFingerPressingState.isTapEnabled = true
+//        mSingleFingerPressingState.setIsTransitionToMultiTouchEnabled(true)
+//        mIdleState.setIsTransitionToMultiTouchEnabled(true)
+//        mDragState.setIsTransitionToMultiTouchEnabled(true)
+//    }
 
     var tapGestureListener: ITapGestureListener?
         get() = getListenerBridge().tapListener
@@ -195,30 +184,11 @@ class GestureDetector(context: Context,
                      context: Any?): Boolean {
         mState!!.onDoing(event, target, context)
 
-        return mSingleFingerPressingState.isTapEnabled ||
-               mSingleFingerPressingState.isLongPressEnabled
+        return true
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Protected / Private Methods ////////////////////////////////////////////
-
-    private fun init(context: Context,
-                     touchSlop: Float,
-                     tapSlop: Float,
-                     minFlingVec: Float,
-                     maxFlingVec: Float) {
-        val configuration = ViewConfiguration.get(context)
-        val newTouchSlop = Math.min(touchSlop, configuration.scaledTouchSlop.toFloat())
-        val newTapSlop = Math.min(tapSlop, configuration.scaledDoubleTapSlop.toFloat())
-
-        mTouchSlopSquare = (newTouchSlop * newTouchSlop).toInt()
-        mTapSlopSquare = (newTapSlop * newTapSlop).toInt()
-
-        mMinFlingVelocity = Math.max(minFlingVec,
-                                     configuration.scaledMinimumFlingVelocity.toFloat()).toInt()
-        mMaxFlingVelocity = Math.max(maxFlingVec,
-                                     configuration.scaledMaximumFlingVelocity.toFloat()).toInt()
-    }
 
     private fun getListenerBridge(): ListenerBridge {
         return this.listener as ListenerBridge
@@ -236,13 +206,13 @@ class GestureDetector(context: Context,
          * Defines the default duration in milliseconds before a press turns into
          * a long press.
          */
-        private val LONG_PRESS_TIMEOUT = ViewConfiguration.getLongPressTimeout()
+        internal val LONG_PRESS_TIMEOUT = ViewConfiguration.getLongPressTimeout()
         /**
          * The duration in milliseconds we will wait to see if a touch event is a
          * tap or a scroll. If the user does not move within this interval, it is
          * considered to be a tap.
          */
-        private val TAP_TIMEOUT = Math.max(150, ViewConfiguration.getTapTimeout())
+        internal val TAP_TIMEOUT = Math.max(150, ViewConfiguration.getTapTimeout())
     }
 }
 
