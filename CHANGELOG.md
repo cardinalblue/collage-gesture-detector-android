@@ -1,6 +1,11 @@
 Revisions
 ===
 
+2.3.0
+---
+
+- Pending policy is consumed only when ACTION_DOWN is happening.
+
 2.2.0
 ---
 
