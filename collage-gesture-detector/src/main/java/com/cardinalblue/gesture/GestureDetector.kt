@@ -64,6 +64,7 @@ class GestureDetector(context: Context,
     override val handler: Handler by lazy { GestureHandler(this) }
 
     // Policy.
+    private var mPendingPolicy: Int = GesturePolicy.ALL
     private val mPolicy: GesturePolicy by lazy {
         GesturePolicy(this,
                       mTouchSlopSquare,
@@ -105,7 +106,6 @@ class GestureDetector(context: Context,
         val oldState = mState
         oldState?.onExit(event, target, context)
 
-        // TODO: Use a factor to produce reusable internal states.
         mState = mPolicy.getNewState(newState)
 
         // Enter new state.
@@ -117,8 +117,13 @@ class GestureDetector(context: Context,
         return mState!!.onHandleMessage(msg)
     }
 
+    /**
+     * Change the set of recognized gestures, where [GesturePolicy.ALL] is for
+     * recognizing TAP, DRAG, and PINCH gestures; [GesturePolicy.DRAG_ONLY] is
+     * for DRAG gesture only. By default it is [GesturePolicy.ALL].
+     */
     fun setPolicy(policy: Int) {
-        mPolicy.setMode(policy)
+        mPendingPolicy = policy
     }
 
 //    fun setIsTapEnabled(enabled: Boolean) {
@@ -182,6 +187,12 @@ class GestureDetector(context: Context,
     fun onTouchEvent(event: MotionEvent,
                      target: Any?,
                      context: Any?): Boolean {
+        val action = event.actionMasked
+        // Consume the pending policy when ACTION_DOWN.
+        when (action) {
+            MotionEvent.ACTION_DOWN -> { mPolicy.setPolicy(mPendingPolicy) }
+        }
+
         mState!!.onDoing(event, target, context)
 
         return true

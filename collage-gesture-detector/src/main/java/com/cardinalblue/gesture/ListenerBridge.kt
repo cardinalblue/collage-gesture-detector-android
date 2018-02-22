@@ -26,7 +26,6 @@ import android.graphics.PointF
 
 internal class ListenerBridge : IAllGesturesListener {
 
-//    internal var lifecycleListener: IGestureLifecycleListener? = null
     internal var tapListener: ITapGestureListener? = null
     internal var dragListener: IDragGestureListener? = null
     internal var pinchListener: IPinchGestureListener? = null

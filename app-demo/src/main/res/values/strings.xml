@@ -12,5 +12,7 @@
     <string name="enable_tap">Tap Listener</string>
     <string name="enable_drag">Drag Listener</string>
     <string name="enable_pinch">Pinch Listener</string>
-    <string name="enable_multiple_fingers">Multi-fingers</string>
+    <string name="gesture_policy">Policy</string>
+    <string name="gesture_policy_all">ALL</string>
+    <string name="gesture_policy_drag_only">DRAG_ONLY</string>
 </resources>

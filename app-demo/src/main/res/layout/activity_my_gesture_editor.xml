@@ -23,33 +23,46 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_delete"/>
 
-    <!-- Multi-fingers toggle button -->
+    <!-- Gesture policy options -->
 
     <TextView
-        android:id="@+id/txt_multiple_fingers"
+        android:id="@+id/label_gesture_policy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:padding="6dp"
-        android:text="@string/enable_multiple_fingers"
+        android:text="@string/gesture_policy"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/toggle_multiple_fingers"
+    <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:checked="true"
-        app:layout_constraintBottom_toBottomOf="@id/txt_multiple_fingers"
-        app:layout_constraintLeft_toRightOf="@id/txt_multiple_fingers"
-        app:layout_constraintTop_toTopOf="@id/txt_multiple_fingers"/>
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/label_gesture_policy"
+        app:layout_constraintLeft_toRightOf="@id/label_gesture_policy"
+        app:layout_constraintTop_toTopOf="@id/label_gesture_policy">
+
+        <RadioButton
+            android:id="@+id/opt_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/gesture_policy_all"/>
+
+        <RadioButton
+            android:id="@+id/opt_drag_only"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gesture_policy_drag_only"/>
+    </RadioGroup>
 
     <!-- Tap toggle button -->
 
     <TextView
-        android:id="@+id/txt_tap"
+        android:id="@+id/label_tap_listener"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -58,21 +71,21 @@
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_multiple_fingers"/>
+        app:layout_constraintTop_toBottomOf="@id/label_gesture_policy"/>
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/toggle_tap"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:checked="true"
-        app:layout_constraintBottom_toBottomOf="@id/txt_tap"
-        app:layout_constraintLeft_toRightOf="@id/txt_tap"
-        app:layout_constraintTop_toTopOf="@id/txt_tap"/>
+        app:layout_constraintBottom_toBottomOf="@id/label_tap_listener"
+        app:layout_constraintLeft_toRightOf="@id/label_tap_listener"
+        app:layout_constraintTop_toTopOf="@id/label_tap_listener"/>
 
     <!-- Drag toggle button -->
 
     <TextView
-        android:id="@+id/txt_drag"
+        android:id="@+id/label_drag_listener"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -81,21 +94,21 @@
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_tap"/>
+        app:layout_constraintTop_toBottomOf="@id/label_tap_listener"/>
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/toggle_drag"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:checked="true"
-        app:layout_constraintBottom_toBottomOf="@id/txt_drag"
-        app:layout_constraintLeft_toRightOf="@id/txt_drag"
-        app:layout_constraintTop_toTopOf="@id/txt_drag"/>
+        app:layout_constraintBottom_toBottomOf="@id/label_drag_listener"
+        app:layout_constraintLeft_toRightOf="@id/label_drag_listener"
+        app:layout_constraintTop_toTopOf="@id/label_drag_listener"/>
 
     <!-- Pinch toggle button -->
 
     <TextView
-        android:id="@+id/txt_pinch"
+        android:id="@+id/lable_pinch_listener"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -104,20 +117,31 @@
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_drag"/>
+        app:layout_constraintTop_toBottomOf="@id/label_drag_listener"/>
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/toggle_pinch"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:checked="true"
-        app:layout_constraintBottom_toBottomOf="@id/txt_pinch"
-        app:layout_constraintLeft_toRightOf="@id/txt_pinch"
-        app:layout_constraintTop_toTopOf="@id/txt_pinch"/>
+        app:layout_constraintBottom_toBottomOf="@id/lable_pinch_listener"
+        app:layout_constraintLeft_toRightOf="@id/lable_pinch_listener"
+        app:layout_constraintTop_toTopOf="@id/lable_pinch_listener"/>
+
+    <!-- Touch view -->
+    <View
+        android:id="@+id/canvas"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/black_80"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lable_pinch_listener"/>
 
     <!-- Log -->
     <TextView
-        android:id="@+id/text_gesture_test"
+        android:id="@+id/txt_gesture_test"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:clickable="false"
@@ -128,5 +152,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_pinch"/>
+        app:layout_constraintTop_toBottomOf="@id/lable_pinch_listener"/>
 </android.support.constraint.ConstraintLayout>

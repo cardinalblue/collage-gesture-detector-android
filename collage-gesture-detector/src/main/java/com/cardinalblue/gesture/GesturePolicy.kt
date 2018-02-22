@@ -34,7 +34,7 @@ internal constructor(stateOwner: IGestureStateOwner,
                      maxFlingVelocity: Int = 0) {
 
     // Policy mode.
-    private var mMode: Int = ALL
+    private var mPolicy: Int = ALL
 
     // Internal immutable states pool.
     private val mIdleStatePool: HashMap<Int, BaseGestureState> = HashMap()
@@ -62,10 +62,11 @@ internal constructor(stateOwner: IGestureStateOwner,
         mDragStatePool[DRAG_ONLY] = DragStateForDragOnly(stateOwner, minFlingVelocity, maxFlingVelocity)
     }
 
-    internal fun setMode(mode: Int) {
-        // TODO: Verify the given mode int.
-
-        mMode = mode
+    internal fun setPolicy(policy: Int) {
+        when (policy) {
+            ALL, DRAG_ONLY -> mPolicy = policy
+            else -> throw IllegalArgumentException("Invalid given policy")
+        }
     }
 
     internal fun getDefaultState(): BaseGestureState {
@@ -87,23 +88,23 @@ internal constructor(stateOwner: IGestureStateOwner,
     // Protected / Private Methods ////////////////////////////////////////////
 
     private fun getIdleState(): BaseGestureState {
-        return mIdleStatePool[mMode]!!
+        return mIdleStatePool[mPolicy]!!
     }
 
     private fun getSingleFingerPressingState(): BaseGestureState {
-        return mSingleFingerPressingStatePool[mMode]!!
+        return mSingleFingerPressingStatePool[mPolicy]!!
     }
 
     private fun getDragState(): BaseGestureState {
-        return mDragStatePool[mMode]!!
+        return mDragStatePool[mPolicy]!!
     }
 
     private fun getMultipleFingersPressingState(): BaseGestureState {
-        return mMultipleFingersPressingStatePool[mMode]!!
+        return mMultipleFingersPressingStatePool[mPolicy]!!
     }
 
     private fun getPinchState(): BaseGestureState {
-        return mPinchStatePool[mMode]!!
+        return mPinchStatePool[mPolicy]!!
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -28,8 +28,9 @@ import android.graphics.PointF
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SwitchCompat
-import android.view.MotionEvent
+import android.view.View
 import android.widget.ImageView
+import android.widget.RadioButton
 import android.widget.TextView
 import com.cardinalblue.gesture.*
 import com.cardinalblue.gesture.PointerUtils.DELTA_RADIANS
@@ -47,12 +48,14 @@ class GestureEditorActivity : AppCompatActivity(),
     private val mLog: MutableList<String> = mutableListOf()
 
     // View.
-    private val mTxtLog by lazy { findViewById<TextView>(R.id.text_gesture_test) }
+    private val mViewCanvas by lazy { findViewById<View>(R.id.canvas) }
+    private val mTxtLog by lazy { findViewById<TextView>(R.id.txt_gesture_test) }
     private val mBtnClearLog by lazy { findViewById<ImageView>(R.id.btn_clear) }
     private val mBtnEnableTap by lazy { findViewById<SwitchCompat>(R.id.toggle_tap) }
     private val mBtnEnableDrag by lazy { findViewById<SwitchCompat>(R.id.toggle_drag) }
     private val mBtnEnablePinch by lazy { findViewById<SwitchCompat>(R.id.toggle_pinch) }
-    private val mBtnEnableMultipleFingers by lazy { findViewById<SwitchCompat>(R.id.toggle_multiple_fingers) }
+    private val mBtnPolicyAll by lazy { findViewById<RadioButton>(R.id.opt_all) }
+    private val mBtnPolicyDragOnly by lazy { findViewById<RadioButton>(R.id.opt_drag_only) }
 
     // Disposables.
     private val mDisposablesOnCreate = CompositeDisposable()
@@ -102,11 +105,27 @@ class GestureEditorActivity : AppCompatActivity(),
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
-                .checkedChanges(mBtnEnableMultipleFingers)
-                .startWith(mBtnEnableMultipleFingers.isChecked)
+                .checkedChanges(mBtnPolicyAll)
+                .startWith(mBtnPolicyAll.isChecked)
                 .subscribe { checked ->
-                    mGestureDetector.setPolicy(if (checked) GesturePolicy.ALL else GesturePolicy.DRAG_ONLY)
+                    if (!checked) return@subscribe
+                    mGestureDetector.setPolicy(GesturePolicy.ALL)
                 })
+        mDisposablesOnCreate.add(
+            RxCompoundButton
+                .checkedChanges(mBtnPolicyDragOnly)
+                .startWith(mBtnPolicyDragOnly.isChecked)
+                .subscribe { checked ->
+                    if (!checked) return@subscribe
+                    mGestureDetector.setPolicy(GesturePolicy.DRAG_ONLY)
+                })
+
+        // Gesture.
+        mViewCanvas.setOnTouchListener { _, event ->
+            event?.let {
+                mGestureDetector.onTouchEvent(event, null, null)
+            } ?: false
+        }
     }
 
     override fun onDestroy() {
@@ -119,13 +138,14 @@ class GestureEditorActivity : AppCompatActivity(),
         mGestureDetector.tapGestureListener = null
         mGestureDetector.dragGestureListener = null
         mGestureDetector.pinchGestureListener = null
+        mViewCanvas.setOnTouchListener(null)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return event?.let {
-            mGestureDetector.onTouchEvent(event, null, null)
-        } ?: false
-    }
+//    override fun onTouchEvent(event: MotionEvent?): Boolean {
+//        return event?.let {
+//            mGestureDetector.onTouchEvent(event, null, null)
+//        } ?: false
+//    }
 
     // GestureListener ----------------------------------------------------->
 
