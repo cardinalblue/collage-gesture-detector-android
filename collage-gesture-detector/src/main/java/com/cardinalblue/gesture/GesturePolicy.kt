@@ -26,11 +26,12 @@ package com.cardinalblue.gesture
 
 import com.cardinalblue.gesture.state.*
 
-internal class GesturePolicy constructor(stateOwner: IGestureStateOwner,
-                                         touchSlopSquare: Int = 0,
-                                         tapSlopSquare: Int = 0,
-                                         minFlingVelocity: Int = 0,
-                                         maxFlingVelocity: Int = 0) {
+class GesturePolicy
+internal constructor(stateOwner: IGestureStateOwner,
+                     touchSlopSquare: Int = 0,
+                     tapSlopSquare: Int = 0,
+                     minFlingVelocity: Int = 0,
+                     maxFlingVelocity: Int = 0) {
 
     // Policy mode.
     private var mMode: Int = ALL
@@ -61,17 +62,17 @@ internal class GesturePolicy constructor(stateOwner: IGestureStateOwner,
         mDragStatePool[DRAG_ONLY] = DragStateForDragOnly(stateOwner, minFlingVelocity, maxFlingVelocity)
     }
 
-    fun setMode(mode: Int) {
+    internal fun setMode(mode: Int) {
         // TODO: Verify the given mode int.
 
         mMode = mode
     }
 
-    fun getDefaultState(): BaseGestureState {
+    internal fun getDefaultState(): BaseGestureState {
         return mIdleStatePool[ALL]!!
     }
 
-    fun getNewState(newState: IGestureStateOwner.State): BaseGestureState {
+    internal fun getNewState(newState: IGestureStateOwner.State): BaseGestureState {
         // TODO: Use a factor to produce reusable internal states.
         return when (newState) {
             IGestureStateOwner.State.STATE_IDLE -> getIdleState()
@@ -109,7 +110,7 @@ internal class GesturePolicy constructor(stateOwner: IGestureStateOwner,
     // Clazz //////////////////////////////////////////////////////////////////
 
     companion object {
-        internal const val ALL: Int = 1
-        internal const val DRAG_ONLY: Int = 1.shl(1)
+        const val ALL: Int = 1
+        const val DRAG_ONLY: Int = 1.shl(1)
     }
 }
