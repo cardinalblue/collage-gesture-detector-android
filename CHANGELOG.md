@@ -1,6 +1,13 @@
 Revisions
 ===
 
+2.2.0
+---
+
+- Introduce flexible state transition management by GesturePolicy. (1cb631ce81aee9e612fb9bb7b96d09ec14a9136c)
+- Switching the focus dragging finger will kill and respawn the dragging state under the DRAG_ONLY policy.
+- Care focus pointer movement to determine whether transit to DRAG state under DRAG_ONLY policy.
+
 2.1.0
 ---
 
