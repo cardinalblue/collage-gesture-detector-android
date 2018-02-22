@@ -31,66 +31,63 @@ import com.cardinalblue.gesture.IGestureStateOwner
 
 import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_DRAG
 import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_IDLE
+import com.cardinalblue.gesture.PointerUtils
 
 class SingleFingerPressingStateForDragOnly(owner: IGestureStateOwner,
                                            private val mTouchSlopSquare: Long)
     : BaseGestureState(owner) {
 
-    private var mHadLongPress: Boolean = false
-
-    private var mTapCount: Int = 0
-
+    private var mStartFocusId: Int = -1
     private var mStartFocusX: Float = 0f
     private var mStartFocusY: Float = 0f
-
-    private var mTouchingObject: Any? = null
-    private var mTouchingContext: Any? = null
 
     override fun onEnter(event: MotionEvent,
                          target: Any?,
                          context: Any?) {
-        mTapCount = 0
-        mHadLongPress = false
+        // Initialize the ID from idle state to move state.
+        mStartFocusId = event.getPointerId(event.actionIndex)
 
-        // Hold touching things.
-        mTouchingObject = target
-        mTouchingContext = context
-
-        onDoing(event, target, context)
+        // Hold the start focus x and y.
+        val focusIndex = PointerUtils.getFocusIndexFromId(event, mStartFocusId)
+        mStartFocusX = event.getX(focusIndex)
+        mStartFocusY = event.getY(focusIndex)
     }
 
     override fun onDoing(event: MotionEvent,
                          target: Any?,
                          context: Any?) {
         val action = event.actionMasked
-        val pointerUp = action == MotionEvent.ACTION_POINTER_UP
-        val upIndex = if (pointerUp) event.actionIndex else -1
 
         // Determine focal point.
-        var sumX = 0f
-        var sumY = 0f
-        val count = event.pointerCount
-        for (i in 0 until count) {
-            if (upIndex == i) continue
-            sumX += event.getX(i)
-            sumY += event.getY(i)
-        }
-        val downPointerCount = if (pointerUp) count - 1 else count
-        val focusX = sumX / downPointerCount
-        val focusY = sumY / downPointerCount
+        val focusIndex = PointerUtils.getFocusIndexFromId(event, mStartFocusId)
+        var focusX = event.getX(focusIndex)
+        var focusY = event.getY(focusIndex)
 
         when (action) {
 
-            MotionEvent.ACTION_POINTER_UP -> {
-                // TODO: end -> start drag
-                mStartFocusX = focusX
-                mStartFocusY = focusY
+            MotionEvent.ACTION_POINTER_DOWN -> {
             }
 
-            MotionEvent.ACTION_DOWN -> {
-                // Hold start x and y.
-                mStartFocusX = focusX
-                mStartFocusY = focusY
+            MotionEvent.ACTION_POINTER_UP -> {
+                val upIndex = event.actionIndex
+                // Update focus point.
+                if (focusIndex == upIndex) {
+                    var newFocusIndex = -1
+                    for (i in 0 until event.pointerCount) {
+                        if (i == upIndex) continue
+                        mStartFocusId = event.getPointerId(i)
+                        newFocusIndex = i
+                        break
+                    }
+                    if (newFocusIndex == -1) {
+                        throw IllegalStateException("Cannot find other focus pointer")
+                    }
+
+                    focusX = event.getX(newFocusIndex)
+                    focusY = event.getY(newFocusIndex)
+                    mStartFocusX = focusX
+                    mStartFocusY = focusY
+                }
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -106,12 +103,7 @@ class SingleFingerPressingStateForDragOnly(owner: IGestureStateOwner,
                 }
             }
 
-            MotionEvent.ACTION_UP -> {
-                // Transit to IDLE state.
-                owner.issueStateTransition(
-                    STATE_IDLE, event, target, context)
-            }
-
+            MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL -> {
                 // Transit to IDLE state.
                 owner.issueStateTransition(STATE_IDLE,
