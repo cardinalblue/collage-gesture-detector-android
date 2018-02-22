@@ -29,7 +29,9 @@ import android.os.Message
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import com.cardinalblue.gesture.IGestureStateOwner
+import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_DRAG
 import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_IDLE
+import com.cardinalblue.gesture.PointerUtils
 
 class DragStateForDragOnly(owner: IGestureStateOwner,
                            private val mMinFlingVelocity: Int,
@@ -37,14 +39,38 @@ class DragStateForDragOnly(owner: IGestureStateOwner,
     : BaseGestureState(owner) {
 
     private var mVelocityTracker: VelocityTracker? = null
-    private var mStartFocusX: Float = 0.toFloat()
-    private var mStartFocusY: Float = 0.toFloat()
+    private var mStartFocusId: Int = -1
+    private var mStartFocusX: Float = 0f
+    private var mStartFocusY: Float = 0f
 
     override fun onEnter(event: MotionEvent,
                          target: Any?,
                          context: Any?) {
-        mStartFocusX = event.x
-        mStartFocusY = event.y
+        val action = event.actionMasked
+
+        // Find the focus pointer ID.
+        when (action) {
+            MotionEvent.ACTION_POINTER_UP -> {
+                // Need to find ID of the pointer other than the up one.
+                val upIndex = event.actionIndex
+                for (i in 0 until event.pointerCount) {
+                    if (i == upIndex) continue
+
+                    mStartFocusId = event.getPointerId(i)
+                    break
+                }
+            }
+            else -> {
+                // Initialize the ID from idle state to move state.
+                mStartFocusId = event.getPointerId(event.actionIndex)
+            }
+        }
+
+        // Hold the start focus x and y.
+        val focusIndex = PointerUtils.getFocusIndexFromId(event, mStartFocusId)
+        mStartFocusX = event.getX(focusIndex)
+        mStartFocusY = event.getY(focusIndex)
+//        Log.d("xyz", "enter: focus index=%d, pointer count=%d".format(focusIndex, event.pointerCount))
 
         owner.listener?.onDragBegin(
             obtainMyMotionEvent(event),
@@ -60,20 +86,30 @@ class DragStateForDragOnly(owner: IGestureStateOwner,
         mVelocityTracker!!.addMovement(event)
 
         val action = event.actionMasked
-        val focusX = event.x
-        val focusY = event.y
+        val focusIndex = PointerUtils.getFocusIndexFromId(event, mStartFocusId)
+        val focusX = event.getX(focusIndex)
+        val focusY = event.getY(focusIndex)
 
         when (action) {
 
             MotionEvent.ACTION_POINTER_UP -> {
-                // TODO: Respwan state: end -> start
+//                Log.d("xyz", "ACTION_POINTER_UP: x=%.3f, y=%.3f".format(focusX, focusY))
+                // Kill and respawn this state: exit -> enter
+                val upIndex = event.actionIndex
+                if (upIndex == focusIndex) {
+                    owner.issueStateTransition(STATE_DRAG,
+                                               event,
+                                               target,
+                                               context)
+                }
             }
 
             MotionEvent.ACTION_POINTER_DOWN -> {
-                // TODO: Respwan state: end -> start
+//                Log.d("xyz", "ACTION_POINTER_DOWN: x=%.3f, y=%.3f".format(focusX, focusY))
             }
 
             MotionEvent.ACTION_MOVE -> {
+//                Log.d("xyz", "ACTION_MOVE, count=%d, x=%.3f, y=%.3f".format(event.pointerCount, focusX, focusY))
                 owner.listener?.onDrag(
                     obtainMyMotionEvent(event), target, context,
                     PointF(mStartFocusX, mStartFocusY),
@@ -81,10 +117,7 @@ class DragStateForDragOnly(owner: IGestureStateOwner,
             }
 
             MotionEvent.ACTION_UP -> {
-                if (event.pointerCount - 1 > 0) {
-                    // Still finger touching.
-                    return
-                }
+//                Log.d("xyz", "ACTION_UP")
                 // Transit to IDLE state.
                 owner.issueStateTransition(STATE_IDLE,
                                            event,
@@ -93,6 +126,7 @@ class DragStateForDragOnly(owner: IGestureStateOwner,
             }
 
             MotionEvent.ACTION_CANCEL -> {
+//                Log.d("xyz", "ACTION_CANCEL")
                 // Else transition to IDLE state.
                 owner.issueStateTransition(STATE_IDLE, event, target, context)
             }
@@ -103,16 +137,21 @@ class DragStateForDragOnly(owner: IGestureStateOwner,
                         target: Any?,
                         context: Any?) {
         val clone = obtainMyMotionEvent(event)
-        val focusX = event.x
-        val focusY = event.y
+        val focusIndex = PointerUtils.getFocusIndexFromId(event, mStartFocusId)
+        val focusX = event.getX(focusIndex)
+        val focusY = event.getY(focusIndex)
+
+//        Log.d("xyz", "exit: focus index=%d, pointer count=%d".format(focusIndex, event.pointerCount))
 
         if (isConsideredFling(event)) {
             // TODO: Complete fling arguments.
             owner.listener?.onDragFling(clone, target, context,
-                                        PointF(), PointF(), 0f, 0f)
+                                        PointF(mStartFocusX, mStartFocusY),
+                                        PointF(focusX, focusY),
+                                        0f, 0f)
         }
 
-        // TODO: Complete the translation argument.
+        // Callback.
         owner.listener?.onDragEnd(
             clone, target, context,
             PointF(mStartFocusX, mStartFocusY),

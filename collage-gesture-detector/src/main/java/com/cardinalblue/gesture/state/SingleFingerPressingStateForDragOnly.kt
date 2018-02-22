@@ -40,8 +40,8 @@ class SingleFingerPressingStateForDragOnly(owner: IGestureStateOwner,
 
     private var mTapCount: Int = 0
 
-    private var mStartFocusX: Float = 0.toFloat()
-    private var mStartFocusY: Float = 0.toFloat()
+    private var mStartFocusX: Float = 0f
+    private var mStartFocusY: Float = 0f
 
     private var mTouchingObject: Any? = null
     private var mTouchingContext: Any? = null

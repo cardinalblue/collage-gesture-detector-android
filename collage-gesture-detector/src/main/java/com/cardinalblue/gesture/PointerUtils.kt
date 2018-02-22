@@ -25,6 +25,7 @@
 package com.cardinalblue.gesture
 
 import android.graphics.PointF
+import android.view.MotionEvent
 
 object PointerUtils {
 
@@ -96,5 +97,15 @@ object PointerUtils {
 //                                   transform[DELTA_RADIANS]));
 
         return transform
+    }
+
+    fun getFocusIndexFromId(event: MotionEvent, targetId: Int): Int {
+        for (i in 0 until event.pointerCount) {
+            val id = event.getPointerId(i)
+            if (id == targetId) {
+                return i
+            }
+        }
+        throw IllegalStateException("Cannot find the focus index")
     }
 }

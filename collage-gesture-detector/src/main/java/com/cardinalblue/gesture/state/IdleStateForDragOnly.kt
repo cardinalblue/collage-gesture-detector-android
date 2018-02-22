@@ -26,10 +26,7 @@ package com.cardinalblue.gesture.state
 
 import android.os.Message
 import android.view.MotionEvent
-
 import com.cardinalblue.gesture.IGestureStateOwner
-
-import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_MULTIPLE_FINGERS_PRESSING
 import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_SINGLE_FINGER_PRESSING
 
 class IdleStateForDragOnly(owner: IGestureStateOwner)
