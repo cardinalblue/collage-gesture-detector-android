@@ -10,7 +10,7 @@ ext {
     PLAY_SERVICES_VER = '11.8.0'
     KOTLIN_VER = '1.2.21'
     FIREBASE_VER = '10.2.6'
-    RX_BINDING_VER = '2.0.0'
+    RX_BINDING_VER = '2.1.1'
     DAGGER2_VER = '2.11-rc2'
     BOLTS_VER = '1.4.0'
     RETROFIT_VER = "2.1.0"
