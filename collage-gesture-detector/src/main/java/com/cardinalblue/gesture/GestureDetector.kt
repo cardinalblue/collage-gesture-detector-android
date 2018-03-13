@@ -24,7 +24,6 @@
 
 package com.cardinalblue.gesture
 
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -36,7 +35,7 @@ import com.cardinalblue.gesture.state.BaseGestureState
  * Creates a GestureDetector with the supplied listener.
  * You may only use this constructor from a [android.os.Looper] thread.
  *
- * @param context the application's context
+ * @param viewConfig the application's viewConfig
  * @param touchSlop The range where a gesture is identified if the finger
  * movement is beyond.
  * @param tapSlop The range that a TAP is identified if the finger movement is
@@ -46,7 +45,8 @@ import com.cardinalblue.gesture.state.BaseGestureState
  *
  * @see android.os.Handler
  */
-class GestureDetector(context: Context,
+class GestureDetector(uiLooper: Looper,
+                      viewConfig: ViewConfiguration,
                       touchSlop: Float,
                       tapSlop: Float,
                       minFlingVec: Float,
@@ -61,7 +61,11 @@ class GestureDetector(context: Context,
 
     // State owner properties.
     override val listener: IAllGesturesListener? = ListenerBridge()
-    override val handler: Handler by lazy { GestureHandler(this) }
+    /**
+     * A handler corresponding to the UI looper and it is for the children state
+     * to dispatch the callbacks, e.g. long-press.
+     */
+    override val handler: Handler by lazy { GestureHandler(uiLooper, this) }
 
     // Policy.
     private var mPendingPolicy: Int = GesturePolicy.ALL
@@ -83,17 +87,20 @@ class GestureDetector(context: Context,
         }
 
         // Init properties like touch slop square, tap slop square, ..., etc.
-        val configuration = ViewConfiguration.get(context)
-        val newTouchSlop = Math.min(touchSlop, configuration.scaledTouchSlop.toFloat())
-        val newTapSlop = Math.min(tapSlop, configuration.scaledDoubleTapSlop.toFloat())
+        val newTouchSlop = Math.min(touchSlop, viewConfig.scaledTouchSlop.toFloat())
+        val newTapSlop = Math.min(tapSlop, viewConfig.scaledDoubleTapSlop.toFloat())
 
         mTouchSlopSquare = (newTouchSlop * newTouchSlop).toInt()
         mTapSlopSquare = (newTapSlop * newTapSlop).toInt()
 
         mMinFlingVelocity = Math.max(minFlingVec,
-                                     configuration.scaledMinimumFlingVelocity.toFloat()).toInt()
+                                     viewConfig.scaledMinimumFlingVelocity
+                                         .toFloat())
+            .toInt()
         mMaxFlingVelocity = Math.max(maxFlingVec,
-                                     configuration.scaledMaximumFlingVelocity.toFloat()).toInt()
+                                     viewConfig.scaledMaximumFlingVelocity
+                                         .toFloat())
+            .toInt()
 
         // Init IDLE state.
         mState = mPolicy.getDefaultState()
@@ -208,8 +215,10 @@ class GestureDetector(context: Context,
     ///////////////////////////////////////////////////////////////////////////
     // Clazz //////////////////////////////////////////////////////////////////
 
-    private class GestureHandler internal constructor(callback: Handler.Callback)
-        : Handler(callback)
+    private class GestureHandler
+    internal constructor(uiLooper: Looper,
+                         callback: Handler.Callback)
+        : Handler(uiLooper, callback)
 
     companion object {
 

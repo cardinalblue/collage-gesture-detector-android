@@ -26,9 +26,11 @@ package com.cardinalblue.demo
 
 import android.graphics.PointF
 import android.os.Bundle
+import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SwitchCompat
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
@@ -61,7 +63,8 @@ class GestureEditorActivity : AppCompatActivity(),
     private val mDisposablesOnCreate = CompositeDisposable()
 
     private val mGestureDetector: GestureDetector by lazy {
-        GestureDetector(this@GestureEditorActivity,
+        GestureDetector(Looper.getMainLooper(),
+                        ViewConfiguration.get(this@GestureEditorActivity),
                         resources.getDimension(R.dimen.touch_slop),
                         resources.getDimension(R.dimen.tap_slop),
                         resources.getDimension(R.dimen.fling_min_vec),
@@ -152,6 +155,8 @@ class GestureEditorActivity : AppCompatActivity(),
     override fun onActionBegin(event: MyMotionEvent,
                                target: Any?,
                                context: Any?) {
+        ensureUiThread()
+
         printLog("--------------")
         printLog("⬇onActionBegin")
     }
@@ -159,18 +164,24 @@ class GestureEditorActivity : AppCompatActivity(),
     override fun onActionEnd(event: MyMotionEvent,
                              target: Any?,
                              context: Any?) {
+        ensureUiThread()
+
         printLog("⬆onActionEnd")
     }
 
     override fun onSingleTap(event: MyMotionEvent,
                              target: Any?,
                              context: Any?) {
+        ensureUiThread()
+
         printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onSingleTap", 1))
     }
 
     override fun onDoubleTap(event: MyMotionEvent,
                              target: Any?,
                              context: Any?) {
+        ensureUiThread()
+
         printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onDoubleTap", 2))
     }
 
@@ -178,24 +189,32 @@ class GestureEditorActivity : AppCompatActivity(),
                            target: Any?,
                            context: Any?,
                            tapCount: Int) {
+        ensureUiThread()
+
         printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onMoreTap", tapCount))
     }
 
     override fun onLongTap(event: MyMotionEvent,
                            target: Any?,
                            context: Any?) {
+        ensureUiThread()
+
         printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onLongTap", 1))
     }
 
     override fun onLongPress(event: MyMotionEvent,
                              target: Any?,
                              context: Any?) {
+        ensureUiThread()
+
         printLog("\uD83D\uDD50 onLongPress")
     }
 
     override fun onDragBegin(event: MyMotionEvent,
                              target: Any?,
                              context: Any?) {
+        ensureUiThread()
+
         printLog("✍️ onDragBegin")
     }
 
@@ -204,7 +223,8 @@ class GestureEditorActivity : AppCompatActivity(),
                         context: Any?,
                         startPointer: PointF,
                         stopPointer: PointF) {
-        // DO NOTHING.
+        ensureUiThread()
+
         printLog("✍️ onDrag")
     }
 
@@ -213,6 +233,8 @@ class GestureEditorActivity : AppCompatActivity(),
                            context: Any?,
                            startPointer: PointF,
                            stopPointer: PointF) {
+        ensureUiThread()
+
         printLog("✍️ onDragEnd")
     }
 
@@ -223,6 +245,8 @@ class GestureEditorActivity : AppCompatActivity(),
                              stopPointer: PointF,
                              velocityX: Float,
                              velocityY: Float) {
+        ensureUiThread()
+
         printLog("✍ \uD83C\uDFBC onDragFling")
     }
 
@@ -230,6 +254,8 @@ class GestureEditorActivity : AppCompatActivity(),
                               target: Any?,
                               context: Any?,
                               startPointers: Array<PointF>) {
+        ensureUiThread()
+
         printLog("\uD83D\uDD0D onPinchBegin")
     }
 
@@ -238,6 +264,8 @@ class GestureEditorActivity : AppCompatActivity(),
                          context: Any?,
                          startPointers: Array<PointF>,
                          stopPointers: Array<PointF>) {
+        ensureUiThread()
+
         val transform = PointerUtils.getTransformFromPointers(startPointers,
                                                               stopPointers)
 
@@ -254,6 +282,8 @@ class GestureEditorActivity : AppCompatActivity(),
     override fun onPinchFling(event: MyMotionEvent,
                               target: Any?,
                               context: Any?) {
+        ensureUiThread()
+
         printLog("\uD83D\uDD0D onPinchFling")
     }
 
@@ -262,10 +292,19 @@ class GestureEditorActivity : AppCompatActivity(),
                             context: Any?,
                             startPointers: Array<PointF>,
                             stopPointers: Array<PointF>) {
+        ensureUiThread()
+
         printLog("\uD83D\uDD0D onPinchEnd")
     }
 
     // GestureListener <- end -----------------------------------------------
+
+    private fun ensureUiThread() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw IllegalThreadStateException(
+                "Callback should be triggered in the UI thread")
+        }
+    }
 
     private fun printLog(msg: String) {
         mLog.add(msg)
