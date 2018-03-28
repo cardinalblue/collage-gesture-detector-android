@@ -108,7 +108,7 @@
     <!-- Pinch toggle button -->
 
     <TextView
-        android:id="@+id/lable_pinch_listener"
+        android:id="@+id/label_pinch_listener"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -124,20 +124,19 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:checked="true"
-        app:layout_constraintBottom_toBottomOf="@id/lable_pinch_listener"
-        app:layout_constraintLeft_toRightOf="@id/lable_pinch_listener"
-        app:layout_constraintTop_toTopOf="@id/lable_pinch_listener"/>
+        app:layout_constraintBottom_toBottomOf="@id/label_pinch_listener"
+        app:layout_constraintLeft_toRightOf="@id/label_pinch_listener"
+        app:layout_constraintTop_toTopOf="@id/label_pinch_listener"/>
 
     <!-- Touch view -->
-    <View
+    <com.cardinalblue.demo.view.DemoView
         android:id="@+id/canvas"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/black_80"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lable_pinch_listener"/>
+        app:layout_constraintTop_toBottomOf="@id/label_pinch_listener"/>
 
     <!-- Log -->
     <TextView
@@ -152,5 +151,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lable_pinch_listener"/>
+        app:layout_constraintTop_toBottomOf="@id/label_pinch_listener"/>
 </android.support.constraint.ConstraintLayout>

@@ -34,6 +34,8 @@ object PointerUtils {
     const val DELTA_SCALE_X = 2
     const val DELTA_SCALE_Y = 3
     const val DELTA_RADIANS = 4
+    const val PIVOT_X = 5
+    const val PIVOT_Y = 6
 
     /**
      * Get an array of [tx, ty, sx, sy, rotation] sequence representing
@@ -46,7 +48,7 @@ object PointerUtils {
                 "The event must have at least two down pointers.")
         }
 
-        val transform = floatArrayOf(0f, 0f, 1f, 1f, 0f)
+        val transform = floatArrayOf(0f, 0f, 1f, 1f, 0f, 0f, 0f)
 
         // Start pointer 1.
         val startX1 = startPointers[0].x
@@ -87,6 +89,8 @@ object PointerUtils {
                                                                    startVecY.toDouble())).toFloat()
         transform[DELTA_SCALE_X] = dScale
         transform[DELTA_SCALE_Y] = dScale
+        transform[PIVOT_X] = startPivotX
+        transform[PIVOT_Y] = startPivotY
 //        Log.d("xyz", String.format(Locale.ENGLISH,
 //                                   "getTransform: " +
 //                                   "dx=%.3f, dy=%.3f, " +

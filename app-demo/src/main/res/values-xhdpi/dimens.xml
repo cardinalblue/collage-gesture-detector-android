@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="toolbar_height">56dp</dimen>
+
+    <dimen name="touch_slop">6dp</dimen>
+    <dimen name="tap_slop">24dp</dimen>
+    <dimen name="fling_min_vec">400dp</dimen>
+    <dimen name="fling_max_vec">1000dp</dimen>
+</resources>

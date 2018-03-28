@@ -29,7 +29,7 @@
 
         <!-- Gesture Editor -->
         <activity
-            android:name=".GestureEditorActivity">
+            android:name=".GestureDemoActivity">
         </activity>
     </application>
 </manifest>

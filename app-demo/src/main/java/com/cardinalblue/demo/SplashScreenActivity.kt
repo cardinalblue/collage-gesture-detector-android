@@ -45,7 +45,7 @@ class SplashScreenActivity : AppCompatActivity() {
             .delay(150, TimeUnit.MILLISECONDS)
             .subscribe {
                 startActivity(Intent(this@SplashScreenActivity,
-                                     GestureEditorActivity::class.java))
+                                     GestureDemoActivity::class.java))
                 finish()
             }
     }

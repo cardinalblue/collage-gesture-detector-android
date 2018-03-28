@@ -29,11 +29,10 @@ import android.os.Bundle
 import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SwitchCompat
-import android.view.View
-import android.view.ViewConfiguration
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
+import com.cardinalblue.demo.view.DemoView
 import com.cardinalblue.gesture.*
 import com.cardinalblue.gesture.PointerUtils.DELTA_RADIANS
 import com.cardinalblue.gesture.PointerUtils.DELTA_SCALE_X
@@ -44,13 +43,13 @@ import com.jakewharton.rxbinding2.widget.RxCompoundButton
 import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 
-class GestureEditorActivity : AppCompatActivity(),
-                              IAllGesturesListener {
+class GestureDemoActivity : AppCompatActivity(),
+                            IAllGesturesListener {
 
     private val mLog: MutableList<String> = mutableListOf()
 
     // View.
-    private val mViewCanvas by lazy { findViewById<View>(R.id.canvas) }
+    private val mCanvasView by lazy { findViewById<DemoView>(R.id.canvas) }
     private val mTxtLog by lazy { findViewById<TextView>(R.id.txt_gesture_test) }
     private val mBtnClearLog by lazy { findViewById<ImageView>(R.id.btn_clear) }
     private val mBtnEnableTap by lazy { findViewById<SwitchCompat>(R.id.toggle_tap) }
@@ -61,15 +60,6 @@ class GestureEditorActivity : AppCompatActivity(),
 
     // Disposables.
     private val mDisposablesOnCreate = CompositeDisposable()
-
-    private val mGestureDetector: GestureDetector by lazy {
-        GestureDetector(Looper.getMainLooper(),
-                        ViewConfiguration.get(this@GestureEditorActivity),
-                        resources.getDimension(R.dimen.touch_slop),
-                        resources.getDimension(R.dimen.tap_slop),
-                        resources.getDimension(R.dimen.fling_min_vec),
-                        resources.getDimension(R.dimen.fling_max_vec))
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,24 +77,24 @@ class GestureEditorActivity : AppCompatActivity(),
                 .checkedChanges(mBtnEnableTap)
                 .startWith(mBtnEnableTap.isChecked)
                 .subscribe { checked ->
-                    mGestureDetector.tapGestureListener = if (checked)
-                        this@GestureEditorActivity else null
+                    mCanvasView.gestureDetector.tapGestureListener = if (checked)
+                        this@GestureDemoActivity else null
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
                 .checkedChanges(mBtnEnableDrag)
                 .startWith(mBtnEnableDrag.isChecked)
                 .subscribe { checked ->
-                    mGestureDetector.dragGestureListener = if (checked)
-                        this@GestureEditorActivity else null
+                    mCanvasView.gestureDetector.dragGestureListener = if (checked)
+                        this@GestureDemoActivity else null
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
                 .checkedChanges(mBtnEnablePinch)
                 .startWith(mBtnEnablePinch.isChecked)
                 .subscribe { checked ->
-                    mGestureDetector.pinchGestureListener = if (checked)
-                        this@GestureEditorActivity else null
+                    mCanvasView.gestureDetector.pinchGestureListener = if (checked)
+                        this@GestureDemoActivity else null
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
@@ -112,7 +102,7 @@ class GestureEditorActivity : AppCompatActivity(),
                 .startWith(mBtnPolicyAll.isChecked)
                 .subscribe { checked ->
                     if (!checked) return@subscribe
-                    mGestureDetector.setPolicy(GesturePolicy.ALL)
+                    mCanvasView.gestureDetector.setPolicy(GesturePolicy.ALL)
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
@@ -120,15 +110,8 @@ class GestureEditorActivity : AppCompatActivity(),
                 .startWith(mBtnPolicyDragOnly.isChecked)
                 .subscribe { checked ->
                     if (!checked) return@subscribe
-                    mGestureDetector.setPolicy(GesturePolicy.DRAG_ONLY)
+                    mCanvasView.gestureDetector.setPolicy(GesturePolicy.DRAG_ONLY)
                 })
-
-        // Gesture.
-        mViewCanvas.setOnTouchListener { _, event ->
-            event?.let {
-                mGestureDetector.onTouchEvent(event, null, null)
-            } ?: false
-        }
     }
 
     override fun onDestroy() {
@@ -138,17 +121,10 @@ class GestureEditorActivity : AppCompatActivity(),
         mDisposablesOnCreate.clear()
 
         // Gesture listener.
-        mGestureDetector.tapGestureListener = null
-        mGestureDetector.dragGestureListener = null
-        mGestureDetector.pinchGestureListener = null
-        mViewCanvas.setOnTouchListener(null)
+        mCanvasView.gestureDetector.tapGestureListener = null
+        mCanvasView.gestureDetector.dragGestureListener = null
+        mCanvasView.gestureDetector.pinchGestureListener = null
     }
-
-//    override fun onTouchEvent(event: MotionEvent?): Boolean {
-//        return event?.let {
-//            mGestureDetector.onTouchEvent(event, null, null)
-//        } ?: false
-//    }
 
     // GestureListener ----------------------------------------------------->
 
@@ -167,6 +143,8 @@ class GestureEditorActivity : AppCompatActivity(),
         ensureUiThread()
 
         printLog("⬆onActionEnd")
+
+        mCanvasView.resetDemo()
     }
 
     override fun onSingleTap(event: MyMotionEvent,
@@ -216,6 +194,8 @@ class GestureEditorActivity : AppCompatActivity(),
         ensureUiThread()
 
         printLog("✍️ onDragBegin")
+
+        mCanvasView.startDragDemo()
     }
 
     override fun onDrag(event: MyMotionEvent,
@@ -226,6 +206,9 @@ class GestureEditorActivity : AppCompatActivity(),
         ensureUiThread()
 
         printLog("✍️ onDrag")
+
+        mCanvasView.dragDemo(startPointer,
+                             stopPointer)
     }
 
     override fun onDragEnd(event: MyMotionEvent,
@@ -236,6 +219,8 @@ class GestureEditorActivity : AppCompatActivity(),
         ensureUiThread()
 
         printLog("✍️ onDragEnd")
+
+        mCanvasView.stopDragDemo()
     }
 
     override fun onDragFling(event: MyMotionEvent,
@@ -257,6 +242,8 @@ class GestureEditorActivity : AppCompatActivity(),
         ensureUiThread()
 
         printLog("\uD83D\uDD0D onPinchBegin")
+
+        mCanvasView.startPinchDemo()
     }
 
     override fun onPinch(event: MyMotionEvent,
@@ -277,6 +264,9 @@ class GestureEditorActivity : AppCompatActivity(),
                                transform[DELTA_X], transform[DELTA_Y],
                                transform[DELTA_SCALE_X],
                                transform[DELTA_RADIANS]))
+
+        mCanvasView.pinchDemo(startPointers,
+                              stopPointers)
     }
 
     override fun onPinchFling(event: MyMotionEvent,
@@ -295,6 +285,8 @@ class GestureEditorActivity : AppCompatActivity(),
         ensureUiThread()
 
         printLog("\uD83D\uDD0D onPinchEnd")
+
+        mCanvasView.stopPinchDemo()
     }
 
     // GestureListener <- end -----------------------------------------------
