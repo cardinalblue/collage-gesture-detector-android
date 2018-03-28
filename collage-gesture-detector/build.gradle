@@ -37,9 +37,6 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Google Support Library.
-    implementation rootProject.ext.dep.supportAnnotations
-
     // Kotlin
     api rootProject.ext.dep.kotlinStdlibJdk7
 }
