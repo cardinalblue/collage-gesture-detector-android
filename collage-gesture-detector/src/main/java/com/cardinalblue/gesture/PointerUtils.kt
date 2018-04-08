@@ -82,11 +82,23 @@ object PointerUtils {
         transform[DELTA_X] = stopPivotX - startPivotX
         transform[DELTA_Y] = stopPivotY - startPivotY
         // Calculate the rotation degree.
-        transform[DELTA_RADIANS] = (Math.atan2(stopVecY.toDouble(), stopVecX.toDouble()) - Math.atan2(startVecY.toDouble(), startVecX.toDouble())).toFloat()
+        transform[DELTA_RADIANS] = if (startVecX == 0f && startVecY == 0f &&
+                                       stopVecX == 0f && stopVecY == 0f) {
+            0f
+        } else {
+            (Math.atan2(stopVecY.toDouble(), stopVecX.toDouble()) -
+             Math.atan2(startVecY.toDouble(), startVecX.toDouble())).toFloat()
+        }
         // Calculate the scale change.
-        val dScale = (Math.hypot(stopVecX.toDouble(),
-                                 stopVecY.toDouble()) / Math.hypot(startVecX.toDouble(),
-                                                                   startVecY.toDouble())).toFloat()
+        val dScale = if (startVecX == 0f && startVecY == 0f &&
+                         stopVecX == 0f && stopVecY == 0f) {
+            1f
+        } else {
+            (Math.hypot(stopVecX.toDouble(),
+                        stopVecY.toDouble()) /
+             Math.hypot(startVecX.toDouble(),
+                        startVecY.toDouble())).toFloat()
+        }
         transform[DELTA_SCALE_X] = dScale
         transform[DELTA_SCALE_Y] = dScale
         transform[PIVOT_X] = startPivotX
