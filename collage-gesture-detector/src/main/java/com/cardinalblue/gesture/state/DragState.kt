@@ -115,9 +115,11 @@ class DragState(owner: IGestureStateOwner,
         val focusY = event.y
 
         if (isConsideredFling(event)) {
-            // TODO: Complete fling arguments.
             owner.listener?.onDragFling(clone, target, context,
-                                        PointF(), PointF(), 0f, 0f)
+                                        startPointer = PointF(mStartFocusX, mStartFocusY),
+                                        stopPointer = PointF(focusX, focusY),
+                                        velocityX = mVelocityTracker!!.xVelocity,
+                                        velocityY = mVelocityTracker!!.yVelocity)
         }
 
         // TODO: Complete the translation argument.

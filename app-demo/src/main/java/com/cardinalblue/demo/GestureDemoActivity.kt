@@ -232,7 +232,7 @@ class GestureDemoActivity : AppCompatActivity(),
                              velocityY: Float) {
         ensureUiThread()
 
-        printLog("✍ \uD83C\uDFBC onDragFling")
+        printLog("✍ \uD83C\uDFBC onDragFling vx=%.3f, vy=%.3f".format(velocityX, velocityY))
     }
 
     override fun onPinchBegin(event: MyMotionEvent,

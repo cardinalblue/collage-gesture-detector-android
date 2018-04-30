@@ -144,11 +144,11 @@ class DragStateForDragOnly(owner: IGestureStateOwner,
 //        Log.d("xyz", "exit: focus index=%d, pointer count=%d".format(focusIndex, event.pointerCount))
 
         if (isConsideredFling(event)) {
-            // TODO: Complete fling arguments.
             owner.listener?.onDragFling(clone, target, context,
-                                        PointF(mStartFocusX, mStartFocusY),
-                                        PointF(focusX, focusY),
-                                        0f, 0f)
+                                        startPointer = PointF(mStartFocusX, mStartFocusY),
+                                        stopPointer = PointF(focusX, focusY),
+                                        velocityX = mVelocityTracker!!.xVelocity,
+                                        velocityY = mVelocityTracker!!.yVelocity)
         }
 
         // Callback.
