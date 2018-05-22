@@ -46,17 +46,17 @@ internal constructor(stateOwner: IGestureStateOwner,
     init {
         // Mode "ALL"
         mIdleStatePool[ALL] = IdleState(stateOwner)
-        mSingleFingerPressingStatePool[ALL] = SingleFingerPressingState(
+        mSingleFingerPressingStatePool[ALL] = SingleFingerIdleState(
             stateOwner,
             tapSlopSquare.toLong(), touchSlopSquare.toLong(),
             GestureDetector.TAP_TIMEOUT.toLong(), GestureDetector.LONG_PRESS_TIMEOUT.toLong())
-        mMultipleFingersPressingStatePool[ALL] = MultipleFingersPressingState(stateOwner, touchSlopSquare)
+        mMultipleFingersPressingStatePool[ALL] = MultipleFingersIdleState(stateOwner, touchSlopSquare)
         mDragStatePool[ALL] = DragState(stateOwner, minFlingVelocity, maxFlingVelocity)
         mPinchStatePool[ALL] = PinchState(stateOwner)
 
         // Mode "DRAG_ONLY"
         mIdleStatePool[DRAG_ONLY] = IdleStateForDragOnly(stateOwner)
-        mSingleFingerPressingStatePool[DRAG_ONLY] = SingleFingerPressingStateForDragOnly(
+        mSingleFingerPressingStatePool[DRAG_ONLY] = SingleFingerIdleStateForDragOnly(
             stateOwner,
             touchSlopSquare.toLong())
         mDragStatePool[DRAG_ONLY] = DragStateForDragOnly(stateOwner, minFlingVelocity, maxFlingVelocity)

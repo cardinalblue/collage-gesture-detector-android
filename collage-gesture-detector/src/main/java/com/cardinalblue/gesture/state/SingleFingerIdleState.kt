@@ -33,11 +33,11 @@ import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_DRAG
 import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_IDLE
 import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_MULTIPLE_FINGERS_PRESSING
 
-class SingleFingerPressingState(owner: IGestureStateOwner,
-                                private val mTapSlopSquare: Long,
-                                private val mTouchSlopSquare: Long,
-                                private val mTapTimeout: Long,
-                                private val mLongPressTimeout: Long)
+class SingleFingerIdleState(owner: IGestureStateOwner,
+                            private val mTapSlopSquare: Long,
+                            private val mTouchSlopSquare: Long,
+                            private val mTapTimeout: Long,
+                            private val mLongPressTimeout: Long)
     : BaseGestureState(owner) {
 
     // Configurations.

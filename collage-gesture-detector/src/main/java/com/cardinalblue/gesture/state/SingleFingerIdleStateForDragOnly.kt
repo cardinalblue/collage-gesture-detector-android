@@ -33,8 +33,8 @@ import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_DRAG
 import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_IDLE
 import com.cardinalblue.gesture.PointerUtils
 
-class SingleFingerPressingStateForDragOnly(owner: IGestureStateOwner,
-                                           private val mTouchSlopSquare: Long)
+class SingleFingerIdleStateForDragOnly(owner: IGestureStateOwner,
+                                       private val mTouchSlopSquare: Long)
     : BaseGestureState(owner) {
 
     private var mStartFocusId: Int = -1

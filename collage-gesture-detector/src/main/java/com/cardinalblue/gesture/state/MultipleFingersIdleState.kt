@@ -35,8 +35,8 @@ import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_IDLE
 import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_PINCH
 import com.cardinalblue.gesture.IGestureStateOwner.State.STATE_SINGLE_FINGER_PRESSING
 
-class MultipleFingersPressingState(owner: IGestureStateOwner,
-                                   private val mTouchSlopSquare: Int)
+class MultipleFingersIdleState(owner: IGestureStateOwner,
+                               private val mTouchSlopSquare: Int)
     : BaseGestureState(owner) {
 
     // TODO: Time for insertion is O(log(n)), searching is O(1)
