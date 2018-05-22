@@ -38,7 +38,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Kotlin
-    api rootProject.ext.dep.kotlinStdlibJdk7
+    api rootProject.ext.dep.kotlinStdlibJre7
 }
 
 // Deployment script.
