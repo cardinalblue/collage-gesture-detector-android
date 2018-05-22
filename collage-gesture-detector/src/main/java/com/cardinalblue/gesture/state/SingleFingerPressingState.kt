@@ -187,13 +187,21 @@ class SingleFingerPressingState(owner: IGestureStateOwner,
                     // Because it is a TAP, cancel the upcoming long-press delay.
                     cancelLongPress()
 
-                    // Defer the transition to IDLE state.
-                    owner.handler.sendMessageDelayed(
-                        obtainMessageWithPayload(MSG_TAP,
-                                                 event,
-                                                 target,
-                                                 context),
-                        mTapTimeout)
+                    if (mTapCount == 0) {
+                        // Transit to IDLE state.
+                        owner.issueStateTransition(STATE_IDLE,
+                                                   event,
+                                                   target,
+                                                   context)
+                    } else {
+                        // Defer the transition to IDLE state.
+                        owner.handler.sendMessageDelayed(
+                            obtainMessageWithPayload(MSG_TAP,
+                                                     event,
+                                                     target,
+                                                     context),
+                            mTapTimeout)
+                    }
                 }
             }
 
