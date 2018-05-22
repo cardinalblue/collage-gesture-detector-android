@@ -1,4 +1,4 @@
-Gesture Detector
+Collage Gesture Detector
 ===
 
 ![demo](docs/demo.gif)
@@ -26,27 +26,54 @@ maven {
 }
 ```
 
-Revisions
+Usage
 ---
 
-[link](CHANGELOG.md)
+- Instantiate the detector instance
 
-Wiki
----
+```
+private val mGestureDetector by lazy {
+    GestureDetector(Looper.getMainLooper(),
+                    ViewConfiguration.get(context),
+                    resources.getDimension(R.dimen.touch_slop),
+                    resources.getDimension(R.dimen.tap_slop),
+                    resources.getDimension(R.dimen.fling_min_vec),
+                    resources.getDimension(R.dimen.fling_max_vec))
+}
+```
 
-### Usage
+- Register the listener
 
-constructing...
+```
+// Gesture listener.
+mGestureDetector.tapGestureListener = ...
+mGestureDetector.dragGestureListener = ...
+mGestureDetector.pinchGestureListener = ...
+```
 
-### General
+- Add to your view's onTouchEvent()
 
-Recognized gestures:
+```
+override fun onTouchEvent(event: MotionEvent): Boolean {
+    return mGestureDetector.onTouchEvent(event, null, null)
+}
+```
+
+That's it and so simple!
+
+### Callbacks
+
+Lifecycle callbacks:
 
 ```
 void onActionBegin();
 
 void onActionEnd();
+```
 
+TAP related callbacks:
+
+```
 void onSingleTap();
 
 void onDoubleTap();
@@ -56,21 +83,23 @@ void onMoreTap();
 void onLongTap();
 
 void onLongPress();
+```
 
-// Drag ///////////////////////////////////////////////////////////////
+DRAG related callbacks:
 
+```
 boolean onDragBegin();
 
 void onDrag();
 
 void onDragEnd();
 
-// Fling //////////////////////////////////////////////////////////////
-
 boolean onDragFling();
+```
 
-// Pinch //////////////////////////////////////////////////////////////
+PINCH related callbacks:
 
+```
 boolean onPinchBegin();
 
 void onPinch();
@@ -84,3 +113,8 @@ Checkout the details in the code, [interface link](library/src/main/java/com/car
 
 ![state diagram](docs/figure-state-paradigm.jpg)
 ![state diagram2](docs/GestureDetectorState.png)
+
+Revisions
+---
+
+[link](CHANGELOG.md)
