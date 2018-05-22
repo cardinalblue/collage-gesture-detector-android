@@ -47,6 +47,8 @@ class MultipleFingersPressingState(owner: IGestureStateOwner,
     override fun onEnter(event: MotionEvent,
                          target: Any?,
                          context: Any?) {
+        println("${StateConst.TAG} enter ${javaClass.simpleName}")
+
         val action = event.actionMasked
         val pointerUp = action == MotionEvent.ACTION_POINTER_UP
         val upIndex = if (pointerUp) event.actionIndex else -1
@@ -171,6 +173,8 @@ class MultipleFingersPressingState(owner: IGestureStateOwner,
     override fun onExit(event: MotionEvent,
                         target: Any?,
                         context: Any?) {
+        println("${StateConst.TAG} exit ${javaClass.simpleName}")
+
         mStartPointers.clear()
         mStopPointers.clear()
     }

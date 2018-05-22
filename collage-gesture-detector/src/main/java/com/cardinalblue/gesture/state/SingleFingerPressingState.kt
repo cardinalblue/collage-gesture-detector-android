@@ -69,6 +69,8 @@ class SingleFingerPressingState(owner: IGestureStateOwner,
     override fun onEnter(event: MotionEvent,
                          target: Any?,
                          context: Any?) {
+        println("${StateConst.TAG} enter ${javaClass.simpleName}")
+
         mTapCount = 0
         mHadLongPress = false
 
@@ -218,6 +220,8 @@ class SingleFingerPressingState(owner: IGestureStateOwner,
     override fun onExit(event: MotionEvent,
                         target: Any?,
                         context: Any?) {
+        println("${StateConst.TAG} exit ${javaClass.simpleName}")
+
         val action = event.actionMasked
 
         // Cancel tap.

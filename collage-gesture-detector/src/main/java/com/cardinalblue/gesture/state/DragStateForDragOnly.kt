@@ -46,6 +46,8 @@ class DragStateForDragOnly(owner: IGestureStateOwner,
     override fun onEnter(event: MotionEvent,
                          target: Any?,
                          context: Any?) {
+        println("${StateConst.TAG} enter ${javaClass.simpleName}")
+
         val action = event.actionMasked
 
         // Find the focus pointer ID.
@@ -136,12 +138,14 @@ class DragStateForDragOnly(owner: IGestureStateOwner,
     override fun onExit(event: MotionEvent,
                         target: Any?,
                         context: Any?) {
+        println("${StateConst.TAG} exit ${javaClass.simpleName}")
+
         val clone = obtainMyMotionEvent(event)
         val focusIndex = PointerUtils.getFocusIndexFromId(event, mStartFocusId)
         val focusX = event.getX(focusIndex)
         val focusY = event.getY(focusIndex)
 
-//        Log.d("xyz", "exit: focus index=%d, pointer count=%d".format(focusIndex, event.pointerCount))
+//        println("${StateConst.TAG}: exit: focus index=%d, pointer count=%d".format(focusIndex, event.pointerCount))
 
         if (isConsideredFling(event)) {
             owner.listener?.onDragFling(clone, target, context,

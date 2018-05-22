@@ -53,6 +53,8 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
     override fun onEnter(event: MotionEvent,
                          target: Any?,
                          context: Any?) {
+        println("${StateConst.TAG} enter ${javaClass.simpleName}")
+
         val action = event.actionMasked
         val pointerUp = action == MotionEvent.ACTION_POINTER_UP
         val upIndex = if (pointerUp) event.actionIndex else -1
@@ -193,6 +195,8 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
     override fun onExit(event: MotionEvent,
                         target: Any?,
                         context: Any?) {
+        println("${StateConst.TAG} exit ${javaClass.simpleName}")
+
         // Dispatch pinch-end.
         owner.listener?.onPinchEnd(
             obtainMyMotionEvent(event), target, context,

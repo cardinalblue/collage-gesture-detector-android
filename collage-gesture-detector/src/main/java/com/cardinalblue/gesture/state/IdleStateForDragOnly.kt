@@ -35,6 +35,8 @@ class IdleStateForDragOnly(owner: IGestureStateOwner)
     override fun onEnter(event: MotionEvent,
                          target: Any?,
                          context: Any?) {
+        println("${StateConst.TAG} enter ${javaClass.simpleName}")
+
         owner.listener?.onActionEnd(obtainMyMotionEvent(event),
                                     target,
                                     context)
@@ -56,6 +58,8 @@ class IdleStateForDragOnly(owner: IGestureStateOwner)
     override fun onExit(event: MotionEvent,
                         target: Any?,
                         context: Any?) {
+        println("${StateConst.TAG} exit ${javaClass.simpleName}")
+
         owner.listener?.onActionBegin(obtainMyMotionEvent(event),
                                       target,
                                       context)

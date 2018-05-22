@@ -48,6 +48,8 @@ class DragState(owner: IGestureStateOwner,
     override fun onEnter(event: MotionEvent,
                          target: Any?,
                          context: Any?) {
+        println("${StateConst.TAG} enter ${javaClass.simpleName}")
+
         mStartFocusX = event.x
         mStartFocusY = event.y
 
@@ -110,6 +112,8 @@ class DragState(owner: IGestureStateOwner,
     override fun onExit(event: MotionEvent,
                         target: Any?,
                         context: Any?) {
+        println("${StateConst.TAG} exit ${javaClass.simpleName}")
+
         val clone = obtainMyMotionEvent(event)
         val focusX = event.x
         val focusY = event.y
