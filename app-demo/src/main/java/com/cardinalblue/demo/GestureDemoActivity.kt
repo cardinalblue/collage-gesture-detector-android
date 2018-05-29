@@ -98,24 +98,21 @@ class GestureDemoActivity : AppCompatActivity() {
                 .checkedChanges(mBtnEnableTap)
                 .startWith(mBtnEnableTap.isChecked)
                 .subscribe { checked ->
-//                    mCanvasView.gestureDetector.tapGestureListener = if (checked)
-//                        this@GestureDemoActivity else null
+                    mGestureDetector.tapGestureEnabled = checked
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
                 .checkedChanges(mBtnEnableDrag)
                 .startWith(mBtnEnableDrag.isChecked)
                 .subscribe { checked ->
-//                    mCanvasView.gestureDetector.dragGestureListener = if (checked)
-//                        this@GestureDemoActivity else null
+                    mGestureDetector.dragGestureEnabled = checked
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
                 .checkedChanges(mBtnEnablePinch)
                 .startWith(mBtnEnablePinch.isChecked)
                 .subscribe { checked ->
-//                    mCanvasView.gestureDetector.pinchGestureListener = if (checked)
-//                        this@GestureDemoActivity else null
+                    mGestureDetector.pinchGestureEnabled = checked
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
