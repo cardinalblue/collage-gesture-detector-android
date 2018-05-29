@@ -16,6 +16,9 @@
 #   public *;
 #}
 
--keep class com.my.widget.** {
+-keep class com.cardinalblue.gesture.GestureDetector {
+    public *;
+}
+-keep class com.cardinalblue.gesture.GesturePolicy {
     public *;
 }

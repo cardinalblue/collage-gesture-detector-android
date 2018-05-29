@@ -24,11 +24,11 @@
 
 package com.cardinalblue.demo
 
-import android.graphics.PointF
 import android.os.Bundle
 import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SwitchCompat
+import android.view.ViewConfiguration
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
@@ -38,13 +38,14 @@ import com.cardinalblue.gesture.PointerUtils.DELTA_RADIANS
 import com.cardinalblue.gesture.PointerUtils.DELTA_SCALE_X
 import com.cardinalblue.gesture.PointerUtils.DELTA_X
 import com.cardinalblue.gesture.PointerUtils.DELTA_Y
+import com.cardinalblue.gesture.rx.*
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxCompoundButton
+import io.reactivex.ObservableTransformer
 import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 
-class GestureDemoActivity : AppCompatActivity(),
-                            IAllGesturesListener {
+class GestureDemoActivity : AppCompatActivity() {
 
     private val mLog: MutableList<String> = mutableListOf()
 
@@ -57,6 +58,16 @@ class GestureDemoActivity : AppCompatActivity(),
     private val mBtnEnablePinch by lazy { findViewById<SwitchCompat>(R.id.toggle_pinch) }
     private val mBtnPolicyAll by lazy { findViewById<RadioButton>(R.id.opt_all) }
     private val mBtnPolicyDragOnly by lazy { findViewById<RadioButton>(R.id.opt_drag_only) }
+
+    // Collage gesture detector
+    private val mGestureDetector: GestureDetector by lazy {
+        GestureDetector(Looper.getMainLooper(),
+                        ViewConfiguration.get(this@GestureDemoActivity),
+                        resources.getDimension(R.dimen.touch_slop),
+                        resources.getDimension(R.dimen.tap_slop),
+                        resources.getDimension(R.dimen.fling_min_vec),
+                        resources.getDimension(R.dimen.fling_max_vec))
+    }
 
     // Disposables.
     private val mDisposablesOnCreate = CompositeDisposable()
@@ -73,28 +84,35 @@ class GestureDemoActivity : AppCompatActivity(),
                     clearLog()
                 })
         mDisposablesOnCreate.add(
+            RxView.touches(mCanvasView)
+                .subscribe { event ->
+                    mGestureDetector.onTouchEvent(event, mCanvasView, null)
+                })
+        mDisposablesOnCreate.add(
+            GestureEventObservable(gestureDetector = mGestureDetector,
+                                   threadVerifier = ThreadVerifierAndroidImpl())
+                .compose(onConsumeGestureEvent())
+                .subscribe())
+        mDisposablesOnCreate.add(
             RxCompoundButton
                 .checkedChanges(mBtnEnableTap)
                 .startWith(mBtnEnableTap.isChecked)
                 .subscribe { checked ->
-                    mCanvasView.gestureDetector.tapGestureListener = if (checked)
-                        this@GestureDemoActivity else null
+                    mGestureDetector.tapGestureEnabled = checked
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
                 .checkedChanges(mBtnEnableDrag)
                 .startWith(mBtnEnableDrag.isChecked)
                 .subscribe { checked ->
-                    mCanvasView.gestureDetector.dragGestureListener = if (checked)
-                        this@GestureDemoActivity else null
+                    mGestureDetector.dragGestureEnabled = checked
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
                 .checkedChanges(mBtnEnablePinch)
                 .startWith(mBtnEnablePinch.isChecked)
                 .subscribe { checked ->
-                    mCanvasView.gestureDetector.pinchGestureListener = if (checked)
-                        this@GestureDemoActivity else null
+                    mGestureDetector.pinchGestureEnabled = checked
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
@@ -102,7 +120,7 @@ class GestureDemoActivity : AppCompatActivity(),
                 .startWith(mBtnPolicyAll.isChecked)
                 .subscribe { checked ->
                     if (!checked) return@subscribe
-                    mCanvasView.gestureDetector.setPolicy(GesturePolicy.ALL)
+                    mGestureDetector.setPolicy(GesturePolicy.ALL)
                 })
         mDisposablesOnCreate.add(
             RxCompoundButton
@@ -110,8 +128,91 @@ class GestureDemoActivity : AppCompatActivity(),
                 .startWith(mBtnPolicyDragOnly.isChecked)
                 .subscribe { checked ->
                     if (!checked) return@subscribe
-                    mCanvasView.gestureDetector.setPolicy(GesturePolicy.DRAG_ONLY)
+                    mGestureDetector.setPolicy(GesturePolicy.DRAG_ONLY)
                 })
+    }
+
+    private fun onConsumeGestureEvent(): ObservableTransformer<GestureEvent, Boolean> {
+        return ObservableTransformer { upstream ->
+            upstream.map { event ->
+                ensureUiThread()
+
+                // Huge switch-case:
+                when (event) {
+                    is TouchBeginEvent -> {
+                        printLog("--------------")
+                        printLog("⬇onActionBegin")
+                    }
+                    is TouchEndEvent -> {
+                        printLog("⬆onActionEnd")
+
+                        mCanvasView.resetDemo()
+                    }
+                    is TapEvent -> {
+                        when {
+                            event.taps == 1 -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onSingleTap", 1))
+                            event.taps == 2 -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onDoubleTap", 2))
+                            else -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onMoreTap", event.taps))
+                        }
+                    }
+                    is LongTapEvent -> {
+                        printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onLongTap", 1))
+                    }
+                    is LongPressEvent -> {
+                        printLog("\uD83D\uDD50 onLongPress")
+                    }
+                    is DragBeginEvent -> {
+                        printLog("✍️ onDragBegin")
+
+                        mCanvasView.startDragDemo()
+                    }
+                    is OnDragEvent -> {
+                        printLog("✍️ onDrag")
+
+                        mCanvasView.dragDemo(event.startPointer,
+                                             event.stopPointer)
+                    }
+                    is DragFlingEvent -> {
+                        printLog("✍ \uD83C\uDFBC onDragFling vx=%.3f, vy=%.3f".format(event.velocityX, event.velocityY))
+                    }
+                    is DragEndEvent -> {
+                        printLog("✍️ onDragEnd")
+
+                        mCanvasView.stopDragDemo()
+                    }
+                    is PinchBeginEvent -> {
+                        printLog("\uD83D\uDD0D onPinchBegin")
+
+                        mCanvasView.startPinchDemo()
+                    }
+                    is OnPinchEvent -> {
+                        val transform = PointerUtils.getTransformFromPointers(event.startPointers,
+                                                                              event.stopPointers)
+
+                        printLog(String.format(Locale.ENGLISH,
+                                               "\uD83D\uDD0D onPinch: " +
+                                               "dx=%.1f, dy=%.1f, " +
+                                               "ds=%.2f, " +
+                                               "dr=%.2f",
+                                               transform[DELTA_X], transform[DELTA_Y],
+                                               transform[DELTA_SCALE_X],
+                                               transform[DELTA_RADIANS]))
+
+                        mCanvasView.pinchDemo(event.startPointers,
+                                              event.stopPointers)
+                    }
+                    is PinchFlingEvent -> {
+                        printLog("\uD83D\uDD0D onPinchFling")
+                    }
+                    is PinchEndEvent -> {
+                        printLog("\uD83D\uDD0D onPinchEnd")
+
+                        mCanvasView.stopPinchDemo()
+                    }
+                }
+                true
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -119,177 +220,7 @@ class GestureDemoActivity : AppCompatActivity(),
 
         // Unbind view.
         mDisposablesOnCreate.clear()
-
-        // Gesture listener.
-        mCanvasView.gestureDetector.tapGestureListener = null
-        mCanvasView.gestureDetector.dragGestureListener = null
-        mCanvasView.gestureDetector.pinchGestureListener = null
     }
-
-    // GestureListener ----------------------------------------------------->
-
-    override fun onActionBegin(event: MyMotionEvent,
-                               target: Any?,
-                               context: Any?) {
-        ensureUiThread()
-
-        printLog("--------------")
-        printLog("⬇onActionBegin")
-    }
-
-    override fun onActionEnd(event: MyMotionEvent,
-                             target: Any?,
-                             context: Any?) {
-        ensureUiThread()
-
-        printLog("⬆onActionEnd")
-
-        mCanvasView.resetDemo()
-    }
-
-    override fun onSingleTap(event: MyMotionEvent,
-                             target: Any?,
-                             context: Any?) {
-        ensureUiThread()
-
-        printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onSingleTap", 1))
-    }
-
-    override fun onDoubleTap(event: MyMotionEvent,
-                             target: Any?,
-                             context: Any?) {
-        ensureUiThread()
-
-        printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onDoubleTap", 2))
-    }
-
-    override fun onMoreTap(event: MyMotionEvent,
-                           target: Any?,
-                           context: Any?,
-                           tapCount: Int) {
-        ensureUiThread()
-
-        printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onMoreTap", tapCount))
-    }
-
-    override fun onLongTap(event: MyMotionEvent,
-                           target: Any?,
-                           context: Any?) {
-        ensureUiThread()
-
-        printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onLongTap", 1))
-    }
-
-    override fun onLongPress(event: MyMotionEvent,
-                             target: Any?,
-                             context: Any?) {
-        ensureUiThread()
-
-        printLog("\uD83D\uDD50 onLongPress")
-    }
-
-    override fun onDragBegin(event: MyMotionEvent,
-                             target: Any?,
-                             context: Any?) {
-        ensureUiThread()
-
-        printLog("✍️ onDragBegin")
-
-        mCanvasView.startDragDemo()
-    }
-
-    override fun onDrag(event: MyMotionEvent,
-                        target: Any?,
-                        context: Any?,
-                        startPointer: PointF,
-                        stopPointer: PointF) {
-        ensureUiThread()
-
-        printLog("✍️ onDrag")
-
-        mCanvasView.dragDemo(startPointer,
-                             stopPointer)
-    }
-
-    override fun onDragEnd(event: MyMotionEvent,
-                           target: Any?,
-                           context: Any?,
-                           startPointer: PointF,
-                           stopPointer: PointF) {
-        ensureUiThread()
-
-        printLog("✍️ onDragEnd")
-
-        mCanvasView.stopDragDemo()
-    }
-
-    override fun onDragFling(event: MyMotionEvent,
-                             target: Any?,
-                             context: Any?,
-                             startPointer: PointF,
-                             stopPointer: PointF,
-                             velocityX: Float,
-                             velocityY: Float) {
-        ensureUiThread()
-
-        printLog("✍ \uD83C\uDFBC onDragFling vx=%.3f, vy=%.3f".format(velocityX, velocityY))
-    }
-
-    override fun onPinchBegin(event: MyMotionEvent,
-                              target: Any?,
-                              context: Any?,
-                              startPointers: Array<PointF>) {
-        ensureUiThread()
-
-        printLog("\uD83D\uDD0D onPinchBegin")
-
-        mCanvasView.startPinchDemo()
-    }
-
-    override fun onPinch(event: MyMotionEvent,
-                         target: Any?,
-                         context: Any?,
-                         startPointers: Array<PointF>,
-                         stopPointers: Array<PointF>) {
-        ensureUiThread()
-
-        val transform = PointerUtils.getTransformFromPointers(startPointers,
-                                                              stopPointers)
-
-        printLog(String.format(Locale.ENGLISH,
-                               "\uD83D\uDD0D onPinch: " +
-                               "dx=%.1f, dy=%.1f, " +
-                               "ds=%.2f, " +
-                               "dr=%.2f",
-                               transform[DELTA_X], transform[DELTA_Y],
-                               transform[DELTA_SCALE_X],
-                               transform[DELTA_RADIANS]))
-
-        mCanvasView.pinchDemo(startPointers,
-                              stopPointers)
-    }
-
-    override fun onPinchFling(event: MyMotionEvent,
-                              target: Any?,
-                              context: Any?) {
-        ensureUiThread()
-
-        printLog("\uD83D\uDD0D onPinchFling")
-    }
-
-    override fun onPinchEnd(event: MyMotionEvent,
-                            target: Any?,
-                            context: Any?,
-                            startPointers: Array<PointF>,
-                            stopPointers: Array<PointF>) {
-        ensureUiThread()
-
-        printLog("\uD83D\uDD0D onPinchEnd")
-
-        mCanvasView.stopPinchDemo()
-    }
-
-    // GestureListener <- end -----------------------------------------------
 
     private fun ensureUiThread() {
         if (Looper.myLooper() != Looper.getMainLooper()) {

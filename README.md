@@ -12,10 +12,14 @@ Add this into your dependencies block.
 
 ```
 // For gradle < 3.0
-compile 'com.cardinalblue.gesture:collage-gesture-detector:2.4.2'
+compile 'com.cardinalblue.gesture:collage-gesture-detector:2.4.4'
+// Optional Rx 
+compile 'com.cardinalblue.gesture:collage-gesture-detector-rx:2.4.4'
 
 // For gradle >= 3.0, use "api" or "implementation"
-implementation 'com.cardinalblue.gesture:collage-gesture-detector:2.4.2'
+implementation 'com.cardinalblue.gesture:collage-gesture-detector:2.4.4'
+// Optional Rx 
+implementation 'com.cardinalblue.gesture:collage-gesture-detector-rx:2.4.4'
 ```
 
 If you cannot find the package, add this to your gradle repository
@@ -29,9 +33,11 @@ maven {
 Usage
 ---
 
+### Without RxJava
+
 - Instantiate the detector instance
 
-```
+```kotlin
 private val mGestureDetector by lazy {
     GestureDetector(Looper.getMainLooper(),
                     ViewConfiguration.get(context),
@@ -44,7 +50,7 @@ private val mGestureDetector by lazy {
 
 - Register the listener
 
-```
+```kotlin
 // Gesture listener.
 mGestureDetector.tapGestureListener = ...
 mGestureDetector.dragGestureListener = ...
@@ -53,13 +59,37 @@ mGestureDetector.pinchGestureListener = ...
 
 - Add to your view's onTouchEvent()
 
-```
+```kotlin
 override fun onTouchEvent(event: MotionEvent): Boolean {
     return mGestureDetector.onTouchEvent(event, null, null)
 }
 ```
 
 That's it and so simple!
+
+### With RxJava
+
+If you'd prefer the Rx way, try as following:
+
+- Add this to `build.gradle` 
+
+```
+// For gradle < 3.0
+// Rx add-on 
+compile 'com.cardinalblue.gesture:collage-gesture-detector-rx:?.?.?'
+
+// For gradle >= 3.0, use "api" or "implementation" 
+implementation 'com.cardinalblue.gesture:collage-gesture-detector-rx:?.?.?'
+```
+
+- Feed the detector to the `GestureEventObservable`:
+
+```kotlin
+GestureEventObservable(gestureDetector = ${YOUR_COLLAGE_GESTURE_DETECTOR})
+    .subscrible { java.awt.Event ->
+        // Handle event... 
+    }
+```
 
 ### Callbacks
 

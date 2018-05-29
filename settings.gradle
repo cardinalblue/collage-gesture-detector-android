@@ -1,2 +1,3 @@
 include ':app-demo',
-        ':collage-gesture-detector'
+        ':collage-gesture-detector',
+        ':collage-gesture-detector-rx'

@@ -85,6 +85,7 @@ dependencies {
 
     // My Libraries.
     implementation project(path: ':collage-gesture-detector')
+    implementation project(path: ':collage-gesture-detector-rx')
 
     testImplementation rootProject.ext.dep.testJunit
 

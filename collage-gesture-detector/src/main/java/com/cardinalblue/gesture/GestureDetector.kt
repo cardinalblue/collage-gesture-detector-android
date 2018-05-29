@@ -164,18 +164,38 @@ class GestureDetector(uiLooper: Looper,
 //        mDragState.setIsTransitionToMultiTouchEnabled(true)
 //    }
 
+    var tapGestureEnabled: Boolean
+        get() = getListenerBridge().tapEnabled
+        set(value) {
+            getListenerBridge().tapEnabled = value
+        }
+    var longPressGestureEnabled: Boolean
+        get() = getListenerBridge().longPressEnabled
+        set(value) {
+            getListenerBridge().longPressEnabled = value
+        }
     var tapGestureListener: ITapGestureListener?
         get() = getListenerBridge().tapListener
         set(value) {
             getListenerBridge().tapListener = value
         }
 
+    var dragGestureEnabled: Boolean
+        get() = getListenerBridge().dragEnabled
+        set(value) {
+            getListenerBridge().dragEnabled = value
+        }
     var dragGestureListener: IDragGestureListener?
         get() = getListenerBridge().dragListener
         set(value) {
             getListenerBridge().dragListener = value
         }
 
+    var pinchGestureEnabled: Boolean
+        get() = getListenerBridge().pinchEnabled
+        set(value) {
+            getListenerBridge().pinchEnabled = value
+        }
     var pinchGestureListener: IPinchGestureListener?
         get() = getListenerBridge().pinchListener
         set(value) {

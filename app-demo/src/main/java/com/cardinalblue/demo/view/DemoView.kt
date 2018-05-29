@@ -24,28 +24,13 @@ package com.cardinalblue.demo.view
 
 import android.content.Context
 import android.graphics.*
-import android.os.Looper
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
-import android.view.ViewConfiguration
 import com.cardinalblue.demo.R
-import com.cardinalblue.gesture.GestureDetector
 import com.cardinalblue.gesture.PointerUtils
 
 class DemoView : View {
-
-    val gestureDetector: GestureDetector get() = mGestureDetector
-    private val mGestureDetector: GestureDetector by lazy {
-        GestureDetector(Looper.getMainLooper(),
-                        ViewConfiguration.get(context),
-                        resources.getDimension(R.dimen.touch_slop),
-                        resources.getDimension(R.dimen.tap_slop),
-                        resources.getDimension(R.dimen.fling_min_vec),
-                        resources.getDimension(R.dimen.fling_max_vec))
-    }
 
     private var mDefaultColor = 0
     private var mShowDemo = false
@@ -61,10 +46,6 @@ class DemoView : View {
 
         mDemoPaint.color = mDefaultColor
         mDemoPaint.style = Paint.Style.FILL
-    }
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        return mGestureDetector.onTouchEvent(event, null, null)
     }
 
     override fun onDraw(canvas: Canvas) {
