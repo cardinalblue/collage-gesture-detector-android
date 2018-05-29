@@ -38,6 +38,7 @@ import com.cardinalblue.gesture.PointerUtils.DELTA_RADIANS
 import com.cardinalblue.gesture.PointerUtils.DELTA_SCALE_X
 import com.cardinalblue.gesture.PointerUtils.DELTA_X
 import com.cardinalblue.gesture.PointerUtils.DELTA_Y
+import com.cardinalblue.gesture.rx.*
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxCompoundButton
 import io.reactivex.ObservableTransformer
@@ -89,7 +90,6 @@ class GestureDemoActivity : AppCompatActivity() {
                 })
         mDisposablesOnCreate.add(
             GestureEventObservable(gestureDetector = mGestureDetector,
-                                   // Optional
                                    threadVerifier = ThreadVerifierAndroidImpl())
                 .compose(onConsumeGestureEvent())
                 .subscribe())

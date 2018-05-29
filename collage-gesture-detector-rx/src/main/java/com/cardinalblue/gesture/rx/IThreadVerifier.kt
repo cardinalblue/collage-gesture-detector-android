@@ -20,7 +20,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-package com.cardinalblue.gesture
+package com.cardinalblue.gesture.rx
 
 interface IThreadVerifier {
 

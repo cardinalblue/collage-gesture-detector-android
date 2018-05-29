@@ -23,9 +23,12 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-package com.cardinalblue.gesture
+package com.cardinalblue.gesture.rx
 
 import android.graphics.PointF
+import com.cardinalblue.gesture.GestureDetector
+import com.cardinalblue.gesture.IAllGesturesListener
+import com.cardinalblue.gesture.MyMotionEvent
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable

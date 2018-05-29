@@ -13,11 +13,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode project.hasProperty('versionCode') ? project.property('versionCode').toInteger(): 999999
         versionName project.findProperty('versionName') ?: '99.99.99-dev'
-    }
 
-    lintOptions {
-        abortOnError false
-        disable "MissingTranslation"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -35,14 +32,10 @@ android {
     }
 }
 
-repositories {
-    google()
-    jcenter()
-    mavenCentral()
-}
-
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
+
+    api project(path: ':collage-gesture-detector')
 
     // Kotlin
     api rootProject.ext.dep.kotlinStdlibJre7
