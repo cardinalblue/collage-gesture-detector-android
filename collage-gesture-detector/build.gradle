@@ -39,6 +39,10 @@ dependencies {
 
     // Kotlin
     api rootProject.ext.dep.kotlinStdlibJre7
+
+    // RxJava
+    api rootProject.ext.dep.rxJava
+    api rootProject.ext.dep.rxAndroid
 }
 
 // Deployment script.
