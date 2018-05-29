@@ -1,10 +1,10 @@
 apply plugin: 'com.novoda.bintray-release'
 
 ext {
-    library_artifactId = 'rx-collage-gesture-detector'
+    library_artifactId = 'collage-gesture-detector-rx'
     library_groupId = 'com.cardinalblue.gesture.rx'
     library_version = '2.4.4'
-    library_desc = 'The gesture detector used by PicCollage editor.'
+    library_desc = 'The RxJava add-on to the collage-gesture-detector'
 
     site_url = 'https://github.com/cardinalblue/collage-gesture-detector-android/'
     vcs_url = 'https://github.com/cardinalblue/collage-gesture-detector-android.git'
@@ -15,7 +15,7 @@ publish {
     bintrayKey = System.getenv('BINTRAY_CBLUE_API_KEY')
 
     repoName = 'android'
-    uploadName = 'rx-collage-gesture-detector'
+    uploadName = 'collage-gesture-detector-rx'
 
     groupId = library_groupId
     artifactId = library_artifactId
