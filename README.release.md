@@ -3,7 +3,7 @@ Release Process
 
 ### Step 1
 
-Update the `library_version` configuration in the `collage-gesture-detector/deploy.gradle` file.
+Update the `library_version` configuration in both the `collage-gesture-detector/deploy.gradle` and `collage-gesture-detector-rx/deploy.gradle` file.
 
 For example:
 
@@ -31,6 +31,7 @@ Deploy to Bintray and JCenter by running the following command:
 
 ```
 ./gradlew clean build collage-gesture-detector:bintrayUpload
+./gradlew clean build collage-gesture-detector-rx:bintrayUpload
 ```
 
 ### Step 4
