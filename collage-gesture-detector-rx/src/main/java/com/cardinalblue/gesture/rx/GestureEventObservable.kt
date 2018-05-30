@@ -49,7 +49,6 @@ class GestureEventObservable(gestureDetector: GestureDetector,
 
         val d = DisposableListener(detector = mGestureDetector,
                                    observer = observer)
-
         observer.onSubscribe(d)
 
         mGestureDetector.tapGestureListener = d
@@ -77,7 +76,7 @@ class GestureEventObservable(gestureDetector: GestureDetector,
         override fun onActionBegin(event: MyMotionEvent,
                                    target: Any?,
                                    context: Any?) {
-            observer.onNext(TouchBeginEvent(event = event,
+            observer.onNext(TouchBeginEvent(rawEvent = event,
                                             target = target,
                                             context = context))
         }
@@ -85,7 +84,7 @@ class GestureEventObservable(gestureDetector: GestureDetector,
         override fun onActionEnd(event: MyMotionEvent,
                                  target: Any?,
                                  context: Any?) {
-            observer.onNext(TouchEndEvent(event = event,
+            observer.onNext(TouchEndEvent(rawEvent = event,
                                           target = target,
                                           context = context))
         }
@@ -93,18 +92,22 @@ class GestureEventObservable(gestureDetector: GestureDetector,
         override fun onSingleTap(event: MyMotionEvent,
                                  target: Any?,
                                  context: Any?) {
-            observer.onNext(TapEvent(event = event,
+            observer.onNext(TapEvent(rawEvent = event,
                                      target = target,
                                      context = context,
+                                     downX = event.downFocusX,
+                                     downY = event.downFocusY,
                                      taps = 1))
         }
 
         override fun onDoubleTap(event: MyMotionEvent,
                                  target: Any?,
                                  context: Any?) {
-            observer.onNext(TapEvent(event = event,
+            observer.onNext(TapEvent(rawEvent = event,
                                      target = target,
                                      context = context,
+                                     downX = event.downFocusX,
+                                     downY = event.downFocusY,
                                      taps = 2))
         }
 
@@ -112,34 +115,42 @@ class GestureEventObservable(gestureDetector: GestureDetector,
                                target: Any?,
                                context: Any?,
                                tapCount: Int) {
-            observer.onNext(TapEvent(event = event,
+            observer.onNext(TapEvent(rawEvent = event,
                                      target = target,
                                      context = context,
+                                     downX = event.downFocusX,
+                                     downY = event.downFocusY,
                                      taps = tapCount))
         }
 
         override fun onLongTap(event: MyMotionEvent,
                                target: Any?,
                                context: Any?) {
-            observer.onNext(LongTapEvent(event = event,
+            observer.onNext(LongTapEvent(rawEvent = event,
                                          target = target,
-                                         context = context))
+                                         context = context,
+                                         downX = event.downFocusX,
+                                         downY = event.downFocusY))
         }
 
         override fun onLongPress(event: MyMotionEvent,
                                  target: Any?,
                                  context: Any?) {
-            observer.onNext(LongPressEvent(event = event,
+            observer.onNext(LongPressEvent(rawEvent = event,
                                            target = target,
-                                           context = context))
+                                           context = context,
+                                           downX = event.downFocusX,
+                                           downY = event.downFocusY))
         }
 
         override fun onDragBegin(event: MyMotionEvent,
                                  target: Any?,
                                  context: Any?) {
-            observer.onNext(DragBeginEvent(event = event,
+            observer.onNext(DragBeginEvent(rawEvent = event,
                                            target = target,
-                                           context = context))
+                                           context = context,
+                                           startPointer = PointF(event.downFocusX,
+                                                                 event.downFocusY)))
         }
 
         override fun onDrag(event: MyMotionEvent,
@@ -147,7 +158,7 @@ class GestureEventObservable(gestureDetector: GestureDetector,
                             context: Any?,
                             startPointer: PointF,
                             stopPointer: PointF) {
-            observer.onNext(OnDragEvent(event = event,
+            observer.onNext(OnDragEvent(rawEvent = event,
                                         target = target,
                                         context = context,
                                         startPointer = startPointer,
@@ -159,7 +170,7 @@ class GestureEventObservable(gestureDetector: GestureDetector,
                                context: Any?,
                                startPointer: PointF,
                                stopPointer: PointF) {
-            observer.onNext(DragEndEvent(event = event,
+            observer.onNext(DragEndEvent(rawEvent = event,
                                          target = target,
                                          context = context,
                                          startPointer = startPointer,
@@ -173,7 +184,7 @@ class GestureEventObservable(gestureDetector: GestureDetector,
                                  stopPointer: PointF,
                                  velocityX: Float,
                                  velocityY: Float) {
-            observer.onNext(DragFlingEvent(event = event,
+            observer.onNext(DragFlingEvent(rawEvent = event,
                                            target = target,
                                            context = context,
                                            startPointer = startPointer,
@@ -186,7 +197,7 @@ class GestureEventObservable(gestureDetector: GestureDetector,
                                   target: Any?,
                                   context: Any?,
                                   startPointers: Array<PointF>) {
-            observer.onNext(PinchBeginEvent(event = event,
+            observer.onNext(PinchBeginEvent(rawEvent = event,
                                             target = target,
                                             context = context,
                                             startPointers = startPointers))
@@ -197,7 +208,7 @@ class GestureEventObservable(gestureDetector: GestureDetector,
                              context: Any?,
                              startPointers: Array<PointF>,
                              stopPointers: Array<PointF>) {
-            observer.onNext(OnPinchEvent(event = event,
+            observer.onNext(OnPinchEvent(rawEvent = event,
                                          target = target,
                                          context = context,
                                          startPointers = startPointers,
@@ -207,7 +218,7 @@ class GestureEventObservable(gestureDetector: GestureDetector,
         override fun onPinchFling(event: MyMotionEvent,
                                   target: Any?,
                                   context: Any?) {
-            observer.onNext(PinchFlingEvent(event = event,
+            observer.onNext(PinchFlingEvent(rawEvent = event,
                                             target = target,
                                             context = context))
         }
@@ -217,7 +228,7 @@ class GestureEventObservable(gestureDetector: GestureDetector,
                                 context: Any?,
                                 startPointers: Array<PointF>,
                                 stopPointers: Array<PointF>) {
-            observer.onNext(PinchEndEvent(event = event,
+            observer.onNext(PinchEndEvent(rawEvent = event,
                                           target = target,
                                           context = context,
                                           startPointers = startPointers,

@@ -37,7 +37,7 @@ sealed class GestureEvent
  * A event formation for the callback, [IGestureLifecycleListener.onActionBegin],
  * which represents the beginning of a touch.
  */
-data class TouchBeginEvent(val event: MyMotionEvent,
+data class TouchBeginEvent(val rawEvent: MyMotionEvent,
                            val target: Any?,
                            val context: Any?) : GestureEvent()
 
@@ -45,7 +45,7 @@ data class TouchBeginEvent(val event: MyMotionEvent,
  * A event formation for the callback, [IGestureLifecycleListener.onActionEnd],
  * which represents the end of a touch.
  */
-data class TouchEndEvent(val event: MyMotionEvent,
+data class TouchEndEvent(val rawEvent: MyMotionEvent,
                          val target: Any?,
                          val context: Any?) : GestureEvent()
 
@@ -56,26 +56,32 @@ data class TouchEndEvent(val event: MyMotionEvent,
  * [ITapGestureListener.onDoubleTap], [ITapGestureListener.onMoreTap],
  * which represent the family of tap.
  */
-data class TapEvent(val event: MyMotionEvent,
+data class TapEvent(val rawEvent: MyMotionEvent,
                     val target: Any?,
                     val context: Any?,
+                    val downX: Float,
+                    val downY: Float,
                     val taps: Int) : GestureEvent()
 
 /**
  * A event formation for these callbacks, [ITapGestureListener.onLongTap], which
  * represents a long-tap.
  */
-data class LongTapEvent(val event: MyMotionEvent,
+data class LongTapEvent(val rawEvent: MyMotionEvent,
                         val target: Any?,
-                        val context: Any?) : GestureEvent()
+                        val context: Any?,
+                        val downX: Float,
+                        val downY: Float) : GestureEvent()
 
 /**
  * A event formation for the callback, [ITapGestureListener.onLongPress], which
  * represents a long-press.
  */
-data class LongPressEvent(val event: MyMotionEvent,
+data class LongPressEvent(val rawEvent: MyMotionEvent,
                           val target: Any?,
-                          val context: Any?) : GestureEvent()
+                          val context: Any?,
+                          val downX: Float,
+                          val downY: Float) : GestureEvent()
 
 // Drag ///////////////////////////////////////////////////////////////////////
 
@@ -83,15 +89,16 @@ data class LongPressEvent(val event: MyMotionEvent,
  * A event formation for the callback, [IDragGestureListener.onDragBegin],
  * which represents the beginning of a drag.
  */
-data class DragBeginEvent(val event: MyMotionEvent,
+data class DragBeginEvent(val rawEvent: MyMotionEvent,
                           val target: Any?,
-                          val context: Any?) : GestureEvent()
+                          val context: Any?,
+                          val startPointer: PointF) : GestureEvent()
 
 /**
  * A event formation for the callback, [IDragGestureListener.onDrag], which
  * represents a on-going drag.
  */
-data class OnDragEvent(val event: MyMotionEvent,
+data class OnDragEvent(val rawEvent: MyMotionEvent,
                        val target: Any?,
                        val context: Any?,
                        val startPointer: PointF,
@@ -101,7 +108,7 @@ data class OnDragEvent(val event: MyMotionEvent,
  * A event formation for the callback, [IDragGestureListener.onDragFling], which
  * represents a drag-fling.
  */
-data class DragFlingEvent(val event: MyMotionEvent,
+data class DragFlingEvent(val rawEvent: MyMotionEvent,
                           val target: Any?,
                           val context: Any?,
                           val startPointer: PointF,
@@ -113,7 +120,7 @@ data class DragFlingEvent(val event: MyMotionEvent,
  * A event formation for the callback, [IDragGestureListener.onDragEnd], which
  * represents the end of a drag.
  */
-data class DragEndEvent(val event: MyMotionEvent,
+data class DragEndEvent(val rawEvent: MyMotionEvent,
                         val target: Any?,
                         val context: Any?,
                         val startPointer: PointF,
@@ -125,7 +132,7 @@ data class DragEndEvent(val event: MyMotionEvent,
  * A event formation for the callback, [IPinchGestureListener.onPinchBegin],
  * which represents the beginning of a pinch (pan).
  */
-data class PinchBeginEvent(val event: MyMotionEvent,
+data class PinchBeginEvent(val rawEvent: MyMotionEvent,
                            val target: Any?,
                            val context: Any?,
                            val startPointers: Array<PointF>) : GestureEvent() {
@@ -136,7 +143,7 @@ data class PinchBeginEvent(val event: MyMotionEvent,
 
         other as PinchBeginEvent
 
-        if (event != other.event) return false
+        if (rawEvent != other.rawEvent) return false
         if (target != other.target) return false
         if (context != other.context) return false
         if (!Arrays.equals(startPointers, other.startPointers)) return false
@@ -145,7 +152,7 @@ data class PinchBeginEvent(val event: MyMotionEvent,
     }
 
     override fun hashCode(): Int {
-        var result = event.hashCode()
+        var result = rawEvent.hashCode()
         result = 31 * result + (target?.hashCode() ?: 0)
         result = 31 * result + (context?.hashCode() ?: 0)
         result = 31 * result + Arrays.hashCode(startPointers)
@@ -157,7 +164,7 @@ data class PinchBeginEvent(val event: MyMotionEvent,
  * A event formation for the callback, [IPinchGestureListener.onPinch], which
  * represents a on-going pinch (pan).
  */
-data class OnPinchEvent(val event: MyMotionEvent,
+data class OnPinchEvent(val rawEvent: MyMotionEvent,
                         val target: Any?,
                         val context: Any?,
                         val startPointers: Array<PointF>,
@@ -169,7 +176,7 @@ data class OnPinchEvent(val event: MyMotionEvent,
 
         other as OnPinchEvent
 
-        if (event != other.event) return false
+        if (rawEvent != other.rawEvent) return false
         if (target != other.target) return false
         if (context != other.context) return false
         if (!Arrays.equals(startPointers, other.startPointers)) return false
@@ -179,7 +186,7 @@ data class OnPinchEvent(val event: MyMotionEvent,
     }
 
     override fun hashCode(): Int {
-        var result = event.hashCode()
+        var result = rawEvent.hashCode()
         result = 31 * result + (target?.hashCode() ?: 0)
         result = 31 * result + (context?.hashCode() ?: 0)
         result = 31 * result + Arrays.hashCode(startPointers)
@@ -192,7 +199,7 @@ data class OnPinchEvent(val event: MyMotionEvent,
  * A event formation for the callback, [IPinchGestureListener.onPinchFling], which
  * represents a pinch (pan) fling (or flick).
  */
-data class PinchFlingEvent(val event: MyMotionEvent,
+data class PinchFlingEvent(val rawEvent: MyMotionEvent,
                            val target: Any?,
                            val context: Any?) : GestureEvent()
 
@@ -200,7 +207,7 @@ data class PinchFlingEvent(val event: MyMotionEvent,
  * A event formation for the callback, [IPinchGestureListener.onPinchEnd], which
  * represents the end of a pinch (pan).
  */
-data class PinchEndEvent(val event: MyMotionEvent,
+data class PinchEndEvent(val rawEvent: MyMotionEvent,
                          val target: Any?,
                          val context: Any?,
                          val startPointers: Array<PointF>,
@@ -212,7 +219,7 @@ data class PinchEndEvent(val event: MyMotionEvent,
 
         other as PinchEndEvent
 
-        if (event != other.event) return false
+        if (rawEvent != other.rawEvent) return false
         if (target != other.target) return false
         if (context != other.context) return false
         if (!Arrays.equals(startPointers, other.startPointers)) return false
@@ -222,7 +229,7 @@ data class PinchEndEvent(val event: MyMotionEvent,
     }
 
     override fun hashCode(): Int {
-        var result = event.hashCode()
+        var result = rawEvent.hashCode()
         result = 31 * result + (target?.hashCode() ?: 0)
         result = 31 * result + (context?.hashCode() ?: 0)
         result = 31 * result + Arrays.hashCode(startPointers)
