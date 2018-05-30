@@ -2,7 +2,7 @@ apply plugin: 'com.novoda.bintray-release'
 
 ext {
     library_artifactId = 'collage-gesture-detector-rx'
-    library_groupId = 'com.cardinalblue.gesture.rx'
+    library_groupId = 'com.cardinalblue.gesture'
     library_version = '2.4.4'
     library_desc = 'The RxJava add-on to the collage-gesture-detector'
 
