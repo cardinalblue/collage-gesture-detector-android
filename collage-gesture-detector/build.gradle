@@ -11,13 +11,12 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode project.hasProperty('versionCode') ? project.property('versionCode').toInteger(): 999999
-        versionName project.findProperty('versionName') ?: '99.99.99-dev'
-    }
 
-    lintOptions {
-        abortOnError false
-        disable "MissingTranslation"
+        def givenVersionName = project.findProperty('versionName') ?: '99.99.99-dev'
+        versionCode generateVersionCode(givenVersionName)
+        versionName givenVersionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -53,6 +52,31 @@ dependencies {
     // Instrumentation tests.
     androidTestImplementation rootProject.ext.dep.testRunner
     androidTestImplementation rootProject.ext.dep.testEspressoCore
+}
+
+/**
+ * Extract major, minor, and patch version code and compose them to a version
+ * code.
+ *
+ * @param versionName the version name, could be like "99.99.99-dev"
+ * @return The version code
+ */
+private static Integer generateVersionCode(String versionName) {
+    // Filter postfix like "-dev"
+    final int postfixIndex = versionName.indexOf("-")
+    if (postfixIndex >= 0) {
+        versionName = versionName.substring(0, postfixIndex)
+    }
+    // Extract version integers
+    final String[] versions = versionName.split("\\.")
+    assert versionName.split('.') instanceof String[]
+    final int major = Integer.parseInt(versions[0])
+    final int minor = Integer.parseInt(versions[1])
+    final int patch = Integer.parseInt(versions[2])
+
+    // 00    00    00
+    // major minor patch
+    return major * 10000 + minor * 100 + patch
 }
 
 // Deployment script.
