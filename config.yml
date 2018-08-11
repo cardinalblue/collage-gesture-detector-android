@@ -3,9 +3,10 @@ jobs:
   build:
     working_directory: ~/code
     docker:
-      # Specify the version you desire here
-      - image: boyw165/docker-android
-    
+      - image: cardinalblue/docker-android-sdk:api-27-alpha
+
+    resource_class: large
+
     environment:
       # Customize the JVM maximum heap limit
       JVM_OPTS: -Xmx3200m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
@@ -16,34 +17,45 @@ jobs:
       - run:
           name: Git submodule
           command: git submodule update --init --recursive
-      
+
       - save_cache:
           paths:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}
-      
+
       - run:
           name: Download Dependencies
           command: |
             unset ANDROID_NDK_HOME
             bundle install
-      
+
       - run:
          name: Run Unit Tests
          command: bundle exec fastlane android test
-      
+
       - store_artifacts:
-          path: dirtyflag/build/reports
+          path: collage-gesture-detector/build/reports
+          destination: reports
+
+      - store_artifacts:
+          path: collage-gesture-detector-rx/build/reports
           destination: reports
 
       - store_test_results:
-          path: dirtyflag/build/test-results
-      
+          path: collage-gesture-detector/build/test-results
+
+      - store_test_results:
+          path: collage-gesture-detector-rx/build/test-results
+
       - run:
           name: Build library & delopy to Bintray/JCenter
           command: |
             bundle exec fastlane android smart_deploy
-      
+
       - store_artifacts:
-          path: dirtyflag/build/outputs/aar/
+          path: collage-gesture-detector/build/outputs/aar/
+          destination: aar
+
+      - store_artifacts:
+          path: collage-gesture-detector-rx/build/outputs/aar/
           destination: aar

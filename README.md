@@ -1,6 +1,10 @@
 Collage Gesture Detector
 ===
 
+[![CircleCI](https://circleci.com/gh/cardinalblue/collage-gesture-detector-android.svg?style=svg)](https://circleci.com/gh/cardinalblue/collage-gesture-detector-android)
+[ ![Download](https://api.bintray.com/packages/cblue/android/collage-gesture-detector/images/download.svg) ](https://bintray.com/cblue/android/collage-gesture-detector/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/cblue/android/collage-gesture-detector-rx/images/download.svg) ](https://bintray.com/cblue/android/collage-gesture-detector-rx/_latestVersion)
+
 ![demo](docs/demo.gif)
 
 The system built-in `GestureDetector` has no concept of gesture lifecycle. We enclose gesture callbacks with lifecycle so that you could something in the **onActionBegin** and do anothing in the **onActionEnd** callbacks.
