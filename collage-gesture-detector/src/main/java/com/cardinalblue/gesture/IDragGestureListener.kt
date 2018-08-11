@@ -25,7 +25,7 @@ package com.cardinalblue.gesture
 import android.graphics.PointF
 import android.view.MotionEvent
 
-interface IDragGestureListener : IGestureLifecycleListener {
+interface IDragGestureListener {
 
     // Drag ///////////////////////////////////////////////////////////////
 

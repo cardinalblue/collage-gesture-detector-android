@@ -24,11 +24,11 @@ package com.cardinalblue.gesture
 
 interface IGestureLifecycleListener {
 
-    fun onActionBegin(event: MyMotionEvent,
-                      target: Any?,
-                      context: Any?)
+    fun onTouchBegin(event: MyMotionEvent,
+                     target: Any?,
+                     context: Any?)
 
-    fun onActionEnd(event: MyMotionEvent,
-                    target: Any?,
-                    context: Any?)
+    fun onTouchEnd(event: MyMotionEvent,
+                   target: Any?,
+                   context: Any?)
 }

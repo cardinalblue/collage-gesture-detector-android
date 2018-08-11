@@ -34,7 +34,7 @@ sealed class GestureEvent
 // Lifecycle //////////////////////////////////////////////////////////////////
 
 /**
- * A event formation for the callback, [IGestureLifecycleListener.onActionBegin],
+ * A event formation for the callback, [IGestureLifecycleListener.onTouchBegin],
  * which represents the beginning of a touch.
  */
 data class TouchBeginEvent(val rawEvent: MyMotionEvent,
@@ -42,7 +42,7 @@ data class TouchBeginEvent(val rawEvent: MyMotionEvent,
                            val context: Any?) : GestureEvent()
 
 /**
- * A event formation for the callback, [IGestureLifecycleListener.onActionEnd],
+ * A event formation for the callback, [IGestureLifecycleListener.onTouchEnd],
  * which represents the end of a touch.
  */
 data class TouchEndEvent(val rawEvent: MyMotionEvent,

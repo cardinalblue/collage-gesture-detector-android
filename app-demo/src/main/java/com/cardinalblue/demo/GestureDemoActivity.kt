@@ -141,10 +141,10 @@ class GestureDemoActivity : AppCompatActivity() {
                 when (event) {
                     is TouchBeginEvent -> {
                         printLog("--------------")
-                        printLog("⬇onActionBegin")
+                        printLog("⬇onTouchBegin")
                     }
                     is TouchEndEvent -> {
-                        printLog("⬆onActionEnd")
+                        printLog("⬆onTouchEnd")
 
                         mCanvasView.resetDemo()
                     }

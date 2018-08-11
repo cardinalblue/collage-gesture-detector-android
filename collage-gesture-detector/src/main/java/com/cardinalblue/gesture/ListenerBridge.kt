@@ -23,6 +23,7 @@
 package com.cardinalblue.gesture
 
 import android.graphics.PointF
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * The bridge manages the dispatch of [ITapGestureListener], [IDragGestureListener],
@@ -33,48 +34,83 @@ import android.graphics.PointF
  */
 internal class ListenerBridge : IAllGesturesListener {
 
-    internal var tapEnabled: Boolean = false
-    internal var longPressEnabled: Boolean = false
-    internal var tapListener: ITapGestureListener? = null
-        set(value) {
-            field = value
+    private val lifecycleListeners = CopyOnWriteArrayList<IGestureLifecycleListener>()
 
-            tapEnabled = value != null
-            longPressEnabled = value != null
-        }
-
-    internal var dragEnabled: Boolean = false
-    internal var dragListener: IDragGestureListener? = null
-        set(value) {
-            field = value
-            dragEnabled = value != null
-        }
-
-    internal var pinchEnabled: Boolean = false
-    internal var pinchListener: IPinchGestureListener? = null
-        set(value) {
-            field = value
-            pinchEnabled = value != null
-        }
-
-    override fun onActionBegin(event: MyMotionEvent,
-                               target: Any?,
-                               context: Any?) {
-        when {
-            tapListener != null -> tapListener?.onActionBegin(event, target, context)
-            dragListener != null -> dragListener?.onActionBegin(event, target, context)
-            pinchListener != null -> pinchListener?.onActionBegin(event, target, context)
-        }
+    fun addLifecycleListener(listener: IGestureLifecycleListener) {
+        lifecycleListeners.add(listener)
     }
 
-    override fun onActionEnd(event: MyMotionEvent,
-                             target: Any?,
-                             context: Any?) {
-        when {
-            tapListener != null -> tapListener?.onActionEnd(event, target, context)
-            dragListener != null -> dragListener?.onActionEnd(event, target, context)
-            pinchListener != null -> pinchListener?.onActionEnd(event, target, context)
-        }
+    fun removeLifecycleListener(listener: IGestureLifecycleListener) {
+        lifecycleListeners.remove(listener)
+    }
+
+    fun removeAllLifecycleGestureListeners() {
+        lifecycleListeners.clear()
+    }
+
+    internal var tapEnabled: Boolean = false
+    internal var longPressEnabled: Boolean = false
+    private val tapListeners = CopyOnWriteArrayList<ITapGestureListener>()
+
+    fun addTapGestureListener(listener: ITapGestureListener) {
+        tapListeners.add(listener)
+
+        tapEnabled = true
+        longPressEnabled = true
+    }
+
+    fun removeTapGestureListener(listener: ITapGestureListener) {
+        tapListeners.remove(listener)
+    }
+
+    fun removeAllTapGestureListeners() {
+        tapListeners.clear()
+    }
+
+    internal var dragEnabled: Boolean = false
+    private val dragListeners = CopyOnWriteArrayList<IDragGestureListener>()
+
+    fun addDragGestureListener(listener: IDragGestureListener) {
+        dragListeners.add(listener)
+
+        dragEnabled = true
+    }
+
+    fun removeDragGestureListener(listener: IDragGestureListener) {
+        dragListeners.remove(listener)
+    }
+
+    fun removeAllDragGestureListeners() {
+        dragListeners.clear()
+    }
+
+    internal var pinchEnabled: Boolean = false
+    private val pinchListeners = CopyOnWriteArrayList<IPinchGestureListener>()
+
+    fun addPinchGestureListener(listener: IPinchGestureListener) {
+        pinchListeners.add(listener)
+
+        pinchEnabled = true
+    }
+
+    fun removePinchGestureListener(listener: IPinchGestureListener) {
+        pinchListeners.remove(listener)
+    }
+
+    fun removeAllPinchGestureListeners() {
+        pinchListeners.clear()
+    }
+
+    override fun onTouchBegin(event: MyMotionEvent,
+                              target: Any?,
+                              context: Any?) {
+        lifecycleListeners.forEach { it.onTouchBegin(event, target, context) }
+    }
+
+    override fun onTouchEnd(event: MyMotionEvent,
+                            target: Any?,
+                            context: Any?) {
+        lifecycleListeners.forEach { it.onTouchEnd(event, target, context) }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -84,14 +120,14 @@ internal class ListenerBridge : IAllGesturesListener {
                              target: Any?,
                              context: Any?) {
         if (!tapEnabled) return
-        tapListener?.onSingleTap(event, target, context)
+        tapListeners.forEach { it.onSingleTap(event, target, context) }
     }
 
     override fun onDoubleTap(event: MyMotionEvent,
                              target: Any?,
                              context: Any?) {
         if (!tapEnabled) return
-        tapListener?.onDoubleTap(event, target, context)
+        tapListeners.forEach { it.onDoubleTap(event, target, context) }
     }
 
     override fun onMoreTap(event: MyMotionEvent,
@@ -99,21 +135,21 @@ internal class ListenerBridge : IAllGesturesListener {
                            context: Any?,
                            tapCount: Int) {
         if (!tapEnabled) return
-        tapListener?.onMoreTap(event, target, context, tapCount)
+        tapListeners.forEach { it.onMoreTap(event, target, context, tapCount) }
     }
 
     override fun onLongTap(event: MyMotionEvent,
                            target: Any?,
                            context: Any?) {
         if (!longPressEnabled || !tapEnabled) return
-        tapListener?.onLongTap(event, target, context)
+        tapListeners.forEach { it.onLongTap(event, target, context) }
     }
 
     override fun onLongPress(event: MyMotionEvent,
                              target: Any?,
                              context: Any?) {
         if (!longPressEnabled) return
-        tapListener?.onLongPress(event, target, context)
+        tapListeners.forEach { it.onLongPress(event, target, context) }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -128,7 +164,7 @@ internal class ListenerBridge : IAllGesturesListener {
         ifHandleDrag = dragEnabled
         if (!ifHandleDrag) return
 
-        dragListener?.onDragBegin(event, target, context)
+        dragListeners.forEach { it.onDragBegin(event, target, context) }
     }
 
     override fun onDrag(event: MyMotionEvent,
@@ -138,8 +174,8 @@ internal class ListenerBridge : IAllGesturesListener {
                         stopPointer: PointF) {
         if (!ifHandleDrag) return
 
-        dragListener?.onDrag(event, target, context,
-                             startPointer, stopPointer)
+        dragListeners.forEach { it.onDrag(event, target, context,
+                                          startPointer, stopPointer) }
     }
 
     override fun onDragFling(event: MyMotionEvent,
@@ -151,9 +187,9 @@ internal class ListenerBridge : IAllGesturesListener {
                              velocityY: Float) {
         if (!ifHandleDrag) return
 
-        dragListener?.onDragFling(event, target, context,
-                                  startPointer, stopPointer,
-                                  velocityX, velocityY)
+        dragListeners.forEach { it.onDragFling(event, target, context,
+                                               startPointer, stopPointer,
+                                               velocityX, velocityY) }
     }
 
     override fun onDragEnd(event: MyMotionEvent,
@@ -163,8 +199,8 @@ internal class ListenerBridge : IAllGesturesListener {
                            stopPointer: PointF) {
         if (!ifHandleDrag) return
 
-        dragListener?.onDragEnd(event, target, context,
-                                startPointer, stopPointer)
+        dragListeners.forEach { it.onDragEnd(event, target, context,
+                                             startPointer, stopPointer) }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -180,8 +216,8 @@ internal class ListenerBridge : IAllGesturesListener {
         ifHandlePinch = pinchEnabled
         if (!ifHandlePinch) return
 
-        pinchListener?.onPinchBegin(event, target, context,
-                                    startPointers)
+        pinchListeners.forEach { it.onPinchBegin(event, target, context,
+                                                 startPointers) }
     }
 
     override fun onPinch(event: MyMotionEvent,
@@ -191,8 +227,8 @@ internal class ListenerBridge : IAllGesturesListener {
                          stopPointers: Array<PointF>) {
         if (!ifHandlePinch) return
 
-        pinchListener?.onPinch(event, target, context,
-                               startPointers, stopPointers)
+        pinchListeners.forEach { it.onPinch(event, target, context,
+                                            startPointers, stopPointers) }
     }
 
     override fun onPinchFling(event: MyMotionEvent,
@@ -200,7 +236,7 @@ internal class ListenerBridge : IAllGesturesListener {
                               context: Any?) {
         if (!ifHandlePinch) return
 
-        pinchListener?.onPinchFling(event, target, context)
+        pinchListeners.forEach { it.onPinchFling(event, target, context) }
     }
 
     override fun onPinchEnd(event: MyMotionEvent,
@@ -210,7 +246,7 @@ internal class ListenerBridge : IAllGesturesListener {
                             stopPointers: Array<PointF>) {
         if (!ifHandlePinch) return
 
-        pinchListener?.onPinchEnd(event, target, context,
-                                  startPointers, stopPointers)
+        pinchListeners.forEach { it.onPinchEnd(event, target, context,
+                                               startPointers, stopPointers) }
     }
 }

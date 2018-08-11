@@ -51,9 +51,10 @@ class GestureEventObservable(gestureDetector: GestureDetector,
                                    observer = observer)
         observer.onSubscribe(d)
 
-        mGestureDetector.tapGestureListener = d
-        mGestureDetector.dragGestureListener = d
-        mGestureDetector.pinchGestureListener = d
+        mGestureDetector.addLifecycleListener(d)
+        mGestureDetector.addTapGestureListener(d)
+        mGestureDetector.addDragGestureListener(d)
+        mGestureDetector.addPinchGestureListener(d)
     }
 
     private class DisposableListener(val detector: GestureDetector,
@@ -68,22 +69,23 @@ class GestureEventObservable(gestureDetector: GestureDetector,
         }
 
         override fun dispose() {
-            detector.tapGestureListener = null
-            detector.dragGestureListener = null
-            detector.pinchGestureListener = null
+            detector.removeLifecycleListener(this)
+            detector.removeTapGestureListener(this)
+            detector.removeDragGestureListener(this)
+            detector.removePinchGestureListener(this)
         }
 
-        override fun onActionBegin(event: MyMotionEvent,
-                                   target: Any?,
-                                   context: Any?) {
+        override fun onTouchBegin(event: MyMotionEvent,
+                                  target: Any?,
+                                  context: Any?) {
             observer.onNext(TouchBeginEvent(rawEvent = event,
                                             target = target,
                                             context = context))
         }
 
-        override fun onActionEnd(event: MyMotionEvent,
-                                 target: Any?,
-                                 context: Any?) {
+        override fun onTouchEnd(event: MyMotionEvent,
+                                target: Any?,
+                                context: Any?) {
             observer.onNext(TouchEndEvent(rawEvent = event,
                                           target = target,
                                           context = context))

@@ -30,6 +30,7 @@ import android.os.Message
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import com.cardinalblue.gesture.state.BaseGestureState
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Creates a GestureDetector with the supplied listener.
@@ -164,43 +165,74 @@ class GestureDetector(uiLooper: Looper,
 //        mDragState.setIsTransitionToMultiTouchEnabled(true)
 //    }
 
+    fun addLifecycleListener(listener: IGestureLifecycleListener) {
+        getListenerBridge().addLifecycleListener(listener)
+    }
+
+    fun removeLifecycleListener(listener: IGestureLifecycleListener) {
+        getListenerBridge().removeLifecycleListener(listener)
+    }
+
     var tapGestureEnabled: Boolean
         get() = getListenerBridge().tapEnabled
         set(value) {
             getListenerBridge().tapEnabled = value
         }
+
     var longPressGestureEnabled: Boolean
         get() = getListenerBridge().longPressEnabled
         set(value) {
             getListenerBridge().longPressEnabled = value
         }
-    var tapGestureListener: ITapGestureListener?
-        get() = getListenerBridge().tapListener
-        set(value) {
-            getListenerBridge().tapListener = value
-        }
+
+    fun addTapGestureListener(listener: ITapGestureListener) {
+        getListenerBridge().addTapGestureListener(listener)
+    }
+
+    fun removeTapGestureListener(listener: ITapGestureListener) {
+        getListenerBridge().removeTapGestureListener(listener)
+    }
+
+    fun removeAllTapGestureListeners() {
+        getListenerBridge().removeAllTapGestureListeners()
+    }
 
     var dragGestureEnabled: Boolean
         get() = getListenerBridge().dragEnabled
         set(value) {
             getListenerBridge().dragEnabled = value
         }
-    var dragGestureListener: IDragGestureListener?
-        get() = getListenerBridge().dragListener
-        set(value) {
-            getListenerBridge().dragListener = value
-        }
+
+    fun addDragGestureListener(listener: IDragGestureListener) {
+        getListenerBridge().addDragGestureListener(listener)
+    }
+
+    fun removeDragGestureListener(listener: IDragGestureListener) {
+        getListenerBridge().removeDragGestureListener(listener)
+    }
+
+    fun removeAllDragGestureListeners() {
+        getListenerBridge().removeAllDragGestureListeners()
+    }
 
     var pinchGestureEnabled: Boolean
         get() = getListenerBridge().pinchEnabled
         set(value) {
             getListenerBridge().pinchEnabled = value
         }
-    var pinchGestureListener: IPinchGestureListener?
-        get() = getListenerBridge().pinchListener
-        set(value) {
-            getListenerBridge().pinchListener = value
-        }
+    var pinchGestureListeners = CopyOnWriteArrayList<IPinchGestureListener>()
+
+    fun addPinchGestureListener(listener: IPinchGestureListener) {
+        getListenerBridge().addPinchGestureListener(listener)
+    }
+
+    fun removePinchGestureListener(listener: IPinchGestureListener) {
+        getListenerBridge().removePinchGestureListener(listener)
+    }
+
+    fun removeAllPinchGestureListeners() {
+        getListenerBridge().removeAllPinchGestureListeners()
+    }
 
     /**
      * Analyzes the given motion event and if applicable triggers the

@@ -22,7 +22,7 @@
 
 package com.cardinalblue.gesture
 
-interface ITapGestureListener : IGestureLifecycleListener {
+interface ITapGestureListener {
 
     fun onSingleTap(event: MyMotionEvent,
                     target: Any?,

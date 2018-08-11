@@ -42,9 +42,9 @@ class IdleState(owner: IGestureStateOwner)
                          context: Any?) {
         println("${StateConst.TAG} enter ${javaClass.simpleName}")
 
-        owner.listener?.onActionEnd(obtainMyMotionEvent(event),
-                                    target,
-                                    context)
+        owner.listener?.onTouchEnd(obtainMyMotionEvent(event),
+                                   target,
+                                   context)
     }
 
     override fun onDoing(event: MotionEvent,
@@ -73,9 +73,9 @@ class IdleState(owner: IGestureStateOwner)
                         context: Any?) {
         println("${StateConst.TAG} exit ${javaClass.simpleName}")
 
-        owner.listener?.onActionBegin(obtainMyMotionEvent(event),
-                                      target,
-                                      context)
+        owner.listener?.onTouchBegin(obtainMyMotionEvent(event),
+                                     target,
+                                     context)
     }
 
     override fun onHandleMessage(msg: Message): Boolean {

@@ -22,6 +22,7 @@
 
 package com.cardinalblue.gesture
 
-interface IAllGesturesListener : ITapGestureListener,
+interface IAllGesturesListener : IGestureLifecycleListener,
+                                 ITapGestureListener,
                                  IDragGestureListener,
                                  IPinchGestureListener

@@ -24,7 +24,7 @@ package com.cardinalblue.gesture
 
 import android.graphics.PointF
 
-interface IPinchGestureListener : IGestureLifecycleListener {
+interface IPinchGestureListener {
 
     fun onPinchBegin(event: MyMotionEvent,
                      target: Any?,
