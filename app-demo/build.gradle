@@ -8,8 +8,10 @@ android {
 
     defaultConfig {
         applicationId "com.cardinalblue.demo"
-        minSdkVersion 16
+
+        minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+
         versionCode 1
         versionName "1.0"
 
@@ -40,7 +42,6 @@ repositories {
     google()
     jcenter()
     mavenCentral()
-    maven { url "https://maven.fabric.io/public" }
 }
 
 dependencies {
