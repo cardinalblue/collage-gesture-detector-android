@@ -38,7 +38,7 @@ dependencies {
     api project(path: ':collage-gesture-detector')
 
     // Kotlin
-    api rootProject.ext.dep.kotlinStdlibJre7
+    api rootProject.ext.dep.kotlinStdlibJdk7
 
     // RxJava
     api rootProject.ext.dep.rxJava

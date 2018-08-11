@@ -55,7 +55,7 @@ dependencies {
     implementation rootProject.ext.dep.supportMultidex
 
     // Kotlin STD Library.
-    implementation rootProject.ext.dep.kotlinStdlibJre7
+    implementation rootProject.ext.dep.kotlinStdlibJdk7
 
 //    // Dependency Injection.
 //    compile rootProject.ext.dep.dagger2

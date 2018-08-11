@@ -7,7 +7,7 @@ ext {
     targetCompatibilityVersion = JavaVersion.VERSION_1_7
 
     SUPPORT_LIB_VER = '27.1.1'
-    KOTLIN_VER = '1.2.21'
+    KOTLIN_VER = '1.2.60'
     RX_BINDING_VER = '2.1.1'
     DAGGER2_VER = '2.13'
     BOLTS_VER = '1.4.0'
@@ -62,9 +62,10 @@ ext {
             // Kotlin.
             kotlinGradle              : "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VER",
             kotlinStdlib              : "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VER",
-            kotlinStdlibJre7          : "org.jetbrains.kotlin:kotlin-stdlib-jre7:$KOTLIN_VER",
-            kotlinStdlibJre8          : "org.jetbrains.kotlin:kotlin-stdlib-jre8:$KOTLIN_VER",
+            kotlinStdlibJdk7          : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$KOTLIN_VER",
+            kotlinStdlibJdk8          : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$KOTLIN_VER",
             kotlinUnitTest            : "org.jetbrains.kotlin:kotlin-test-junit:$KOTLIN_VER",
+            kotlinCoroutinesCore      : 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21',
             // Facebook.
             facebookShare             : 'com.facebook.android:facebook-share:4.27.0',
             facebookLogin             : 'com.facebook.android:facebook-login:4.27.0',
@@ -76,7 +77,7 @@ ext {
             fresco                    : "com.facebook.fresco:fresco:1.8.1",
             glide                     : 'com.github.bumptech.glide:glide:4.3.1',
             glideAnnotation           : 'com.github.bumptech.glide:compiler:4.3.1',
-            lottie                    : 'com.airbnb.android:lottie:2.1.0',
+            lottie                    : 'com.airbnb.android:lottie:2.5.5',
             adobeFoundation           : 'com.adobe.creativesdk.foundation:auth:0.9.1251',
             adobeImage                : 'com.adobe.creativesdk:image:4.8.3',
             // RxJava.
@@ -88,8 +89,6 @@ ext {
             rxBindingCompat           : "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:${RX_BINDING_VER}",
             rxBindingRecyclerViewV7   : "com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:${RX_BINDING_VER}",
             rxPermissions             : 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar',
-            // Gesture
-            collageGestureDetector    : 'com.cardinalblue.gesture:collage-gesture-detector:2.4.0',
             // View Binding.
             butterKnife               : "com.jakewharton:butterknife:${BUTTER_KNIFE_VER}",
             butterKnifeCompiler       : "com.jakewharton:butterknife-compiler:${BUTTER_KNIFE_VER}",
@@ -103,12 +102,15 @@ ext {
             // Leak Detection.
             leakcanary                : 'com.squareup.leakcanary:leakcanary-android:1.5.1',
             leakcanaryNoOp            : 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1',
+            // Logger
+            timber                    : 'com.jakewharton.timber:timber:4.7.1',
             // IO, Cache
             diskLruCache              : 'com.jakewharton:disklrucache:2.0.2',
             // Custom View.
             airbnbEpoxy               : 'com.airbnb.android:epoxy:2.7.3',
             airbnbEpoxyAnnotation     : 'com.airbnb.android:epoxy-processor:2.7.3',
             discreteScrollView        : 'com.yarolegovich:discrete-scrollview:1.4.4',
+            snappyRecyclerView        : 'com.github.dan-td:snappy-recyclerview:1.0.2',
             // ASYNC.
             bolts                     : "com.parse.bolts:bolts-tasks:$BOLTS_VER",
             // BUS.
