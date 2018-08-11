@@ -1,0 +1,87 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    request = get_request_from_git
+    if request.empty?
+      next
+    else
+      is_merged_commit = %r{^Merge pull request}i.match(request.first) ? true : false
+      is_skip_test = %r{--no-test}.match(request.first) ? true : false
+
+      # Run unit-test except for "Merge pull request" commit.
+      if is_merged_commit || is_skip_test
+        puts "Skip because either...
+            is_merged_commit=#{is_merged_commit},
+            is_skip_test=#{is_skip_test}"
+        next
+      end
+
+      # Unit tests
+      gradle(task: "collage-gesture-detector:test",
+             build_type: 'Debug')
+      gradle(task: "collage-gesture-detector-rx:test",
+             build_type: 'Debug')
+
+      # ProGuard test
+      gradle(task: 'collage-gesture-detector:assemble',
+             build_type: 'Debug',
+             properties: {
+               'testProguard' => 'true',
+             })
+      gradle(task: 'collage-gesture-detector-rx:assemble',
+             build_type: 'Debug',
+             properties: {
+               'testProguard' => 'true',
+             })
+    end
+  end
+
+  desc "Deploy a new version to the Bintray/JCenter"
+  lane :smart_deploy do
+    request = get_request_from_git
+    match_data = %r{bump (?<version_name>(\d+\.)?(\d+\.)?(\*|\d+))}i.match(request.first)
+    version_name = match_data[:version_name] if match_data
+
+    if version_name
+      gradle(task: "clean build collage-gesture-detector:bintrayUpload",
+             properties: {
+               'versionName' => version_name,
+             })
+      gradle(task: "clean build collage-gesture-detector-rx:bintrayUpload",
+             properties: {
+               'versionName' => version_name,
+             })
+      # Git tag
+      sh("git tag v#{version_name} && git push origin #{git_branch} --tags")
+    end
+  end
+
+  desc 'Get git tag on the current commit'
+  private_lane :get_request_from_git do
+    request = sh('git log -1 --pretty=%B | cat').split("\n")
+    puts "The request from git is #{request}"
+
+    request
+  end
+
+  private_lane :version_name_to_version_code do
+
+  end
+end

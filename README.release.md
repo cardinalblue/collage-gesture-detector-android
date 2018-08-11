@@ -1,21 +1,26 @@
 Release Process
 ===
 
-### Step 1
+Automation with CI
+---
 
-Update the `library_version` configuration in both the `collage-gesture-detector/deploy.gradle` and `collage-gesture-detector-rx/deploy.gradle` file.
-
-For example:
+CI server will look into the git comment, and smartly deploy the library if it's a release comment.
 
 ```
-ext {
-    library_version = 'x.x.x'
-}
+git commit --allow-empty -m "bump x.x.x" && git push origin master
 ```
 
-Then commit the change with message like, `Bump to x.x.x`
+Manually
+---
 
-### Step 2
+Deploy to Bintray and JCenter by running the following command:
+
+```
+# Gesture detctor
+./gradlew clean build collage-gesture-detector:bintrayUpload -PversionName="x.x.x"
+# Gesture detector with RxJava support
+./gradlew clean build collage-gesture-detector-rx:bintrayUpload -PversionName="x.x.x"
+```
 
 Tag and submit the tag to GitHub, for example:
 
@@ -24,16 +29,3 @@ git tag vX.X.X
 git push origin master --tag
 
 ```
-
-### Step 3
-
-Deploy to Bintray and JCenter by running the following command:
-
-```
-./gradlew clean build collage-gesture-detector:bintrayUpload
-./gradlew clean build collage-gesture-detector-rx:bintrayUpload
-```
-
-### Step 4
-
-Once the new release is updated to the GitHub, go to the release page and update the change log of the new release manually.
