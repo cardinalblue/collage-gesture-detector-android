@@ -39,7 +39,7 @@ Usage
 
 ### Without RxJava
 
-- Instantiate the detector instance
+Instantiate the detector instance
 
 ```kotlin
 private val mGestureDetector by lazy {
@@ -52,20 +52,31 @@ private val mGestureDetector by lazy {
 }
 ```
 
-- Register the listener
+Register the listener
 
 ```kotlin
 // Gesture listener.
-mGestureDetector.tapGestureListener = ...
-mGestureDetector.dragGestureListener = ...
-mGestureDetector.pinchGestureListener = ...
+mGestureDetector.addLifecycleListener(...)
+mGestureDetector.addTapGestureListener(...)
+mGestureDetector.addDragGestureListener(...)
+mGestureDetector.addPinchGestureListener(...)
 ```
 
-- Add to your view's onTouchEvent()
+Add to your view's onTouchEvent()
 
 ```kotlin
 override fun onTouchEvent(event: MotionEvent): Boolean {
     return mGestureDetector.onTouchEvent(event, null, null)
+}
+```
+
+If you use flat view hierarchy designed by yourself, the 2nd and 3rd arguements are useful for you. For example:
+
+```kotlin
+override fun onTouchEvent(event: MotionEvent): Boolean {
+    return mGestureDetector.onTouchEvent(event, 
+                                         someTouchingObject, 
+                                         payloadOrContext)
 }
 ```
 
@@ -90,7 +101,7 @@ implementation 'com.cardinalblue.gesture:collage-gesture-detector-rx:?.?.?'
 
 ```kotlin
 GestureEventObservable(gestureDetector = ${YOUR_COLLAGE_GESTURE_DETECTOR})
-    .subscrible { java.awt.Event ->
+    .subscrible { event ->
         // Handle event... 
     }
 ```
