@@ -16,14 +16,14 @@ Add this into your dependencies block.
 
 ```
 // For gradle < 3.0
-compile 'com.cardinalblue.gesture:collage-gesture-detector:3.1.1'
+compile 'com.cardinalblue.gesture:collage-gesture-detector:3.1.2'
 // Optional Rx 
-compile 'com.cardinalblue.gesture:collage-gesture-detector-rx:3.1.1'
+compile 'com.cardinalblue.gesture:collage-gesture-detector-rx:3.1.2'
 
 // For gradle >= 3.0, use "api" or "implementation"
-implementation 'com.cardinalblue.gesture:collage-gesture-detector:3.1.1'
+implementation 'com.cardinalblue.gesture:collage-gesture-detector:3.1.2'
 // Optional Rx 
-implementation 'com.cardinalblue.gesture:collage-gesture-detector-rx:3.1.1'
+implementation 'com.cardinalblue.gesture:collage-gesture-detector-rx:3.1.2'
 ```
 
 If you cannot find the package, add this to your gradle repository
