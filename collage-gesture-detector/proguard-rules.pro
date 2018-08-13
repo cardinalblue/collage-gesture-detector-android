@@ -16,9 +16,21 @@
 #   public *;
 #}
 
+# Preserve all annotations.
+-keepattributes **
+
 -keep class com.cardinalblue.gesture.GestureDetector {
+    protected *;
     public *;
 }
 -keep class com.cardinalblue.gesture.GesturePolicy {
+    protected *;
     public *;
+}
+-keep class com.cardinalblue.gesture.PointerUtils {
+    protected *;
+    public *;
+}
+-keep interface com.cardinalblue.gesture.*Listener {
+    *;
 }
