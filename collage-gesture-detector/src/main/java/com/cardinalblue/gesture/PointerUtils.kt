@@ -41,6 +41,7 @@ object PointerUtils {
      * Get an array of [tx, ty, sx, sy, rotation] sequence representing
      * the transformation from the given event.
      */
+    @JvmStatic
     fun getTransformFromPointers(startPointers: Array<PointF>,
                                  stopPointers: Array<PointF>): FloatArray {
         if (startPointers.size < 2 || stopPointers.size < 2) {
@@ -115,6 +116,7 @@ object PointerUtils {
         return transform
     }
 
+    @JvmStatic
     fun getFocusIndexFromId(event: MotionEvent, targetId: Int): Int {
         for (i in 0 until event.pointerCount) {
             val id = event.getPointerId(i)

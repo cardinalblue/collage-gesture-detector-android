@@ -31,6 +31,10 @@
     protected *;
     public *;
 }
+-keep class com.cardinalblue.gesture.MyMotionEvent {
+    protected *;
+    public *;
+}
 -keep interface com.cardinalblue.gesture.*Listener {
     *;
 }
