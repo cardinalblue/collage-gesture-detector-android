@@ -20,6 +20,9 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+# Preserve all annotations.
+-keepattributes **
+
 -keep class com.cardinalblue.gesture.rx.** {
     protected *;
     public *;
