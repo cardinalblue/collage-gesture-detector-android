@@ -77,15 +77,11 @@ abstract class BaseGestureState internal constructor(
 
         return if (pointerUp) {
             ShadowMotionEvent(event.actionMasked,
-                              downXs, downYs,
-                              true,
-                              event.getX(upIndex),
-                              event.getY(upIndex))
+                              downXs, downYs)
 
         } else {
             ShadowMotionEvent(event.actionMasked,
-                              downXs, downYs,
-                              false, 0f, 0f)
+                              downXs, downYs)
         }
     }
 

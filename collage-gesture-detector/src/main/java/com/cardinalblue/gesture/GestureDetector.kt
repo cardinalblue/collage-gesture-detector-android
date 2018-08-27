@@ -134,37 +134,6 @@ class GestureDetector(uiLooper: Looper,
         mPendingPolicy = policy
     }
 
-//    fun setIsTapEnabled(enabled: Boolean) {
-//        mSingleFingerPressingState.isTapEnabled = enabled
-//    }
-//
-//    /**
-//     * Set whether long-press is enabled, if this is enabled when a user
-//     * presses and holds down you get a long-press event and nothing further.
-//     * If it's disabled the user can press and hold down and then later
-//     * moved their finger and you will get scroll events. By default
-//     * long-press is enabled.
-//     *
-//     * @param enabled whether long-press should be enabled.
-//     */
-//    fun setIsLongPressEnabled(enabled: Boolean) {
-//        mSingleFingerPressingState.isTapEnabled = enabled
-//    }
-//
-//    fun setIsMultitouchEnabled(enabled: Boolean) {
-//        mSingleFingerPressingState.setIsTransitionToMultiTouchEnabled(enabled)
-//        mIdleState.setIsTransitionToMultiTouchEnabled(enabled)
-//        mDragState.setIsTransitionToMultiTouchEnabled(enabled)
-//    }
-//
-//    fun resetConfig() {
-//        mSingleFingerPressingState.isLongPressEnabled = true
-//        mSingleFingerPressingState.isTapEnabled = true
-//        mSingleFingerPressingState.setIsTransitionToMultiTouchEnabled(true)
-//        mIdleState.setIsTransitionToMultiTouchEnabled(true)
-//        mDragState.setIsTransitionToMultiTouchEnabled(true)
-//    }
-
     fun addLifecycleListener(listener: IGestureLifecycleListener) {
         getListenerBridge().addLifecycleListener(listener)
     }
@@ -193,6 +162,7 @@ class GestureDetector(uiLooper: Looper,
         getListenerBridge().removeTapGestureListener(listener)
     }
 
+    @SuppressWarnings("unused")
     fun removeAllTapGestureListeners() {
         getListenerBridge().removeAllTapGestureListeners()
     }
@@ -211,6 +181,7 @@ class GestureDetector(uiLooper: Looper,
         getListenerBridge().removeDragGestureListener(listener)
     }
 
+    @SuppressWarnings("unused")
     fun removeAllDragGestureListeners() {
         getListenerBridge().removeAllDragGestureListeners()
     }
@@ -230,6 +201,7 @@ class GestureDetector(uiLooper: Looper,
         getListenerBridge().removePinchGestureListener(listener)
     }
 
+    @SuppressWarnings("unused")
     fun removeAllPinchGestureListeners() {
         getListenerBridge().removeAllPinchGestureListeners()
     }

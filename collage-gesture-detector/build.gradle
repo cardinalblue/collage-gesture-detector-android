@@ -48,6 +48,7 @@ dependencies {
     // Unit tests.
     testImplementation rootProject.ext.dep.testJunit
     testImplementation rootProject.ext.dep.testMockito
+    testImplementation rootProject.ext.dep.testRobolectric
 
     // Instrumentation tests.
     androidTestImplementation rootProject.ext.dep.testRunner
