@@ -22,29 +22,27 @@
 
 package com.cardinalblue.gesture
 
-import android.graphics.PointF
-
 interface IPinchGestureListener {
 
-    fun onPinchBegin(event: MyMotionEvent,
+    fun onPinchBegin(event: ShadowMotionEvent,
                      target: Any?,
                      context: Any?,
-                     startPointers: Array<PointF>)
+                     startPointers: Array<Pair<Float, Float>>)
 
-    fun onPinch(event: MyMotionEvent,
+    fun onPinch(event: ShadowMotionEvent,
                 target: Any?,
                 context: Any?,
-                startPointers: Array<PointF>,
-                stopPointers: Array<PointF>)
+                startPointers: Array<Pair<Float, Float>>,
+                stopPointers: Array<Pair<Float, Float>>)
 
     // TODO: (Not implemented) Figure out the arguments.
-    fun onPinchFling(event: MyMotionEvent,
+    fun onPinchFling(event: ShadowMotionEvent,
                      target: Any?,
                      context: Any?)
 
-    fun onPinchEnd(event: MyMotionEvent,
+    fun onPinchEnd(event: ShadowMotionEvent,
                    target: Any?,
                    context: Any?,
-                   startPointers: Array<PointF>,
-                   stopPointers: Array<PointF>)
+                   startPointers: Array<Pair<Float, Float>>,
+                   stopPointers: Array<Pair<Float, Float>>)
 }

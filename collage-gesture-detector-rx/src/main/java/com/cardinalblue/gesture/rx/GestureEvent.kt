@@ -25,11 +25,24 @@
 
 package com.cardinalblue.gesture.rx
 
-import android.graphics.PointF
 import com.cardinalblue.gesture.*
 import java.util.*
 
 sealed class GestureEvent
+
+abstract class GestureLifecycleEvent : GestureEvent()
+/**
+ * The parent class for all the tap and drag events.
+ */
+abstract class SingleFingerEvent : GestureEvent()
+/**
+ * The parent class for all the pinch events.
+ */
+abstract class TwoFingersEvent : GestureEvent()
+/**
+ * The parent class for all the unknown events.
+ */
+abstract class MultipleFingersEvent : GestureEvent()
 
 // Lifecycle //////////////////////////////////////////////////////////////////
 
@@ -37,17 +50,17 @@ sealed class GestureEvent
  * A event formation for the callback, [IGestureLifecycleListener.onTouchBegin],
  * which represents the beginning of a touch.
  */
-data class TouchBeginEvent(val rawEvent: MyMotionEvent,
+data class TouchBeginEvent(val rawEvent: ShadowMotionEvent,
                            val target: Any?,
-                           val context: Any?) : GestureEvent()
+                           val context: Any?) : GestureLifecycleEvent()
 
 /**
  * A event formation for the callback, [IGestureLifecycleListener.onTouchEnd],
  * which represents the end of a touch.
  */
-data class TouchEndEvent(val rawEvent: MyMotionEvent,
+data class TouchEndEvent(val rawEvent: ShadowMotionEvent,
                          val target: Any?,
-                         val context: Any?) : GestureEvent()
+                         val context: Any?) : GestureLifecycleEvent()
 
 // Tap ////////////////////////////////////////////////////////////////////////
 
@@ -56,32 +69,32 @@ data class TouchEndEvent(val rawEvent: MyMotionEvent,
  * [ITapGestureListener.onDoubleTap], [ITapGestureListener.onMoreTap],
  * which represent the family of tap.
  */
-data class TapEvent(val rawEvent: MyMotionEvent,
+data class TapEvent(val rawEvent: ShadowMotionEvent,
                     val target: Any?,
                     val context: Any?,
                     val downX: Float,
                     val downY: Float,
-                    val taps: Int) : GestureEvent()
+                    val taps: Int) : SingleFingerEvent()
 
 /**
  * A event formation for these callbacks, [ITapGestureListener.onLongTap], which
  * represents a long-tap.
  */
-data class LongTapEvent(val rawEvent: MyMotionEvent,
+data class LongTapEvent(val rawEvent: ShadowMotionEvent,
                         val target: Any?,
                         val context: Any?,
                         val downX: Float,
-                        val downY: Float) : GestureEvent()
+                        val downY: Float) : SingleFingerEvent()
 
 /**
  * A event formation for the callback, [ITapGestureListener.onLongPress], which
  * represents a long-press.
  */
-data class LongPressEvent(val rawEvent: MyMotionEvent,
+data class LongPressEvent(val rawEvent: ShadowMotionEvent,
                           val target: Any?,
                           val context: Any?,
                           val downX: Float,
-                          val downY: Float) : GestureEvent()
+                          val downY: Float) : SingleFingerEvent()
 
 // Drag ///////////////////////////////////////////////////////////////////////
 
@@ -89,42 +102,42 @@ data class LongPressEvent(val rawEvent: MyMotionEvent,
  * A event formation for the callback, [IDragGestureListener.onDragBegin],
  * which represents the beginning of a drag.
  */
-data class DragBeginEvent(val rawEvent: MyMotionEvent,
+data class DragBeginEvent(val rawEvent: ShadowMotionEvent,
                           val target: Any?,
                           val context: Any?,
-                          val startPointer: PointF) : GestureEvent()
+                          val startPointer: Pair<Float, Float>) : SingleFingerEvent()
 
 /**
  * A event formation for the callback, [IDragGestureListener.onDrag], which
  * represents a on-going drag.
  */
-data class OnDragEvent(val rawEvent: MyMotionEvent,
-                       val target: Any?,
-                       val context: Any?,
-                       val startPointer: PointF,
-                       val stopPointer: PointF) : GestureEvent()
+data class DragDoingEvent(val rawEvent: ShadowMotionEvent,
+                          val target: Any?,
+                          val context: Any?,
+                          val startPointer: Pair<Float, Float>,
+                          val stopPointer: Pair<Float, Float>) : SingleFingerEvent()
 
 /**
  * A event formation for the callback, [IDragGestureListener.onDragFling], which
  * represents a drag-fling.
  */
-data class DragFlingEvent(val rawEvent: MyMotionEvent,
+data class DragFlingEvent(val rawEvent: ShadowMotionEvent,
                           val target: Any?,
                           val context: Any?,
-                          val startPointer: PointF,
-                          val stopPointer: PointF,
+                          val startPointer: Pair<Float, Float>,
+                          val stopPointer: Pair<Float, Float>,
                           val velocityX: Float,
-                          val velocityY: Float) : GestureEvent()
+                          val velocityY: Float) : SingleFingerEvent()
 
 /**
  * A event formation for the callback, [IDragGestureListener.onDragEnd], which
  * represents the end of a drag.
  */
-data class DragEndEvent(val rawEvent: MyMotionEvent,
+data class DragEndEvent(val rawEvent: ShadowMotionEvent,
                         val target: Any?,
                         val context: Any?,
-                        val startPointer: PointF,
-                        val stopPointer: PointF) : GestureEvent()
+                        val startPointer: Pair<Float, Float>,
+                        val stopPointer: Pair<Float, Float>) : SingleFingerEvent()
 
 // Pinch //////////////////////////////////////////////////////////////////////
 
@@ -132,10 +145,11 @@ data class DragEndEvent(val rawEvent: MyMotionEvent,
  * A event formation for the callback, [IPinchGestureListener.onPinchBegin],
  * which represents the beginning of a pinch (pan).
  */
-data class PinchBeginEvent(val rawEvent: MyMotionEvent,
+data class PinchBeginEvent(val rawEvent: ShadowMotionEvent,
                            val target: Any?,
                            val context: Any?,
-                           val startPointers: Array<PointF>) : GestureEvent() {
+                           val startPointers: Array<Pair<Float, Float>>)
+    : TwoFingersEvent() {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -164,17 +178,18 @@ data class PinchBeginEvent(val rawEvent: MyMotionEvent,
  * A event formation for the callback, [IPinchGestureListener.onPinch], which
  * represents a on-going pinch (pan).
  */
-data class OnPinchEvent(val rawEvent: MyMotionEvent,
-                        val target: Any?,
-                        val context: Any?,
-                        val startPointers: Array<PointF>,
-                        val stopPointers: Array<PointF>) : GestureEvent() {
+data class PinchDoingEvent(val rawEvent: ShadowMotionEvent,
+                           val target: Any?,
+                           val context: Any?,
+                           val startPointers: Array<Pair<Float, Float>>,
+                           val stopPointers: Array<Pair<Float, Float>>)
+    : TwoFingersEvent() {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as OnPinchEvent
+        other as PinchDoingEvent
 
         if (rawEvent != other.rawEvent) return false
         if (target != other.target) return false
@@ -199,7 +214,7 @@ data class OnPinchEvent(val rawEvent: MyMotionEvent,
  * A event formation for the callback, [IPinchGestureListener.onPinchFling], which
  * represents a pinch (pan) fling (or flick).
  */
-data class PinchFlingEvent(val rawEvent: MyMotionEvent,
+data class PinchFlingEvent(val rawEvent: ShadowMotionEvent,
                            val target: Any?,
                            val context: Any?) : GestureEvent()
 
@@ -207,11 +222,12 @@ data class PinchFlingEvent(val rawEvent: MyMotionEvent,
  * A event formation for the callback, [IPinchGestureListener.onPinchEnd], which
  * represents the end of a pinch (pan).
  */
-data class PinchEndEvent(val rawEvent: MyMotionEvent,
+data class PinchEndEvent(val rawEvent: ShadowMotionEvent,
                          val target: Any?,
                          val context: Any?,
-                         val startPointers: Array<PointF>,
-                         val stopPointers: Array<PointF>) : GestureEvent() {
+                         val startPointers: Array<Pair<Float, Float>>,
+                         val stopPointers: Array<Pair<Float, Float>>)
+    : TwoFingersEvent() {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

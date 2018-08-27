@@ -22,28 +22,27 @@
 
 package com.cardinalblue.gesture
 
-import android.graphics.PointF
 import android.view.MotionEvent
 
 interface IDragGestureListener {
 
     // Drag ///////////////////////////////////////////////////////////////
 
-    fun onDragBegin(event: MyMotionEvent,
+    fun onDragBegin(event: ShadowMotionEvent,
                     target: Any?,
                     context: Any?)
 
-    fun onDrag(event: MyMotionEvent,
+    fun onDrag(event: ShadowMotionEvent,
                target: Any?,
                context: Any?,
-               startPointer: PointF,
-               stopPointer: PointF)
+               startPointer: Pair<Float, Float>,
+               stopPointer: Pair<Float, Float>)
 
-    fun onDragEnd(event: MyMotionEvent,
+    fun onDragEnd(event: ShadowMotionEvent,
                   target: Any?,
                   context: Any?,
-                  startPointer: PointF,
-                  stopPointer: PointF)
+                  startPointer: Pair<Float, Float>,
+                  stopPointer: Pair<Float, Float>)
 
     // Fling //////////////////////////////////////////////////////////////
 
@@ -61,11 +60,11 @@ interface IDragGestureListener {
      * pixels per second along the x axis.
      * @param velocityY            The velocity of this fling measured in
      */
-    fun onDragFling(event: MyMotionEvent,
+    fun onDragFling(event: ShadowMotionEvent,
                     target: Any?,
                     context: Any?,
-                    startPointer: PointF,
-                    stopPointer: PointF,
+                    startPointer: Pair<Float, Float>,
+                    stopPointer: Pair<Float, Float>,
                     velocityX: Float,
                     velocityY: Float)
 }

@@ -27,7 +27,7 @@ import android.os.Message
 import android.view.MotionEvent
 
 import com.cardinalblue.gesture.IGestureStateOwner
-import com.cardinalblue.gesture.MyMotionEvent
+import com.cardinalblue.gesture.ShadowMotionEvent
 
 abstract class BaseGestureState internal constructor(
     private val mOwner: IGestureStateOwner) {
@@ -51,7 +51,7 @@ abstract class BaseGestureState internal constructor(
     ///////////////////////////////////////////////////////////////////////////
     // Protected / Private Methods ////////////////////////////////////////////
 
-    protected fun obtainMyMotionEvent(event: MotionEvent): MyMotionEvent {
+    protected fun obtainMyMotionEvent(event: MotionEvent): ShadowMotionEvent {
         val action = event.actionMasked
         val pointerUp = action == MotionEvent.ACTION_POINTER_UP
         val upIndex = if (pointerUp) event.actionIndex else -1
@@ -76,16 +76,16 @@ abstract class BaseGestureState internal constructor(
         }
 
         return if (pointerUp) {
-            MyMotionEvent(event.actionMasked,
-                          downXs, downYs,
-                          true,
-                          event.getX(upIndex),
-                          event.getY(upIndex))
+            ShadowMotionEvent(event.actionMasked,
+                              downXs, downYs,
+                              true,
+                              event.getX(upIndex),
+                              event.getY(upIndex))
 
         } else {
-            MyMotionEvent(event.actionMasked,
-                          downXs, downYs,
-                          false, 0f, 0f)
+            ShadowMotionEvent(event.actionMasked,
+                              downXs, downYs,
+                              false, 0f, 0f)
         }
     }
 
@@ -114,7 +114,7 @@ abstract class BaseGestureState internal constructor(
     ///////////////////////////////////////////////////////////////////////////
     // Clazz //////////////////////////////////////////////////////////////////
 
-    internal class MyMessagePayload(val event: MyMotionEvent,
+    internal class MyMessagePayload(val event: ShadowMotionEvent,
                                     val target: Any?,
                                     val context: Any?)
 }

@@ -86,8 +86,8 @@ class DragState(owner: IGestureStateOwner,
             MotionEvent.ACTION_MOVE -> {
                 owner.listener?.onDrag(
                     obtainMyMotionEvent(event), target, context,
-                    PointF(mStartFocusX, mStartFocusY),
-                    PointF(focusX, focusY))
+                    Pair(mStartFocusX, mStartFocusY),
+                    Pair(focusX, focusY))
             }
 
             MotionEvent.ACTION_UP -> {
@@ -120,8 +120,8 @@ class DragState(owner: IGestureStateOwner,
 
         if (isConsideredFling(event)) {
             owner.listener?.onDragFling(clone, target, context,
-                                        startPointer = PointF(mStartFocusX, mStartFocusY),
-                                        stopPointer = PointF(focusX, focusY),
+                                        startPointer = Pair(mStartFocusX, mStartFocusY),
+                                        stopPointer = Pair(focusX, focusY),
                                         velocityX = mVelocityTracker!!.xVelocity,
                                         velocityY = mVelocityTracker!!.yVelocity)
         }
@@ -129,8 +129,8 @@ class DragState(owner: IGestureStateOwner,
         // TODO: Complete the translation argument.
         owner.listener?.onDragEnd(
             clone, target, context,
-            PointF(mStartFocusX, mStartFocusY),
-            PointF(focusX, focusY))
+            Pair(mStartFocusX, mStartFocusY),
+            Pair(focusX, focusY))
 
         if (mVelocityTracker != null) {
             // This may have been cleared when we called out to the

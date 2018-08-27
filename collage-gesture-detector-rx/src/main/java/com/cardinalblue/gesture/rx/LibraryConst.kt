@@ -1,6 +1,6 @@
-// Copyright Feb 2017-present CardinalBlue
+// Copyright Aug 2018-present CardinalBlue
 //
-// Author: boy@cardinalblue.com
+// Author: boyw165@gmail.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -20,28 +20,9 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-package com.cardinalblue.gesture
+package com.cardinalblue.gesture.rx
 
-interface ITapGestureListener {
+object LibraryConst {
 
-    fun onSingleTap(event: ShadowMotionEvent,
-                    target: Any?,
-                    context: Any?)
-
-    fun onDoubleTap(event: ShadowMotionEvent,
-                    target: Any?,
-                    context: Any?)
-
-    fun onMoreTap(event: ShadowMotionEvent,
-                  target: Any?,
-                  context: Any?,
-                  tapCount: Int)
-
-    fun onLongTap(event: ShadowMotionEvent,
-                  target: Any?,
-                  context: Any?)
-
-    fun onLongPress(event: ShadowMotionEvent,
-                    target: Any?,
-                    context: Any?)
+    const val TAG = "Gesture"
 }

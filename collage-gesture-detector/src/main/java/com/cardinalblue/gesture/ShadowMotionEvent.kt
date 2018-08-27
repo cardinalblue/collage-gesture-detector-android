@@ -23,32 +23,24 @@
 
 package com.cardinalblue.gesture
 
-class MyMotionEvent(val maskedAction: Int,
-                    val downXs: FloatArray?,
-                    val downYs: FloatArray?,
-                    val isUp: Boolean,
-                    val upX: Float,
-                    val upY: Float) {
-
-    val downPointerCount: Int
-    val downFocusX: Float
-    val downFocusY: Float
-
-    init {
-        if (downXs == null || downYs == null) {
-            throw IllegalArgumentException("Invalid down x and y array.")
-        } else if (downXs.size != downYs.size) {
-            throw IllegalArgumentException("Amount of down x is not consistent to y.")
-        }
-        this.downPointerCount = downXs.size
-
-        var sumX = 0f
-        var sumY = 0f
-        for (i in 0 until this.downPointerCount) {
-            sumX += downXs[i]
-            sumY += downYs[i]
-        }
-        this.downFocusX = sumX / this.downPointerCount
-        this.downFocusY = sumY / this.downPointerCount
-    }
-}
+data class ShadowMotionEvent(val maskedAction: Int,
+                             val downXs: FloatArray,
+                             val downYs: FloatArray,
+                             val isUp: Boolean,
+                             val upX: Float,
+                             val upY: Float,
+                             val downPointerCount: Int = Math.min(downXs.size, downYs.size),
+                             val downFocusX: Float = kotlin.run {
+                                 var sum = 0f
+                                 for (i in 0..downPointerCount - 1) {
+                                     sum += downXs[i]
+                                 }
+                                 sum / downPointerCount
+                             },
+                             val downFocusY: Float = kotlin.run {
+                                 var sum = 0f
+                                 for (i in 0..downPointerCount - 1) {
+                                     sum += downYs[i]
+                                 }
+                                 sum / downPointerCount
+                             })

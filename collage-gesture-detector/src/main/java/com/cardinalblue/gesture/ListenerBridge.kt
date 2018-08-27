@@ -22,7 +22,6 @@
 
 package com.cardinalblue.gesture
 
-import android.graphics.PointF
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -101,13 +100,13 @@ internal class ListenerBridge : IAllGesturesListener {
         pinchListeners.clear()
     }
 
-    override fun onTouchBegin(event: MyMotionEvent,
+    override fun onTouchBegin(event: ShadowMotionEvent,
                               target: Any?,
                               context: Any?) {
         lifecycleListeners.forEach { it.onTouchBegin(event, target, context) }
     }
 
-    override fun onTouchEnd(event: MyMotionEvent,
+    override fun onTouchEnd(event: ShadowMotionEvent,
                             target: Any?,
                             context: Any?) {
         lifecycleListeners.forEach { it.onTouchEnd(event, target, context) }
@@ -116,21 +115,21 @@ internal class ListenerBridge : IAllGesturesListener {
     ///////////////////////////////////////////////////////////////////////////
     // Tap ////////////////////////////////////////////////////////////////////
 
-    override fun onSingleTap(event: MyMotionEvent,
+    override fun onSingleTap(event: ShadowMotionEvent,
                              target: Any?,
                              context: Any?) {
         if (!tapEnabled) return
         tapListeners.forEach { it.onSingleTap(event, target, context) }
     }
 
-    override fun onDoubleTap(event: MyMotionEvent,
+    override fun onDoubleTap(event: ShadowMotionEvent,
                              target: Any?,
                              context: Any?) {
         if (!tapEnabled) return
         tapListeners.forEach { it.onDoubleTap(event, target, context) }
     }
 
-    override fun onMoreTap(event: MyMotionEvent,
+    override fun onMoreTap(event: ShadowMotionEvent,
                            target: Any?,
                            context: Any?,
                            tapCount: Int) {
@@ -138,14 +137,14 @@ internal class ListenerBridge : IAllGesturesListener {
         tapListeners.forEach { it.onMoreTap(event, target, context, tapCount) }
     }
 
-    override fun onLongTap(event: MyMotionEvent,
+    override fun onLongTap(event: ShadowMotionEvent,
                            target: Any?,
                            context: Any?) {
         if (!longPressEnabled || !tapEnabled) return
         tapListeners.forEach { it.onLongTap(event, target, context) }
     }
 
-    override fun onLongPress(event: MyMotionEvent,
+    override fun onLongPress(event: ShadowMotionEvent,
                              target: Any?,
                              context: Any?) {
         if (!longPressEnabled) return
@@ -157,7 +156,7 @@ internal class ListenerBridge : IAllGesturesListener {
 
     private var ifHandleDrag = false
 
-    override fun onDragBegin(event: MyMotionEvent,
+    override fun onDragBegin(event: ShadowMotionEvent,
                              target: Any?,
                              context: Any?) {
         // Remember the setting for the DRAG session.
@@ -167,22 +166,22 @@ internal class ListenerBridge : IAllGesturesListener {
         dragListeners.forEach { it.onDragBegin(event, target, context) }
     }
 
-    override fun onDrag(event: MyMotionEvent,
+    override fun onDrag(event: ShadowMotionEvent,
                         target: Any?,
                         context: Any?,
-                        startPointer: PointF,
-                        stopPointer: PointF) {
+                        startPointer: Pair<Float, Float>,
+                        stopPointer: Pair<Float, Float>) {
         if (!ifHandleDrag) return
 
         dragListeners.forEach { it.onDrag(event, target, context,
                                           startPointer, stopPointer) }
     }
 
-    override fun onDragFling(event: MyMotionEvent,
+    override fun onDragFling(event: ShadowMotionEvent,
                              target: Any?,
                              context: Any?,
-                             startPointer: PointF,
-                             stopPointer: PointF,
+                             startPointer: Pair<Float, Float>,
+                             stopPointer: Pair<Float, Float>,
                              velocityX: Float,
                              velocityY: Float) {
         if (!ifHandleDrag) return
@@ -192,11 +191,11 @@ internal class ListenerBridge : IAllGesturesListener {
                                                velocityX, velocityY) }
     }
 
-    override fun onDragEnd(event: MyMotionEvent,
+    override fun onDragEnd(event: ShadowMotionEvent,
                            target: Any?,
                            context: Any?,
-                           startPointer: PointF,
-                           stopPointer: PointF) {
+                           startPointer: Pair<Float, Float>,
+                           stopPointer: Pair<Float, Float>) {
         if (!ifHandleDrag) return
 
         dragListeners.forEach { it.onDragEnd(event, target, context,
@@ -208,10 +207,10 @@ internal class ListenerBridge : IAllGesturesListener {
 
     private var ifHandlePinch = false
 
-    override fun onPinchBegin(event: MyMotionEvent,
+    override fun onPinchBegin(event: ShadowMotionEvent,
                               target: Any?,
                               context: Any?,
-                              startPointers: Array<PointF>) {
+                              startPointers: Array<Pair<Float, Float>>) {
         // Remember the setting for the PINCH session.
         ifHandlePinch = pinchEnabled
         if (!ifHandlePinch) return
@@ -220,18 +219,18 @@ internal class ListenerBridge : IAllGesturesListener {
                                                  startPointers) }
     }
 
-    override fun onPinch(event: MyMotionEvent,
+    override fun onPinch(event: ShadowMotionEvent,
                          target: Any?,
                          context: Any?,
-                         startPointers: Array<PointF>,
-                         stopPointers: Array<PointF>) {
+                         startPointers: Array<Pair<Float, Float>>,
+                         stopPointers: Array<Pair<Float, Float>>) {
         if (!ifHandlePinch) return
 
         pinchListeners.forEach { it.onPinch(event, target, context,
                                             startPointers, stopPointers) }
     }
 
-    override fun onPinchFling(event: MyMotionEvent,
+    override fun onPinchFling(event: ShadowMotionEvent,
                               target: Any?,
                               context: Any?) {
         if (!ifHandlePinch) return
@@ -239,11 +238,11 @@ internal class ListenerBridge : IAllGesturesListener {
         pinchListeners.forEach { it.onPinchFling(event, target, context) }
     }
 
-    override fun onPinchEnd(event: MyMotionEvent,
+    override fun onPinchEnd(event: ShadowMotionEvent,
                             target: Any?,
                             context: Any?,
-                            startPointers: Array<PointF>,
-                            stopPointers: Array<PointF>) {
+                            startPointers: Array<Pair<Float, Float>>,
+                            stopPointers: Array<Pair<Float, Float>>) {
         if (!ifHandlePinch) return
 
         pinchListeners.forEach { it.onPinchEnd(event, target, context,

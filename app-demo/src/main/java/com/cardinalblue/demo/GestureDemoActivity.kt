@@ -24,6 +24,7 @@
 
 package com.cardinalblue.demo
 
+import android.graphics.PointF
 import android.os.Bundle
 import android.os.Looper
 import android.support.v7.app.AppCompatActivity
@@ -41,6 +42,7 @@ import com.cardinalblue.gesture.PointerUtils.DELTA_Y
 import com.cardinalblue.gesture.rx.*
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxCompoundButton
+import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.disposables.CompositeDisposable
 import java.util.*
@@ -89,9 +91,9 @@ class GestureDemoActivity : AppCompatActivity() {
                     mGestureDetector.onTouchEvent(event, mCanvasView, null)
                 })
         mDisposablesOnCreate.add(
-            GestureEventObservable(gestureDetector = mGestureDetector,
-                                   threadVerifier = ThreadVerifierAndroidImpl())
-                .compose(onConsumeGestureEvent())
+            GestureDetectorObservable(gestureDetector = mGestureDetector,
+                                      threadVerifier = ThreadVerifierAndroidImpl())
+                .compose(dispatchGestureEvent)
                 .subscribe())
         mDisposablesOnCreate.add(
             RxCompoundButton
@@ -132,94 +134,143 @@ class GestureDemoActivity : AppCompatActivity() {
                 })
     }
 
-    private fun onConsumeGestureEvent(): ObservableTransformer<GestureEvent, Boolean> {
-        return ObservableTransformer { upstream ->
-            upstream.map { event ->
-                ensureUiThread()
-
-                // Huge switch-case:
-                when (event) {
-                    is TouchBeginEvent -> {
-                        printLog("--------------")
-                        printLog("⬇onTouchBegin")
-                    }
-                    is TouchEndEvent -> {
-                        printLog("⬆onTouchEnd")
-
-                        mCanvasView.resetDemo()
-                    }
-                    is TapEvent -> {
-                        when {
-                            event.taps == 1 -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onSingleTap", 1))
-                            event.taps == 2 -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onDoubleTap", 2))
-                            else -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onMoreTap", event.taps))
-                        }
-                    }
-                    is LongTapEvent -> {
-                        printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onLongTap", 1))
-                    }
-                    is LongPressEvent -> {
-                        printLog("\uD83D\uDD50 onLongPress")
-                    }
-                    is DragBeginEvent -> {
-                        printLog("✍️ onDragBegin")
-
-                        mCanvasView.startDragDemo()
-                    }
-                    is OnDragEvent -> {
-                        printLog("✍️ onDrag")
-
-                        mCanvasView.dragDemo(event.startPointer,
-                                             event.stopPointer)
-                    }
-                    is DragFlingEvent -> {
-                        printLog("✍ \uD83C\uDFBC onDragFling vx=%.3f, vy=%.3f".format(event.velocityX, event.velocityY))
-                    }
-                    is DragEndEvent -> {
-                        printLog("✍️ onDragEnd")
-
-                        mCanvasView.stopDragDemo()
-                    }
-                    is PinchBeginEvent -> {
-                        printLog("\uD83D\uDD0D onPinchBegin")
-
-                        mCanvasView.startPinchDemo()
-                    }
-                    is OnPinchEvent -> {
-                        val transform = PointerUtils.getTransformFromPointers(event.startPointers,
-                                                                              event.stopPointers)
-
-                        printLog(String.format(Locale.ENGLISH,
-                                               "\uD83D\uDD0D onPinch: " +
-                                               "dx=%.1f, dy=%.1f, " +
-                                               "ds=%.2f, " +
-                                               "dr=%.2f",
-                                               transform[DELTA_X], transform[DELTA_Y],
-                                               transform[DELTA_SCALE_X],
-                                               transform[DELTA_RADIANS]))
-
-                        mCanvasView.pinchDemo(event.startPointers,
-                                              event.stopPointers)
-                    }
-                    is PinchFlingEvent -> {
-                        printLog("\uD83D\uDD0D onPinchFling")
-                    }
-                    is PinchEndEvent -> {
-                        printLog("\uD83D\uDD0D onPinchEnd")
-
-                        mCanvasView.stopPinchDemo()
-                    }
-                }
-                true
-            }
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
 
         // Unbind view.
         mDisposablesOnCreate.clear()
+    }
+
+    private val dispatchGestureEvent = ObservableTransformer<GestureObservable, Any> { upstream ->
+        upstream.flatMap { eventSrc ->
+            when (eventSrc) {
+                is GestureLifecycleObservable -> eventSrc.compose(handleGestureLifecycle)
+                is TapGestureObservable -> eventSrc.compose(handleTapGesture)
+                is DragGestureObservable -> eventSrc.compose(handleDragGesture)
+                is PinchGestureObservable -> eventSrc.compose(handlePinchGesture)
+            }
+        }
+    }
+
+    private val handleGestureLifecycle = ObservableTransformer<GestureEvent, Any> { upstream ->
+        upstream.flatMap { event ->
+            event as GestureLifecycleEvent
+            when (event) {
+                is TouchBeginEvent -> {
+                    printLog("--------------")
+                    printLog("⬇onTouchBegin")
+                }
+                is TouchEndEvent -> {
+                    printLog("⬆onTouchEnd")
+
+                    mCanvasView.resetDemo()
+                }
+            }
+
+            Observable.empty<Any>()
+        }
+    }
+
+    private val handleTapGesture = ObservableTransformer<GestureEvent, Any> { upstream ->
+        upstream.flatMap { event ->
+            event as SingleFingerEvent
+
+            when (event) {
+                is TapEvent -> {
+                    when {
+                        event.taps == 1 -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onSingleTap", 1))
+                        event.taps == 2 -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onDoubleTap", 2))
+                        else -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onMoreTap", event.taps))
+                    }
+                }
+                is LongTapEvent -> {
+                    printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onLongTap", 1))
+                }
+                is LongPressEvent -> {
+                    printLog("\uD83D\uDD50 onLongPress")
+                }
+            }
+
+            Observable.empty<Any>()
+        }
+    }
+
+    private val handleDragGesture = ObservableTransformer<GestureEvent, Any> { upstream ->
+        upstream.flatMap { event ->
+            event as SingleFingerEvent
+
+            when (event) {
+                is DragBeginEvent -> {
+                    printLog("✍️ onDragBegin")
+
+                    mCanvasView.startDragDemo()
+                }
+                is DragDoingEvent -> {
+                    printLog("✍️ onDrag")
+
+                    mCanvasView.dragDemo(PointF(event.startPointer.first,
+                                                event.startPointer.second),
+                                         PointF(event.stopPointer.first,
+                                                event.stopPointer.second))
+                }
+                is DragFlingEvent -> {
+                    printLog("✍ \uD83C\uDFBC onDragFling vx=%.3f, vy=%.3f".format(event.velocityX, event.velocityY))
+                }
+                is DragEndEvent -> {
+                    printLog("✍️ onDragEnd")
+
+                    mCanvasView.stopDragDemo()
+                }
+            }
+
+            Observable.empty<Any>()
+        }
+    }
+
+    private val handlePinchGesture = ObservableTransformer<GestureEvent, Any> { upstream ->
+        upstream.flatMap { event ->
+            event as TwoFingersEvent
+
+            when (event) {
+                is PinchBeginEvent -> {
+                    printLog("\uD83D\uDD0D onPinchBegin")
+
+                    mCanvasView.startPinchDemo()
+                }
+                is PinchDoingEvent -> {
+                    val startPointers = Array(event.startPointers.size) { i ->
+                        PointF(event.startPointers[i].first,
+                               event.startPointers[i].second)
+                    }
+                    val stopPointers = Array(event.startPointers.size) { i ->
+                        PointF(event.stopPointers[i].first,
+                               event.stopPointers[i].second)
+                    }
+                    val transform = PointerUtils.getTransformFromPointers(startPointers, stopPointers)
+
+                    printLog(String.format(Locale.ENGLISH,
+                                           "\uD83D\uDD0D onPinch: " +
+                                           "dx=%.1f, dy=%.1f, " +
+                                           "ds=%.2f, " +
+                                           "dr=%.2f",
+                                           transform[DELTA_X], transform[DELTA_Y],
+                                           transform[DELTA_SCALE_X],
+                                           transform[DELTA_RADIANS]))
+
+                    mCanvasView.pinchDemo(startPointers, stopPointers)
+                }
+                is PinchFlingEvent -> {
+                    printLog("\uD83D\uDD0D onPinchFling")
+                }
+                is PinchEndEvent -> {
+                    printLog("\uD83D\uDD0D onPinchEnd")
+
+                    mCanvasView.stopPinchDemo()
+                }
+            }
+
+            Observable.empty<Any>()
+        }
     }
 
     private fun ensureUiThread() {

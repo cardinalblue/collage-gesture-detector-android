@@ -24,7 +24,6 @@
 
 package com.cardinalblue.gesture.state
 
-import android.graphics.PointF
 import android.os.Message
 import android.util.SparseArray
 import android.view.MotionEvent
@@ -38,11 +37,11 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
     /**
      * The pointers at the moment this state is entered.
      */
-    private val mStartPointers = SparseArray<PointF>()
+    private val mStartPointers = SparseArray<Pair<Float, Float>>()
     /**
      * The pointers at the moment this state is doing.
      */
-    private val mStopPointers = SparseArray<PointF>()
+    private val mStopPointers = SparseArray<Pair<Float, Float>>()
     /**
      * This is for holding the order of fingers getting down. Because the
      * [SparseArray] is unordered, we introduce auxiliary space to store
@@ -68,10 +67,10 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
 
             val id = event.getPointerId(i)
 
-            mStartPointers.put(id, PointF(event.getX(i),
-                                          event.getY(i)))
-            mStopPointers.put(id, PointF(event.getX(i),
-                                         event.getY(i)))
+            mStartPointers.put(id, Pair(event.getX(i),
+                                        event.getY(i)))
+            mStopPointers.put(id, Pair(event.getX(i),
+                                       event.getY(i)))
 
             mOrderedPointerIds.add(id)
         }
@@ -96,12 +95,10 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
                 if (downPointerCount >= 2) {
                     // Update stop pointers.
                     val id1 = mOrderedPointerIds[0]
-                    val pointer1 = mStopPointers.get(id1)
-                    pointer1.set(event.getX(0), event.getY(0))
+                    mStopPointers.setValueAt(id1, Pair(event.getX(0), event.getY(0)))
 
                     val id2 = mOrderedPointerIds[1]
-                    val pointer2 = mStopPointers.get(id2)
-                    pointer2.set(event.getX(1), event.getY(1))
+                    mStopPointers.setValueAt(id2, Pair(event.getX(1), event.getY(1)))
 
                     // Dispatch callback.
                     owner.listener?.onPinch(
@@ -122,9 +119,9 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
                 // Hold undocumented pointers.
                 val downIndex = event.actionIndex
                 val downId = event.getPointerId(downIndex)
-                mStartPointers.put(downId, PointF(event.getX(downIndex),
+                mStartPointers.put(downId, Pair(event.getX(downIndex),
                                                   event.getY(downIndex)))
-                mStopPointers.put(downId, PointF(event.getX(downIndex),
+                mStopPointers.put(downId, Pair(event.getX(downIndex),
                                                  event.getY(downIndex)))
                 // Hold new down pointer ID.
                 mOrderedPointerIds.add(event.getPointerId(downIndex))
@@ -152,10 +149,10 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
                             if (i == upIndex) continue
 
                             mStartPointers.put(event.getPointerId(i),
-                                               PointF(event.getX(i),
+                                               Pair(event.getX(i),
                                                       event.getY(i)))
                             mStopPointers.put(event.getPointerId(i),
-                                              PointF(event.getX(i),
+                                              Pair(event.getX(i),
                                                      event.getY(i)))
                             mOrderedPointerIds.add(event.getPointerId(i))
                         }
