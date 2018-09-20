@@ -34,7 +34,9 @@ import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
 import com.cardinalblue.demo.view.DemoView
-import com.cardinalblue.gesture.*
+import com.cardinalblue.gesture.GestureDetector
+import com.cardinalblue.gesture.GesturePolicy
+import com.cardinalblue.gesture.PointerUtils
 import com.cardinalblue.gesture.PointerUtils.DELTA_RADIANS
 import com.cardinalblue.gesture.PointerUtils.DELTA_SCALE_X
 import com.cardinalblue.gesture.PointerUtils.DELTA_X
@@ -42,9 +44,12 @@ import com.cardinalblue.gesture.PointerUtils.DELTA_Y
 import com.cardinalblue.gesture.rx.*
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxCompoundButton
+import io.reactivex.Completable
+import io.reactivex.CompletableSource
 import io.reactivex.Observable
-import io.reactivex.ObservableTransformer
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Function
+import io.reactivex.rxkotlin.addTo
 import java.util.*
 
 class GestureDemoActivity : AppCompatActivity() {
@@ -93,7 +98,7 @@ class GestureDemoActivity : AppCompatActivity() {
         mDisposablesOnCreate.add(
             GestureDetectorObservable(gestureDetector = mGestureDetector,
                                       threadVerifier = ThreadVerifierAndroidImpl())
-                .compose(dispatchGestureEvent)
+                .flatMapCompletable(dispatchGestureEvent)
                 .subscribe())
         mDisposablesOnCreate.add(
             RxCompoundButton
@@ -141,103 +146,148 @@ class GestureDemoActivity : AppCompatActivity() {
         mDisposablesOnCreate.clear()
     }
 
-    private val dispatchGestureEvent = ObservableTransformer<GestureObservable, Any> { upstream ->
-        upstream.flatMap { eventSrc ->
-            when (eventSrc) {
-                is GestureLifecycleObservable -> eventSrc.compose(handleGestureLifecycle)
-                is TapGestureObservable -> eventSrc.compose(handleTapGesture)
-                is DragGestureObservable -> eventSrc.compose(handleDragGesture)
-                is PinchGestureObservable -> eventSrc.compose(handlePinchGesture)
-            }
-        }
+    private val dispatchGestureEvent = Function<Observable<GestureEvent>, CompletableSource> { touchSequence ->
+        Completable.concat(listOf(
+            createTouchLifecycleManipulator(touchSequence),
+            createTapManipulator(touchSequence),
+            createDragManipulator(touchSequence),
+            createPinchManipulator(touchSequence)))
     }
 
-    private val handleGestureLifecycle = ObservableTransformer<GestureEvent, Any> { upstream ->
-        upstream.flatMap { event ->
-            event as GestureLifecycleEvent
-            when (event) {
-                is TouchBeginEvent -> {
-                    printLog("--------------")
-                    printLog("⬇onTouchBegin")
-                }
-                is TouchEndEvent -> {
-                    printLog("⬆onTouchEnd")
+    private fun createTouchLifecycleManipulator(touchSequence: Observable<GestureEvent>): Completable {
+        return Completable.create { emitter ->
+            val disposableBag = CompositeDisposable()
 
-                    mCanvasView.resetDemo()
-                }
-            }
+            emitter.setCancellable { disposableBag.dispose() }
 
-            Observable.empty<Any>()
-        }
-    }
+            touchSequence
+                .subscribe { event ->
+                    when (event) {
+                        is TouchBeginEvent -> {
+                            printLog("--------------")
+                            printLog("⬇onTouchBegin")
+                        }
+                        is TouchEndEvent -> {
+                            printLog("⬆onTouchEnd")
 
-    private val handleTapGesture = ObservableTransformer<GestureEvent, Any> { upstream ->
-        upstream.flatMap { event ->
-            event as SingleFingerEvent
-
-            when (event) {
-                is TapEvent -> {
-                    when {
-                        event.taps == 1 -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onSingleTap", 1))
-                        event.taps == 2 -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onDoubleTap", 2))
-                        else -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onMoreTap", event.taps))
+                            mCanvasView.resetDemo()
+                        }
+                        else -> emitter.onComplete()
                     }
                 }
-                is LongTapEvent -> {
-                    printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onLongTap", 1))
-                }
-                is LongPressEvent -> {
-                    printLog("\uD83D\uDD50 onLongPress")
-                }
-            }
+                .addTo(disposableBag)
 
-            Observable.empty<Any>()
+            emitter.onComplete()
         }
     }
 
-    private val handleDragGesture = ObservableTransformer<GestureEvent, Any> { upstream ->
-        upstream.flatMap { event ->
-            event as SingleFingerEvent
+    private fun createTapManipulator(touchSequence: Observable<GestureEvent>): Completable {
+        return Completable.create { emitter ->
+            val disposableBag = CompositeDisposable()
 
-            when (event) {
-                is DragBeginEvent -> {
-                    printLog("✍️ onDragBegin")
+            emitter.setCancellable { disposableBag.dispose() }
 
-                    mCanvasView.startDragDemo()
+            touchSequence
+                .subscribe { event ->
+                    when (event) {
+                        is TapEvent -> {
+                            when {
+                                event.taps == 1 -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onSingleTap", 1))
+                                event.taps == 2 -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onDoubleTap", 2))
+                                else -> printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onMoreTap", event.taps))
+                            }
+                        }
+                        is LongTapEvent -> {
+                            printLog(String.format(Locale.ENGLISH, "\uD83D\uDD95 x%d onLongTap", 1))
+                        }
+                        is LongPressEvent -> {
+                            printLog("\uD83D\uDD50 onLongPress")
+                        }
+                        else -> emitter.onComplete()
+                    }
                 }
-                is DragDoingEvent -> {
-                    printLog("✍️ onDrag")
+                .addTo(disposableBag)
 
+            Completable.fromObservable(touchSequence)
+                .subscribe {
+                    emitter.onComplete()
+                }
+                .addTo(disposableBag)
+        }
+    }
+
+    private fun createDragManipulator(touchSequence: Observable<GestureEvent>): Completable {
+        return Completable.create { emitter ->
+            val disposableBag = CompositeDisposable()
+
+            emitter.setCancellable { disposableBag.dispose() }
+
+            touchSequence
+                .firstElement()
+                .subscribe { event ->
+                    when (event) {
+                        is DragEvent -> {
+                            printLog("✍️ onDragBegin")
+                            mCanvasView.startDragDemo()
+                        }
+                        else -> emitter.onComplete()
+                    }
+                }
+                .addTo(disposableBag)
+
+            touchSequence
+                .ofType(DragEvent::class.java)
+                .subscribe { event ->
+                    printLog("✍️ onDrag")
                     mCanvasView.dragDemo(PointF(event.startPointer.first,
                                                 event.startPointer.second),
                                          PointF(event.stopPointer.first,
                                                 event.stopPointer.second))
                 }
-                is DragFlingEvent -> {
+                .addTo(disposableBag)
+
+            touchSequence
+                .ofType(DragFlingEvent::class.java)
+                .subscribe { event ->
                     printLog("✍ \uD83C\uDFBC onDragFling vx=%.3f, vy=%.3f".format(event.velocityX, event.velocityY))
                 }
-                is DragEndEvent -> {
+                .addTo(disposableBag)
+
+            touchSequence
+                .lastElement()
+                .filter { it is DragEvent }
+                .subscribe {
                     printLog("✍️ onDragEnd")
-
                     mCanvasView.stopDragDemo()
-                }
-            }
 
-            Observable.empty<Any>()
+                    emitter.onComplete()
+                }
+                .addTo(disposableBag)
         }
     }
 
-    private val handlePinchGesture = ObservableTransformer<GestureEvent, Any> { upstream ->
-        upstream.flatMap { event ->
-            event as TwoFingersEvent
+    private fun createPinchManipulator(touchSequence: Observable<GestureEvent>): Completable {
+        return Completable.create { emitter ->
+            val disposableBag = CompositeDisposable()
 
-            when (event) {
-                is PinchBeginEvent -> {
-                    printLog("\uD83D\uDD0D onPinchBegin")
+            emitter.setCancellable { disposableBag.dispose() }
 
-                    mCanvasView.startPinchDemo()
+            touchSequence
+                .firstElement()
+                .subscribe { event ->
+                    when (event) {
+                        is PinchEvent -> {
+                            printLog("\uD83D\uDD0D onPinchBegin")
+                            mCanvasView.startPinchDemo()
+                        }
+                        else -> emitter.onComplete()
+                    }
                 }
-                is PinchDoingEvent -> {
+                .addTo(disposableBag)
+
+            touchSequence
+                .ofType(PinchEvent::class.java)
+                .subscribe { event ->
                     val startPointers = Array(event.startPointers.size) { i ->
                         PointF(event.startPointers[i].first,
                                event.startPointers[i].second)
@@ -259,17 +309,25 @@ class GestureDemoActivity : AppCompatActivity() {
 
                     mCanvasView.pinchDemo(startPointers, stopPointers)
                 }
-                is PinchFlingEvent -> {
+                .addTo(disposableBag)
+
+            touchSequence
+                .ofType(PinchFlingEvent::class.java)
+                .subscribe {
                     printLog("\uD83D\uDD0D onPinchFling")
                 }
-                is PinchEndEvent -> {
+                .addTo(disposableBag)
+
+            touchSequence
+                .ofType(PinchEvent::class.java)
+                .lastElement()
+                .subscribe {
                     printLog("\uD83D\uDD0D onPinchEnd")
-
                     mCanvasView.stopPinchDemo()
-                }
-            }
 
-            Observable.empty<Any>()
+                    emitter.onComplete()
+                }
+                .addTo(disposableBag)
         }
     }
 
