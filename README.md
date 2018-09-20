@@ -77,20 +77,7 @@ That's it and so simple!
 
 ### With RxJava
 
-If you'd prefer the Rx way, try as following:
-
-- Add this to `build.gradle` 
-
-```
-// For gradle < 3.0
-// Rx add-on 
-compile 'com.cardinalblue.gesture:collage-gesture-detector-rx:?.?.?'
-
-// For gradle >= 3.0, use "api" or "implementation" 
-implementation 'com.cardinalblue.gesture:collage-gesture-detector-rx:?.?.?'
-```
-
-- Feed the detector to the `GestureEventObservable`:
+If you'd prefer the Rx way, try as following, pass the detector to the `GestureEventObservable`:
 
 ```kotlin
 GestureEventObservable(gestureDetector = ${YOUR_COLLAGE_GESTURE_DETECTOR})
