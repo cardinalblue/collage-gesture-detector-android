@@ -1,9 +1,10 @@
 version: 2
 jobs:
-  build:
-    working_directory: ~/code
+  build-job:
+    working_directory: ~/collage-gesture-detector
+
     docker:
-      - image: cardinalblue/docker-android-sdk:api-27-alpha
+      - image: circleci/android:api-27-alpha
 
     resource_class: large
 
@@ -24,38 +25,78 @@ jobs:
           key: v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}
 
       - run:
-          name: Download Dependencies
+          name: Download dependencies
           command: |
             unset ANDROID_NDK_HOME
             bundle install
+            ./gradlew androidDependencies --stacktrace
 
       - run:
-         name: Run Unit Tests
-         command: bundle exec fastlane android test
-
-      - store_artifacts:
-          path: collage-gesture-detector/build/reports
-          destination: reports
-
-      - store_artifacts:
-          path: collage-gesture-detector-rx/build/reports
-          destination: reports
+          name: Run unit test
+          command: |
+            ./gradlew collage-gesture-detector:testReleaseUnitTest --stacktrace
+            ./gradlew collage-gesture-detector-rx:testReleaseUnitTest --stacktrace
 
       - store_test_results:
           path: collage-gesture-detector/build/test-results
-
       - store_test_results:
           path: collage-gesture-detector-rx/build/test-results
 
+  deploy-job:
+    working_directory: ~/collage-gesture-detector
+
+    docker:
+      - image: circleci/android:api-27-alpha
+
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xms256m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+      TERM: xterm
+
+    steps:
+      - checkout
+
       - run:
-          name: Build library & delopy to Bintray/JCenter
+          name: Download dependencies
+          command: ./gradlew androidDependencies --stacktrace
+
+      - run:
+          name: Run unit test
           command: |
-            bundle exec fastlane android smart_deploy
+            ./gradlew collage-gesture-detector:testReleaseUnitTest --stacktrace
+            ./gradlew collage-gesture-detector-rx:testReleaseUnitTest --stacktrace
+
+      - run:
+          name: Build artifact
+          command: ./gradlew assembleRelease --stacktrace
+
+#      - run:
+#          name: Publish to Github
+#          command: ./gradlew githubRelease
+
+      - run:
+          name: Publish to JCenter
+          command: |
+            ./gradlew collage-gesture-detector:bintrayUpload --stacktrace
+            ./gradlew collage-gesture-detector-rx:bintrayUpload --stacktrace
 
       - store_artifacts:
           path: collage-gesture-detector/build/outputs/aar/
           destination: aar
-
       - store_artifacts:
           path: collage-gesture-detector-rx/build/outputs/aar/
           destination: aar
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build-job:
+          filters:
+            branches:
+              ignore: master
+      - deploy-job:
+          filters:
+            branches:
+              only: master
