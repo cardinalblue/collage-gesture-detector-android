@@ -1,9 +1,9 @@
 Collage Gesture Detector
 ===
 
-[![CircleCI](https://circleci.com/gh/cardinalblue/collage-gesture-detector-android.svg?style=svg)](https://circleci.com/gh/cardinalblue/collage-gesture-detector-android)
-[ ![Download](https://api.bintray.com/packages/cblue/android/collage-gesture-detector/images/download.svg) ](https://bintray.com/cblue/android/collage-gesture-detector/_latestVersion)
-[ ![Download](https://api.bintray.com/packages/cblue/android/collage-gesture-detector-rx/images/download.svg) ](https://bintray.com/cblue/android/collage-gesture-detector-rx/_latestVersion)
+- build: [![CircleCI](https://circleci.com/gh/cardinalblue/collage-gesture-detector-android.svg?style=svg)](https://circleci.com/gh/cardinalblue/collage-gesture-detector-android)
+- detector: [ ![Download](https://api.bintray.com/packages/cblue/android/collage-gesture-detector/images/download.svg) ](https://bintray.com/cblue/android/collage-gesture-detector/_latestVersion)
+- detector-rx: [ ![Download](https://api.bintray.com/packages/cblue/android/collage-gesture-detector-rx/images/download.svg) ](https://bintray.com/cblue/android/collage-gesture-detector-rx/_latestVersion)
 
 ![demo](docs/demo.gif)
 
@@ -15,15 +15,8 @@ Gradle
 Add this into your dependencies block.
 
 ```
-// For gradle < 3.0
-compile 'com.cardinalblue.gesture:collage-gesture-detector:4.0.0'
-// Optional Rx 
-compile 'com.cardinalblue.gesture:collage-gesture-detector-rx:4.0.0'
-
-// For gradle >= 3.0, use "api" or "implementation"
-implementation 'com.cardinalblue.gesture:collage-gesture-detector:4.0.0'
-// Optional Rx 
-implementation 'com.cardinalblue.gesture:collage-gesture-detector-rx:4.0.0'
+implementation 'com.cardinalblue.gesture:collage-gesture-detector:x.x.x' 
+implementation 'com.cardinalblue.gesture:collage-gesture-detector-rx:x.x.x'
 ```
 
 If you cannot find the package, add this to your gradle repository
