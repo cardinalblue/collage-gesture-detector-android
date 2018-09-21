@@ -14,17 +14,17 @@ jobs:
       - checkout
 
       - restore_cache:
-          key: project-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum  "rx-delegate/build.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+          key: project-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
 
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum  "rx-delegate/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}
 
       - run:
           name: Download dependencies
           command: ./gradlew androidDependencies --stacktrace
 
       - save_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum  "rx-delegate/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}
           paths:
             - ~/android
 
@@ -40,7 +40,7 @@ jobs:
           path: collage-gesture-detector-rx/build/test-results
 
       - save_cache:
-          key: project-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum  "rx-delegate/build.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+          key: project-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
           paths:
             - "~/.gradle/4.6"
             - "~/.gradle/wrapper/dists/gradle-4.6-all"
