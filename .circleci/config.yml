@@ -1,61 +1,105 @@
 version: 2
-jobs:
-  build:
-    working_directory: ~/code
-    docker:
-      - image: cardinalblue/docker-android-sdk:api-27-alpha
 
-    resource_class: large
+jobs:
+  build-job:
+    working_directory: ~/collage-gesture-detector
+
+    docker:
+      - image: circleci/android:api-27-alpha
 
     environment:
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
-      TERM: xterm
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xms256m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
 
     steps:
       - checkout
+
+      - restore_cache:
+          key: project-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}
+
       - run:
-          name: Git submodule
-          command: git submodule update --init --recursive
+          name: Download dependencies
+          command: ./gradlew androidDependencies --stacktrace
 
       - save_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}
           paths:
-            - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}
+            - ~/android
 
       - run:
-          name: Download Dependencies
+          name: Run unit test
           command: |
-            unset ANDROID_NDK_HOME
-            bundle install
-
-      - run:
-         name: Run Unit Tests
-         command: bundle exec fastlane android test
-
-      - store_artifacts:
-          path: collage-gesture-detector/build/reports
-          destination: reports
-
-      - store_artifacts:
-          path: collage-gesture-detector-rx/build/reports
-          destination: reports
+            ./gradlew collage-gesture-detector:testDebugUnitTest -PtestProguard=true --stacktrace
+            ./gradlew collage-gesture-detector-rx:testDebugUnitTest -PtestProguard=true --stacktrace
 
       - store_test_results:
           path: collage-gesture-detector/build/test-results
-
       - store_test_results:
           path: collage-gesture-detector-rx/build/test-results
 
+      - save_cache:
+          key: project-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+          paths:
+            - "~/.gradle/4.6"
+            - "~/.gradle/wrapper/dists/gradle-4.6-all"
+            - "~/.gradle/caches/modules-2"
+            - "~/.gradle/buildOutputCleanup"
+            - "~/.m2"
+
+  deploy-job:
+    working_directory: ~/collage-gesture-detector
+
+    docker:
+      - image: circleci/android:api-27-alpha
+
+    environment:
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xms256m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+
+    steps:
+      - checkout
+
       - run:
-          name: Build library & delopy to Bintray/JCenter
+          name: Download dependencies
+          command: ./gradlew androidDependencies --stacktrace
+
+      - run:
+          name: Run unit test
           command: |
-            bundle exec fastlane android smart_deploy
+            ./gradlew collage-gesture-detector:testReleaseUnitTest --stacktrace
+            ./gradlew collage-gesture-detector-rx:testReleaseUnitTest --stacktrace
+
+      - run:
+          name: Build artifact
+          command: ./gradlew build --stacktrace
+
+#      - run:
+#          name: Publish to Github
+#          command: ./gradlew githubRelease
+
+      - run:
+          name: Publish to JCenter
+          command: |
+            ./gradlew collage-gesture-detector:bintrayUpload --stacktrace
+            ./gradlew collage-gesture-detector-rx:bintrayUpload --stacktrace
 
       - store_artifacts:
           path: collage-gesture-detector/build/outputs/aar/
           destination: aar
-
       - store_artifacts:
           path: collage-gesture-detector-rx/build/outputs/aar/
           destination: aar
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build-job:
+          filters:
+            branches:
+              ignore: master
+      - deploy-job:
+          filters:
+            branches:
+              only: master

@@ -1,29 +1,19 @@
 apply plugin: 'com.novoda.bintray-release'
 
-ext {
-    library_artifactId = 'collage-gesture-detector'
-    library_groupId = 'com.cardinalblue.gesture'
-    library_version = android.defaultConfig.versionName
-    library_desc = 'The gesture detector used by PicCollage editor.'
-
-    site_url = 'https://github.com/cardinalblue/collage-gesture-detector-android/'
-    vcs_url = 'https://github.com/cardinalblue/collage-gesture-detector-android.git'
-}
-
 publish {
-    bintrayUser = System.getenv('BINTRAY_CBLUE_USER')
-    bintrayKey = System.getenv('BINTRAY_CBLUE_API_KEY')
+    bintrayUser = System.getenv('BINTRAY_USER')
+    bintrayKey = System.getenv('BINTRAY_API_KEY')
 
     repoName = 'android'
     uploadName = 'collage-gesture-detector'
 
-    groupId = library_groupId
-    artifactId = library_artifactId
-    publishVersion = library_version
+    groupId = 'com.cardinalblue.gesture'
+    artifactId = 'collage-gesture-detector'
+    publishVersion = project.artifact_version
 
-    userOrg = System.getenv('BINTRAY_CBLUE_USER')
-    desc = library_desc
-    website = site_url
+    userOrg = System.getenv('BINTRAY_USER')
+    desc = 'The gesture detector used by PicCollage editor.'
+    website = 'https://github.com/cardinalblue/collage-gesture-detector-android/'
     dryRun = false
 }
 
