@@ -1,4 +1,5 @@
 version: 2
+
 jobs:
   build-job:
     working_directory: ~/collage-gesture-detector
@@ -6,41 +7,46 @@ jobs:
     docker:
       - image: circleci/android:api-27-alpha
 
-    resource_class: large
-
     environment:
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
-      TERM: xterm
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xms256m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
 
     steps:
       - checkout
-      - run:
-          name: Git submodule
-          command: git submodule update --init --recursive
 
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}
+      - restore_cache:
+          key: project-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum  "rx-delegate/build.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum  "rx-delegate/build.gradle" }}
 
       - run:
           name: Download dependencies
-          command: |
-            unset ANDROID_NDK_HOME
-            bundle install
-            ./gradlew androidDependencies --stacktrace
+          command: ./gradlew androidDependencies --stacktrace
+
+      - save_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum  "rx-delegate/build.gradle" }}
+          paths:
+            - ~/android
 
       - run:
           name: Run unit test
           command: |
-            ./gradlew collage-gesture-detector:testReleaseUnitTest --stacktrace
-            ./gradlew collage-gesture-detector-rx:testReleaseUnitTest --stacktrace
+            ./gradlew collage-gesture-detector:testDebugUnitTest -PtestProguard=true --stacktrace
+            ./gradlew collage-gesture-detector-rx:testDebugUnitTest -PtestProguard=true --stacktrace
 
       - store_test_results:
           path: collage-gesture-detector/build/test-results
       - store_test_results:
           path: collage-gesture-detector-rx/build/test-results
+
+      - save_cache:
+          key: project-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum  "rx-delegate/build.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+          paths:
+            - "~/.gradle/4.6"
+            - "~/.gradle/wrapper/dists/gradle-4.6-all"
+            - "~/.gradle/caches/modules-2"
+            - "~/.gradle/buildOutputCleanup"
+            - "~/.m2"
 
   deploy-job:
     working_directory: ~/collage-gesture-detector
@@ -49,10 +55,7 @@ jobs:
       - image: circleci/android:api-27-alpha
 
     environment:
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xms256m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
-      TERM: xterm
 
     steps:
       - checkout
@@ -69,7 +72,7 @@ jobs:
 
       - run:
           name: Build artifact
-          command: ./gradlew assembleRelease --stacktrace
+          command: ./gradlew build --stacktrace
 
 #      - run:
 #          name: Publish to Github

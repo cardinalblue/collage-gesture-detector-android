@@ -1,0 +1,65 @@
+import static se.bjurr.gitchangelog.api.GitChangelogApi.gitChangelogApiBuilder
+import static se.bjurr.gitchangelog.api.GitChangelogApiConstants.REF_MASTER
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+
+    dependencies {
+        classpath 'co.riiid:gradle-github-plugin:0.4.2'
+        classpath 'gradle.plugin.se.bjurr.gitchangelog:git-changelog-gradle-plugin:1.54'
+    }
+}
+
+// Release our assets to Github
+apply plugin: 'co.riiid.gradle'
+apply plugin: 'se.bjurr.gitchangelog.git-changelog-gradle-plugin'
+
+//if (build.ci) {
+//    github {
+//        owner = 'CardinalBlue'
+//        repo = 'kotlin-delegate-rx-properties'
+//        token = System.getenv('GITHUB_API_TOKEN')
+//        tagName = 'v' + artifact_version
+//        targetCommitish = 'master'
+//        name = 'Release Version ' + artifact_version
+//        body = gitChangelogApiBuilder()
+//                .withJiraServer('https://andromium.atlassian.net')
+//                .withJiraIssuePattern("\\bSLID-([0-9]+)\\b")
+//                .withJiraUsername('sensei@sentio.com')
+//                .withJiraPassword(System.getenv('SENSEI_BOT_PASS'))
+//                .withGitHubToken(System.getenv('GITHUB_API_TOKEN'))
+//                .withFromRef('git describe --abbrev=0 --tags'.execute().text.trim())
+//                .withToRef(REF_MASTER)
+//                .withTemplatePath("releasenotes.mustache")
+//                .withUntaggedName("Version " + artifact_version)
+//                .withNoIssueName("Other issues")
+//                .render()
+//        assets = [
+//                "app/build/outputs/apk/normal/debug/app-normal-debug-${artifact_version}.apk",
+//                "app/build/outputs/apk/normal/release/app-normal-release-${artifact_version}.apk",
+//                "app/build/outputs/mapping/normal/release/app-normal-release-${artifact_version}-mapping.txt"
+//        ]
+//    }
+//}
+
+project.ext {
+    buildVersionCode = { version ->
+        def majorMinorBuild = version.tokenize(".")
+        def vCode = 0
+        def powerOfTen = 1
+        def multiplier = 1000
+        def baseVersionCode = multiplier**Math.max(majorMinorBuild.size() - 1, 0)
+        majorMinorBuild.reverse().eachWithIndex() { obj, i -> (vCode += (obj.toInteger() * powerOfTen)); powerOfTen *= multiplier }
+
+        logger.info("Build version code [" + vCode + "] from version name [" + version + "].")
+
+        if (vCode < baseVersionCode) {
+            return vCode + baseVersionCode
+        } else {
+            return vCode
+        }
+    }
+}

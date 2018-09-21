@@ -2,6 +2,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+// Factory DSL
+apply from: rootProject.file('gradle_scripts/factory.gradle')
+
 // Gradle doc:
 // http://google.github.io/android-gradle-dsl/
 android {
@@ -12,9 +15,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
 
-        def givenVersionName = project.findProperty('versionName') ?: '99.99.99-dev'
-        versionCode generateVersionCode(givenVersionName)
-        versionName givenVersionName
+        versionCode buildVersionCode(project.artifact_version)
+        versionName project.artifact_version
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -46,31 +48,6 @@ dependencies {
     api rootProject.ext.dep.rxJava
     api rootProject.ext.dep.rxAndroid
     api rootProject.ext.dep.rxKotlin
-}
-
-/**
- * Extract major, minor, and patch version code and compose them to a version
- * code.
- *
- * @param versionName the version name, could be like "99.99.99-dev"
- * @return The version code
- */
-private static Integer generateVersionCode(String versionName) {
-    // Filter postfix like "-dev"
-    final int postfixIndex = versionName.indexOf("-")
-    if (postfixIndex >= 0) {
-        versionName = versionName.substring(0, postfixIndex)
-    }
-    // Extract version integers
-    final String[] versions = versionName.split("\\.")
-    assert versionName.split('.') instanceof String[]
-    final int major = Integer.parseInt(versions[0])
-    final int minor = Integer.parseInt(versions[1])
-    final int patch = Integer.parseInt(versions[2])
-
-    // 00    00    00
-    // major minor patch
-    return major * 10000 + minor * 100 + patch
 }
 
 // Deployment script.
