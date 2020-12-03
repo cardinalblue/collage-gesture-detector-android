@@ -1,3 +1,6 @@
+# Branch 'piccollage_submodule' is for PicCollage Android submodule use.
+# MUST NOT MERGE INTO OPEN-SOURCED 'master' BRANCH
+
 Collage Gesture Detector
 ===
 
