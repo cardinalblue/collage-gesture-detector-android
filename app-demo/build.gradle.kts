@@ -9,7 +9,6 @@ android {
     buildToolsVersion(Versions.buildTool)
 
     defaultConfig {
-        applicationId("com.cardinalblue.demo")
         minSdkVersion(Versions.minSdk)
         targetSdkVersion(Versions.targetSdk)
         versionCode = 1
@@ -32,13 +31,11 @@ dependencies {
     // Multi-dex.
     implementation(Dependencies.JetPack.multidex)
 
-    // Kotlin STD Library.
-    implementation(rootProject.ext.dep.kotlinStdlibJdk7)
-
     // RxJava
     implementation(Dependencies.RxJava.rxJava)
     implementation(Dependencies.RxJava.rxAndroid)
     implementation(Dependencies.RxJava.rxBinding)
+    implementation(Dependencies.RxJava.rxKotlin)
 
     // My Libraries.
     cbModules {

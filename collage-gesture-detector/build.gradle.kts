@@ -19,7 +19,6 @@ android {
 dependencies {
     // Kotlin
     implementation(Dependencies.Kotlin.stdlib)
-    implementation(rootProject.ext.dep.kotlinStdlibJdk7)
 
     // Unit tests.
     testImplementation(Dependencies.Test.junit)
