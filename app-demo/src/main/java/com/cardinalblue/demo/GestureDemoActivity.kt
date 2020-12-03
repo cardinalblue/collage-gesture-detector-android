@@ -27,12 +27,12 @@ package com.cardinalblue.demo
 import android.graphics.PointF
 import android.os.Bundle
 import android.os.Looper
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.SwitchCompat
 import android.view.ViewConfiguration
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import com.cardinalblue.demo.view.DemoView
 import com.cardinalblue.gesture.GestureDetector
 import com.cardinalblue.gesture.GesturePolicy

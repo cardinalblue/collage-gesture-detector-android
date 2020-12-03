@@ -22,6 +22,6 @@
 
 package com.cardinalblue.demo
 
-import android.support.multidex.MultiDexApplication
+import androidx.multidex.MultiDexApplication
 
 class MyApplication : MultiDexApplication()
