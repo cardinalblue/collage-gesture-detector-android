@@ -94,11 +94,13 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
             MotionEvent.ACTION_MOVE -> {
                 if (downPointerCount >= 2) {
                     // Update stop pointers.
-                    val id1 = mOrderedPointerIds[0]
-                    mStopPointers.setValueAt(id1, Pair(event.getX(0), event.getY(0)))
+                    val idPointer1 = mOrderedPointerIds[0]
+                    mStopPointers.setValueAt(0,
+                            Pair(event.getXbyId(idPointer1), event.getYbyId(idPointer1)))
 
-                    val id2 = mOrderedPointerIds[1]
-                    mStopPointers.setValueAt(id2, Pair(event.getX(1), event.getY(1)))
+                    val idPointer2 = mOrderedPointerIds[1]
+                    mStopPointers.setValueAt(1,
+                            Pair(event.getXbyId(idPointer2), event.getYbyId(idPointer2)))
 
                     // Dispatch callback.
                     owner.listener?.onPinch(
@@ -211,4 +213,20 @@ class PinchState(owner: IGestureStateOwner) : BaseGestureState(owner) {
     override fun onHandleMessage(msg: Message): Boolean {
         return false
     }
+}
+
+fun MotionEvent.getXbyId(pointerId: Int): Float {
+    val pointerIndex = this.findPointerIndex(pointerId)
+
+    if (pointerIndex == -1) throw IllegalArgumentException()
+
+    return this.getX(pointerIndex)
+}
+
+fun MotionEvent.getYbyId(pointerId: Int): Float {
+    val pointerIndex = this.findPointerIndex(pointerId)
+
+    if (pointerIndex == -1) throw IllegalArgumentException()
+
+    return this.getY(pointerIndex)
 }
