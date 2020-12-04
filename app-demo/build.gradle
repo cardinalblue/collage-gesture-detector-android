@@ -1,95 +1,56 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-
-android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
-
-    defaultConfig {
-        applicationId "com.cardinalblue.demo"
-
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        multiDexEnabled true
-        vectorDrawables.useSupportLibrary = true
-    }
-
-    lintOptions {
-        disable "MissingTranslation"
-    }
-
-    buildTypes {
-        debug {
-            minifyEnabled false
-        }
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-android-extensions")
 }
 
-repositories {
-    // Support AAR file.
-    flatDir { dirs "libs" }
-    google()
-    jcenter()
-    mavenCentral()
+android {
+    compileSdkVersion(Versions.compileSdk)
+    buildToolsVersion(Versions.buildTool)
+
+    defaultConfig {
+        minSdkVersion(Versions.minSdk)
+        targetSdkVersion(Versions.targetSdk)
+        versionCode = 1
+        versionName  = "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility = Versions.compatibilityJava
+        targetCompatibility = Versions.compatibilityJava
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     // Google Support Library.
-    implementation rootProject.ext.dep.supportAppcompatV7
-    implementation rootProject.ext.dep.supportVectorDrawable
-    implementation rootProject.ext.dep.supportRecyclerViewV7
-    implementation rootProject.ext.dep.supportConstraintLayout
+    implementation(Dependencies.JetPack.appcompat)
+    implementation(Dependencies.JetPack.vectorDrawable)
+    implementation(Dependencies.JetPack.recyclerView)
+    implementation(Dependencies.JetPack.constraintLayout)
+
     // Multi-dex.
-    implementation rootProject.ext.dep.supportMultidex
+    implementation(Dependencies.JetPack.multidex)
 
-    // Kotlin STD Library.
-    implementation rootProject.ext.dep.kotlinStdlibJdk7
+    // Kotlin
+    implementation(Dependencies.Kotlin.stdlib)
 
-//    // Dependency Injection.
-//    compile rootProject.ext.dep.dagger2
-//    compile rootProject.ext.dep.dagger2Support
-//    annotationProcessor rootProject.ext.dep.dagger2Compiler
-
-//    // JSON.
-//    compile rootProject.ext.dep.gson
-
-//    // Image loader.
-//    compile rootProject.ext.dep.glide
-
-//    // View.
-//    compile rootProject.ext.dep.airbnbEpoxy
-
-//    // Leak Detection.
-//    compile rootProject.ext.dep.leakcanary
-//    releaseCompile rootProject.ext.dep.leakcanaryNoOp
-
-    // RxAndroid
-    implementation rootProject.ext.dep.rxAndroid
-    // Because RxAndroid releases are few and far between, it is recommended you
-    // also explicitly depend on RxJava's latest version for bug fixes and new
-    // features.
-    implementation rootProject.ext.dep.rxJava
-    implementation rootProject.ext.dep.rxBinding
+    // RxJava
+    implementation(Dependencies.RxJava.rxJava)
+    implementation(Dependencies.RxJava.rxAndroid)
+    implementation(Dependencies.RxJava.rxBinding)
+    implementation(Dependencies.RxJava.rxKotlin)
 
     // My Libraries.
-    implementation project(path: ':collage-gesture-detector')
-    implementation project(path: ':collage-gesture-detector-rx')
+    cbModules {
+        // reference back to lib from PicCollage setup
+        libCollageGestureDetector()
+        libCollageGestureDetectorRx()
+    }
 
-    testImplementation rootProject.ext.dep.testJunit
+    // Unit Test
+    implementation(Dependencies.Test.junit)
 
-    androidTestImplementation rootProject.ext.dep.testRunner
-    androidTestImplementation rootProject.ext.dep.testEspressoCore
+    // Instrumental Test
+    implementation(Dependencies.Test.runner)
+    implementation(Dependencies.Test.espressoCore)
 }

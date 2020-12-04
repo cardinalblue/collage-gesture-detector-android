@@ -1,75 +1,32 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id("com.android.library")
+    id("kotlin-android")
+    id("kotlin-android-extensions")
+}
 
-// Gradle doc:
-// http://google.github.io/android-gradle-dsl/
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion(Versions.compileSdk)
+    buildToolsVersion(Versions.buildTool)
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-
-        def givenVersionName = project.findProperty('versionName') ?: '99.99.99-dev'
-        versionCode generateVersionCode(givenVersionName)
-        versionName givenVersionName
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        debug {
-            // Configurable ProGuard testing, for example,
-            // "./gradlew assembleDebug -PtestProguard=true"
-            minifyEnabled project.hasProperty('testProguard')
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+        minSdkVersion(Versions.minSdk)
+        targetSdkVersion(Versions.targetSdk)
+        versionCode = 1
+        versionName  = "1.0"
     }
 }
 
 dependencies {
-    api fileTree(dir: 'libs', include: ['*.jar'])
-
-    api project(path: ':collage-gesture-detector')
-
     // Kotlin
-    api rootProject.ext.dep.kotlinStdlibJdk7
+    implementation(Dependencies.Kotlin.stdlib)
 
     // RxJava
-    api rootProject.ext.dep.rxJava
-    api rootProject.ext.dep.rxAndroid
-}
+    implementation(Dependencies.RxJava.rxJava)
+    implementation(Dependencies.RxJava.rxAndroid)
+    implementation(Dependencies.RxJava.rxKotlin)
 
-/**
- * Extract major, minor, and patch version code and compose them to a version
- * code.
- *
- * @param versionName the version name, could be like "99.99.99-dev"
- * @return The version code
- */
-private static Integer generateVersionCode(String versionName) {
-    // Filter postfix like "-dev"
-    final int postfixIndex = versionName.indexOf("-")
-    if (postfixIndex >= 0) {
-        versionName = versionName.substring(0, postfixIndex)
+    cbModules {
+        // reference back to lib from PicCollage setup
+        libCollageGestureDetector()
     }
-    // Extract version integers
-    final String[] versions = versionName.split("\\.")
-    assert versionName.split('.') instanceof String[]
-    final int major = Integer.parseInt(versions[0])
-    final int minor = Integer.parseInt(versions[1])
-    final int patch = Integer.parseInt(versions[2])
-
-    // 00    00    00
-    // major minor patch
-    return major * 10000 + minor * 100 + patch
 }
-
-// Deployment script.
-apply from: 'deploy.gradle'
