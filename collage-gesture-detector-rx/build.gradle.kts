@@ -4,11 +4,22 @@ plugins {
 }
 
 android {
+    namespace = "com.cardinalblue.gesture.rx"
+
     compileSdk = Versions.compileSdk
 
     defaultConfig {
         minSdk = Versions.minSdk
         targetSdk = Versions.targetSdk
+    }
+
+    compileOptions {
+        sourceCompatibility = Versions.compatibilityJava
+        targetCompatibility = Versions.compatibilityJava
+    }
+
+    kotlinOptions {
+        jvmTarget = Versions.kotlinJvmTarget
     }
 }
 
