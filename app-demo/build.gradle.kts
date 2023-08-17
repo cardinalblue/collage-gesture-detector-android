@@ -4,6 +4,7 @@ plugins {
 }
 
 android {
+    namespace = "com.cardinalblue.demo"
     compileSdk = Versions.compileSdk
 
     defaultConfig {

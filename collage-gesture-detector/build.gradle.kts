@@ -4,6 +4,8 @@ plugins {
 }
 
 android {
+    namespace = "com.cardinalblue.gesture"
+
     compileSdk = Versions.compileSdk
 
     defaultConfig {
