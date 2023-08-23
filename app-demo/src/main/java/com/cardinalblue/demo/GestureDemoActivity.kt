@@ -165,6 +165,7 @@ class GestureDemoActivity : AppCompatActivity() {
 
                     mCanvasView.resetDemo()
                 }
+                else -> {}
             }
 
             Observable.empty<Any>()
@@ -189,6 +190,7 @@ class GestureDemoActivity : AppCompatActivity() {
                 is LongPressEvent -> {
                     printLog("\uD83D\uDD50 onLongPress")
                 }
+                else -> {}
             }
 
             Observable.empty<Any>()
@@ -221,6 +223,7 @@ class GestureDemoActivity : AppCompatActivity() {
 
                     mCanvasView.stopDragDemo()
                 }
+                else -> {}
             }
 
             Observable.empty<Any>()
@@ -267,6 +270,7 @@ class GestureDemoActivity : AppCompatActivity() {
 
                     mCanvasView.stopPinchDemo()
                 }
+                else -> {}
             }
 
             Observable.empty<Any>()
