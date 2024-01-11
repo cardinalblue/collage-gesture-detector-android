@@ -42,8 +42,8 @@ dependencies {
     // My Libraries.
     cbModules {
         // reference back to lib from PicCollage setup
-        libCollageGestureDetector()
-        libCollageGestureDetectorRx()
+        + libCollageGestureDetector
+        + libCollageGestureDetectorRx
     }
 
     // Unit Test
