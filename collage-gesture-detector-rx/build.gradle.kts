@@ -34,6 +34,6 @@ dependencies {
 
     cbModules {
         // reference back to lib from PicCollage setup
-        libCollageGestureDetector()
+        + libCollageGestureDetector
     }
 }
