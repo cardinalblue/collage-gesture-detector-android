@@ -25,12 +25,10 @@ android {
 
 dependencies {
     // Kotlin
-    implementation(Dependencies.Kotlin.stdlib)
+    implementation(libs.jetBrains.stdlib)
 
     // RxJava
-    implementation(Dependencies.RxJava.rxJava)
-    implementation(Dependencies.RxJava.rxAndroid)
-    implementation(Dependencies.RxJava.rxKotlin)
+    implementation(libs.bundles.rxjava.core)
 
     cbModules {
         // reference back to lib from PicCollage setup

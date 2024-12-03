@@ -22,22 +22,19 @@ android {
 
 dependencies {
     // Google Support Library.
-    implementation(Dependencies.JetPack.appcompat)
-    implementation(Dependencies.JetPack.vectorDrawable)
-    implementation(Dependencies.JetPack.recyclerView)
-    implementation(Dependencies.JetPack.constraintLayout)
+    implementation(libs.jetpack.appcompat)
+    implementation(libs.jetpack.vectorDrawable)
+    implementation(libs.jetpack.recyclerview)
+    implementation(libs.jetpack.constraintlayout)
 
     // Multi-dex.
-    implementation(Dependencies.JetPack.multidex)
+    implementation(libs.jetpack.multidex)
 
     // Kotlin
-    implementation(Dependencies.Kotlin.stdlib)
+    implementation(libs.jetBrains.stdlib)
 
     // RxJava
-    implementation(Dependencies.RxJava.rxJava)
-    implementation(Dependencies.RxJava.rxAndroid)
-    implementation(Dependencies.RxJava.rxBinding)
-    implementation(Dependencies.RxJava.rxKotlin)
+    implementation(libs.bundles.rxjava.core)
 
     // My Libraries.
     cbModules {
@@ -47,9 +44,9 @@ dependencies {
     }
 
     // Unit Test
-    implementation(Dependencies.Test.junit)
+    implementation(libs.test.junit)
 
     // Instrumental Test
-    implementation(Dependencies.Test.runner)
-    implementation(Dependencies.Test.espressoCore)
+    implementation(libs.test.runner)
+    implementation(libs.test.espressoCore)
 }
