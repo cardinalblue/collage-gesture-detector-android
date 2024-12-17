@@ -25,14 +25,14 @@ android {
 
 dependencies {
     // Kotlin
-    implementation(Dependencies.Kotlin.stdlib)
+    implementation(libs.jetBrains.stdlib)
 
     // Unit tests.
-    testImplementation(Dependencies.Test.junit)
-    testImplementation(Dependencies.Test.mockito)
-    testImplementation(Dependencies.Test.robolectric)
+    testImplementation(libs.test.junit)
+    testImplementation(libs.test.mockito)
+    testImplementation(libs.test.robolectric)
 
     // Instrumentation tests.
-    testImplementation(Dependencies.Test.runner)
-    testImplementation(Dependencies.Test.espressoCore)
+    testImplementation(libs.test.runner)
+    testImplementation(libs.test.espressoCore)
 }
