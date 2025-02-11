@@ -18,6 +18,10 @@ android {
         sourceCompatibility = Versions.compatibilityJava
         targetCompatibility = Versions.compatibilityJava
     }
+
+    kotlinOptions {
+        jvmTarget = Versions.kotlinJvmTarget
+    }
 }
 
 dependencies {
