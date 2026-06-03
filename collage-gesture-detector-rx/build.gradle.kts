@@ -1,6 +1,5 @@
 plugins {
     id("com.android.library")
-    id("kotlin-android")
 }
 
 android {
@@ -10,16 +9,17 @@ android {
 
     defaultConfig {
         minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
     }
 
     compileOptions {
         sourceCompatibility = Versions.compatibilityJava
         targetCompatibility = Versions.compatibilityJava
     }
+}
 
-    kotlinOptions {
-        jvmTarget = Versions.kotlinJvmTarget
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 
