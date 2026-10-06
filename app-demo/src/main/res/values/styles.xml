@@ -52,20 +52,4 @@
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
-
-    <!-- Shadow/Invisible Activity -->
-    <style name="AppTheme.Invisible" parent="AppTheme.CustomToolbar">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:backgroundDimEnabled">false</item>
-    </style>
-
-    <!-- Common toolbar -->
-    <style name="ThemeOverlay.ToolBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-    </style>
-
-    <style name="ThemeOverlay.ToolBarPopup" parent="ThemeOverlay.AppCompat.Light">
-    </style>
 </resources>
